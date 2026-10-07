@@ -1,8 +1,8 @@
 # C++ Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Prefer extending an existing repo over scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
 
-Principles, structure, and conventions for C++17 / MSVC / Windows projects.
+These are the principles, structure, and conventions you follow for your C++17 / MSVC / Windows projects. They keep you honest.
 
 ---
 
@@ -31,7 +31,7 @@ project/
  app.manifest        # UAC manifest (if admin required)
 ```
 
-Organize `src/` by **domain**, not by type. Group related files into folders like `core/`, `input/`, `net/`, `ui/`.
+You organize `src/` by **domain**, not by type. You group related files into folders like `core/`, `input/`, `net/`, `ui/`. Why? Because your team thinks in features, not in file kinds.
 
 ---
 
@@ -39,7 +39,7 @@ Organize `src/` by **domain**, not by type. Group related files into folders lik
 
 ### One class, one job
 
-Each class handles exactly one concern. Classes never reach into each other  `main.cpp` wires them together.
+Each class handles exactly one concern. Your classes never reach into each other. Your `main.cpp` wires them together. That separation is your discipline.
 
 ```cpp
 class Capture  { /* grabs frames    */ };
@@ -49,7 +49,7 @@ class Sender   { /* dispatches I/O  */ };
 
 ### Namespaces for stateful subsystems
 
-Subsystems that own threads, sockets, or persistent connections expose a namespace with `start()` / `stop()` / query functions. All internal state is file-static in the `.cpp`. The caller never sees internals.
+Subsystems that own threads, sockets, or persistent connections expose a namespace with `start()` / `stop()` / query functions. All internal state stays file-static in the `.cpp`. Your caller never sees internals. That is how you protect yourself.
 
 ```cpp
 // net.h  entire public API
@@ -63,7 +63,7 @@ namespace net {
 
 ### Classes for data-bound logic
 
-When behavior is tied to an owned resource (a handle, a buffer, an engine), use a class with RAII cleanup. Constructed where needed, destroyed automatically.
+When behavior is tied to an owned resource (a handle, a buffer, an engine), you use a class with RAII cleanup. You construct it where needed, it destroys itself automatically. You never chase leaks.
 
 ```cpp
 class FrameBuffer {
@@ -78,7 +78,7 @@ public:
 
 ### Shared config via `inline` globals
 
-All tunable settings live in a `cfg::` namespace with `inline` variables. Any translation unit can read them. Only `main.cpp` writes them (via message handlers or user input). Persistence is separate.
+All tunable settings live in a `cfg::` namespace with `inline` variables. Any translation unit can read them. Only `main.cpp` writes them (via message handlers or user input). Persistence stays separate. One writer means you always know who changed what.
 
 ```cpp
 // config.h
@@ -93,7 +93,7 @@ namespace cfg {
 
 ### `constexpr` for compile-time data tables
 
-Lookup tables, thresholds, and static data are `constexpr`  zero runtime allocation.
+Your lookup tables, thresholds, and static data are `constexpr`. You pay zero runtime allocation. Why pay at runtime for what you know at compile time?
 
 ```cpp
 constexpr Timing timings[MODE_COUNT] = {
@@ -105,7 +105,7 @@ constexpr Color palette[] = { {254,69,69}, {255,100,95}, {230,50,50} };
 
 ### Header-only for small utilities
 
-Tiny parsers, config I/O, data types, and simple utilities are header-only with `inline` functions. No `.cpp` needed.
+Your tiny parsers, config I/O, data types, and simple utilities are header-only with `inline` functions. No `.cpp` needed. You keep small things small.
 
 ```cpp
 // random.h  entire file
@@ -124,9 +124,9 @@ public:
 
 ### Headers (`include/`)
 
-One header per module. Every header uses `#pragma once`. Headers declare the public interface only  no implementation unless `inline` or `constexpr`.
+One header per module. Every header uses `#pragma once`. Your headers declare the public interface only. You put no implementation there unless it is `inline` or `constexpr`.
 
-Include order: **own header  project headers  system headers**.
+You keep include order fixed: **own header  project headers  system headers**.
 
 ```cpp
 // analyzer.h
@@ -156,7 +156,7 @@ Organized by domain:
 | `ui/`      | Console / display    |
 | (root)     | Orchestration        |
 
-Implementation files include their own header first.
+Implementation files include their own header first. You prove the header stands on its own.
 
 ```cpp
 // analyzer.cpp

@@ -1,14 +1,14 @@
 # Animation Recipes
 
-Ready-to-build implementations for the cases that come up most. Start from the recipe, then adapt — don't rebuild from scratch.
+These are ready-to-build implementations for the cases you will meet most. You start from the recipe, then you adapt. Do not rebuild from scratch. That is wasted craft.
 
-Curves are the `--ease-out`, `--ease-in-out`, and `--ease-drawer` tokens defined in SKILL.md.
+Curves are the `--ease-out`, `--ease-in-out`, and `--ease-drawer` tokens defined in SKILL.md. You use those tokens. You do not invent new ones.
 
 ---
 
 ## Button press
 
-Any pressable element. Instant feedback that the interface heard the user.
+Any pressable element. You give instant feedback that your interface heard your user. That is your job.
 
 ```css
 .button {
@@ -20,15 +20,15 @@ Any pressable element. Instant feedback that the interface heard the user.
 }
 ```
 
-`scale()` scales children too — the label and icons come along, which is what makes it read as a physical press.
+`scale()` scales children too — your label and icons come along, which is what makes it read as a physical press to your user.
 
-No hover gating needed here: `:active` is a real press on touch. Gate any `:hover` styling separately.
+You need no hover gating here: `:active` is a real press on touch. You gate any `:hover` styling separately. Keep the two apart.
 
 ---
 
 ## Dropdown, popover, menu, select
 
-Scales out of its trigger, not out of thin air.
+It scales out of its trigger, not out of thin air. Your user should see where it came from.
 
 ```css
 .popover {
@@ -45,13 +45,13 @@ Scales out of its trigger, not out of thin air.
 }
 ```
 
-The `transform-origin` is the whole point — the panel should look like it came out of the thing you clicked.
+The `transform-origin` is the whole point — your panel should look like it came out of the thing your user clicked. Get that right.
 
 ---
 
 ## Tooltip
 
-Same shape as a popover, faster, plus the detail most implementations miss.
+Same shape as a popover, faster, plus the detail your peers miss most. Pay attention here.
 
 ```css
 .tooltip {
@@ -73,13 +73,13 @@ Same shape as a popover, faster, plus the detail most implementations miss.
 }
 ```
 
-The initial delay prevents accidental activation. After that, skipping both the delay and the animation makes the whole toolbar feel faster.
+The initial delay prevents accidental activation. After that, you skip both the delay and the animation. That makes your whole toolbar feel faster to your user.
 
 ---
 
 ## Modal
 
-The one popover that stays centered.
+The one popover that stays centered. You keep it centered for your user.
 
 ```css
 .modal {
@@ -100,7 +100,7 @@ The one popover that stays centered.
 }
 ```
 
-Animate the backdrop's opacity alongside it so they read as one surface.
+You animate the backdrop's opacity alongside it so they read as one surface to your user. Two pieces. One motion.
 
 ---
 
@@ -117,9 +117,9 @@ Animate the backdrop's opacity alongside it so they read as one surface.
 }
 ```
 
-This is how Vaul hides a drawer before animating it in.
+This is how Vaul hides a drawer before you animate it in. Learn from it.
 
-Add drag and it becomes a gesture problem — see **Drag to dismiss** below.
+You add drag and it becomes a gesture problem for your user — see **Drag to dismiss** below. Treat it as one.
 
 ---
 
@@ -140,15 +140,15 @@ Add drag and it becomes a gesture problem — see **Drag to dismiss** below.
 }
 ```
 
-- `ease` rather than `ease-out`, slightly slower than typical UI: Sonner reads as elegant partly because its motion is tuned to the component's personality rather than to the generic UI budget.
-- If `@starting-style` isn't available, fall back to the mount flag:
+- `ease` rather than `ease-out`, slightly slower than typical UI: you tune Sonner to read as elegant partly because its motion fits the component's personality rather than the generic UI budget.
+- If `@starting-style` isn't available, you fall back to the mount flag:
 
 ```jsx
 useEffect(() => { setMounted(true); }, []);
 // <div data-mounted={mounted}>
 ```
 
-When toasts stack and the list reflows, the opacity change has to work against the height change. There's no formula for that pair — adjust until it feels right, then check it again the next day.
+When your toasts stack and your list reflows, your opacity change has to work against the height change. There is no formula for that pair — you adjust until it feels right to you, then you check it again the next day with fresh eyes.
 
 ---
 
@@ -163,13 +163,13 @@ When toasts stack and the list reflows, the opacity change has to work against t
 }
 ```
 
-Keep it short — this is one of the few animations that costs layout on every frame, so a long duration is expensive as well as sluggish. Measure the content height in JS (or use a headless primitive that supplies it) rather than animating to `auto`.
+You keep it short — this is one of the few animations that costs layout on every frame, so a long duration costs your user twice, in expense and in sluggishness. You measure the content height in JS (or you use a headless primitive that supplies it) rather than animating to `auto`.
 
 ---
 
 ## Stagger a group entrance
 
-For a list or grid the user sees occasionally — not for a list they scroll past all day.
+For a list or grid your user sees occasionally — not for a list they scroll past all day. Ask how often they will see it.
 
 ```css
 .item {
@@ -190,13 +190,13 @@ For a list or grid the user sees occasionally — not for a list they scroll pas
 }
 ```
 
-Stagger is decorative — it must never block interaction while it plays.
+Stagger is decorative — you must never block your user's interaction while it plays. That is the rule.
 
 ---
 
 ## Hold to confirm
 
-For destructive actions where a plain click is too easy to fire by accident.
+For destructive actions where your user's plain click fires too easy by accident. You protect them.
 
 ```css
 .overlay {
@@ -214,15 +214,15 @@ For destructive actions where a plain click is too easy to fire by accident.
 }
 ```
 
-`linear` is correct here — the fill is a progress indicator, and progress shouldn't ease.
+`linear` is correct here — your fill is a progress indicator, and progress should not ease. Be honest with your user.
 
 ---
 
 ## Tab indicator with a color transition
 
-Timing individual color transitions across a tab list never quite lands. Clip instead.
+Timing individual color transitions across a tab list never quite lands for your user. You clip instead. That is the craftsman's fix.
 
-Duplicate the tab list. Style the copy as the active state — different background, different text color. Clip the copy so only the active tab shows, and animate the clip on change:
+You duplicate the tab list. You style the copy as the active state — different background, different text color. You clip the copy so only the active tab shows, and you animate the clip on change:
 
 ```css
 .tabs-active-copy {
@@ -231,13 +231,13 @@ Duplicate the tab list. Style the copy as the active state — different backgro
 }
 ```
 
-The text and background change together, in perfect sync, because they're one element being revealed rather than two colors being interpolated.
+Your text and background change together, in perfect sync, because they are one element being revealed rather than two colors being interpolated. Your user feels the difference.
 
 ---
 
 ## Scroll reveal
 
-Marketing surfaces only. Don't do this to functional UI a user visits daily.
+Marketing surfaces only. You do not do this to functional UI your user visits daily. Leave daily work alone.
 
 ```css
 .reveal {
@@ -250,13 +250,13 @@ Marketing surfaces only. Don't do this to functional UI a user visits daily.
 }
 ```
 
-Trigger with `IntersectionObserver`, or Motion's `useInView` with `{ once: true, margin: "-100px" }`. Fire it once — re-animating on every scroll-by is an interface fighting its reader.
+You trigger with `IntersectionObserver`, or Motion's `useInView` with `{ once: true, margin: "-100px" }`. You fire it once — re-animating on every scroll-by is your interface fighting its reader.
 
 ---
 
 ## Drag to dismiss
 
-The gesture recipe. Springs, not durations, because the user can reverse mid-motion.
+The gesture recipe. You use springs, not durations, because your user can reverse mid-motion. Respect that.
 
 ```js
 // Dismiss on a flick, not just on distance

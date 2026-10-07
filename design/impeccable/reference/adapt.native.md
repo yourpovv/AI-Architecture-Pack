@@ -1,6 +1,6 @@
 > **Additional context needed**: target platforms/devices and usage contexts.
 
-Adapt an existing **native** design (`ios` / `android` / `adaptive`) to a different context: another device class, orientation, platform, or origin. The trap is treating adaptation as scaling. The job is rethinking the experience for the new context, inside the platform conventions of [ios.md](ios.md) / [android.md](android.md); read the target platform's reference before planning if Setup hasn't already.
+Adapt an existing **native** design (`ios` / `android` / `adaptive`) to a different context: another device class, orientation, platform, or origin. Listen. The trap is treating this as scaling. Your job is to rethink the experience for the new context, inside the platform conventions of [ios.md](ios.md) / [android.md](android.md); read your target platform's reference before you plan if Setup hasn't already. Would your user trust it as native?
 
 ## Assess Adaptation Challenge
 
@@ -48,7 +48,7 @@ Reconform, don't reflow. Replace web navigation with the platform's model, HTML-
 - Respect safe areas and window insets in every new configuration (notch, hinge, status bar, keyboard).
 - Test on simulators for breadth, then real hardware for truth: at least one phone and one tablet per shipped platform, both orientations, split-screen where supported.
 
-When the adaptation feels native to each context, hand off to `/impeccable polish` for the final pass.
+When the adaptation feels native to each context, hand off to `/impeccable polish` for the final pass. You did the hard rethinking. Now finish it clean.
 
 **NEVER**:
 - Ship a stretched phone layout on a tablet

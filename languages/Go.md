@@ -1,8 +1,8 @@
 # Go Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Prefer extending an existing repo over scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
 
-Simple, idiomatic structure for Go applications.
+You need a simple, idiomatic structure for your Go applications. Clarity is the feature.
 
 ---
 
@@ -27,19 +27,19 @@ project/
 ## Principles
 
 **Keep it simple**
-Go is designed for clarity. Don't fight it.
+Go is designed for clarity. You don't fight it. You use what the language gives you.
 
 **Small packages**
-Each package has one clear purpose.
+Each package has one clear purpose. If you cannot name it plainly, it does too much.
 
 **Accept interfaces, return structs**
-Makes code flexible and testable.
+This makes your code flexible and testable. Your callers will thank you.
 
 **Handle errors explicitly**
-No exceptions. Check every error.
+No exceptions. You check every error. What else would a professional do?
 
 **Avoid globals**
-Pass dependencies explicitly.
+You pass dependencies explicitly. Globals hide who depends on what.
 
 ---
 
@@ -627,9 +627,9 @@ func TestService(t *testing.T) {
 
 ## Configuration
 
-Load config once at startup into a typed struct, validate it, and pass it down via
-dependency injection, no `os.Getenv` calls scattered through the packages
-(`../standards/Principles.md` §15.1). Fail fast on a missing required var.
+You load config once at startup into a typed struct, you validate it, and you pass it down via
+dependency injection. You put no `os.Getenv` calls scattered through your packages
+(`../standards/Principles.md` §15.1). You fail fast on a missing required var.
 
 ```go
 // internal/config/config.go
@@ -666,50 +666,50 @@ func getenv(key, fallback string) string {
 }
 ```
 
-`main.go` calls `config.Load()` first and exits non-zero if it errors. Secrets come
-from the environment, never from committed files.
+`main.go` calls `config.Load()` first and exits non-zero if it errors. Your secrets come
+from the environment, never from committed files. Listen. Committed secrets do not stay secret.
 
 ---
 
 ## Summary
 
-Keep packages small and focused.
-Handle every error explicitly.
-Use short, clear names.
-Accept interfaces, return structs.
-Write table-driven tests.
-Keep functions short and simple.
+You keep your packages small and focused.
+You handle every error explicitly.
+You use short, clear names.
+You accept interfaces, you return structs.
+You write table-driven tests.
+You keep your functions short and simple. That is your discipline.
 
 ---
 
 ## Project Prompt
 
-Write Go against the structure and rules above. Where they disagree with your defaults,
+You write Go against the structure and rules above. Where they disagree with your defaults,
 this file wins.
 
-Read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting.
 
 **Error Handling**
-- Check every error explicitly (no `_` ignoring)
-- Wrap errors with context: `fmt.Errorf("context: %w", err)`
-- Return errors, don't panic
+- You check every error explicitly (no `_` ignoring)
+- You wrap errors with context: `fmt.Errorf("context: %w", err)`
+- You return errors, you don't panic
 - Custom error types for domain errors
 
 **Interfaces**
 - Small interfaces (1-3 methods)
-- Define at point of use, not implementation
-- No god interfaces
+- You define them at point of use, not implementation
+- No god interfaces. Can you name what it does? Then it is too big.
 
 **Concurrency**
 - Goroutines for I/O, not CPU
-- Always provide context for cancellation
-- Close channels from sender
-- Use mutexes or channels for shared state
+- You always provide context for cancellation
+- You close channels from sender
+- You use mutexes or channels for shared state
 
 **Testing**
 - Table-driven tests
-- Use interfaces for mocking
-- Test all error paths
+- You use interfaces for mocking
+- You test all error paths
 
 ### Setup
 
@@ -728,21 +728,20 @@ mkdir -p cmd/api internal/{handlers,services,repository,models}
 6. Context-aware operations
 7. Every error checked and wrapped with context
 8. README with setup instructions
-9. Test files for all packages
+9. Test files for all packages. You prove each one.
 
 ### Validation Checklist
 
 - [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
 - [ ] No secrets committed; env examples use placeholders only
-
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] All errors checked (no `_` ignoring)
-- [ ] Errors wrapped with context
+- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] You check all errors (no `_` ignoring)
+- [ ] You wrap errors with context
 - [ ] Interfaces at point of use
 - [ ] No stuttering in names
-- [ ] Context passed to long operations
+- [ ] You pass context to long operations
 - [ ] Proper resource cleanup (defer)
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
+- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md)
 - [ ] `go vet` and `golint` clean
 
 ### Pre-Delivery

@@ -1,8 +1,8 @@
 # TypeScript Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Prefer extending an existing repo over scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
 
-Clean structure for TypeScript applications.
+Clean structure for your TypeScript applications. You will thank yourself for it.
 
 ---
 
@@ -21,25 +21,25 @@ project/
 └── tsconfig.json
 ```
 
-Organize `src/` by **domain**, not by type, once it grows, a `users/` folder holding
+Organize `src/` by **domain**, not by type, once it grows. A `users/` folder holding
 its own logic, API calls, and types beats parallel `lib/` / `api/` trees you have to
-jump between. Keep it flat until that hurts.
+jump between. You keep it flat until that hurts. Why split what still fits together?
 
 ---
 
 ## Principles
 
 **Type everything**
-Use TypeScript's type system fully.
+You use TypeScript's type system fully. An untyped boundary is a lie you tell your team.
 
 **Single responsibility**
-Each module does one thing well.
+Each module does one thing well. If it does two, you split it.
 
 **Explicit dependencies**
-Import what you need. No globals.
+You import what you need. No globals. Globals hide who depends on what.
 
 **Strict mode**
-Enable all strict checks. No shortcuts.
+You enable all strict checks. No shortcuts. Shortcuts bill you later.
 
 ---
 
@@ -89,9 +89,9 @@ function isValidAge(age: number): boolean {
 
 ## API Layer
 
-The base URL comes from typed config (see [Configuration](#configuration)), never
-hard-code a host. Errors carry the operation and status so a 3 a.m. log is useful
-(`../standards/Principles.md` §5.3).
+The base URL comes from your typed config (see [Configuration](#configuration)), you never
+hard-code a host. Your errors carry the operation and status so a 3 a.m. log tells you what broke
+(`../standards/Principles.md` §5.3). Will you remember the context six months from now? Your log should.
 
 **api/users.ts**
 ```typescript
@@ -131,8 +131,8 @@ export async function deleteUser(id: string): Promise<void> {
 ```
 
 One `request` helper wraps `fetch` so the URL, error shape, and JSON parsing live in
-one place, adding auth headers or a retry later means editing a single function, not
-three.
+one place. When you add auth headers or a retry later, you edit a single function, not
+three. That is the whole point.
 
 ---
 
@@ -140,8 +140,8 @@ three.
 
 **Try-catch for async operations**
 
-Branch on your own error types, the typed `ApiError` and `ValidationError` carry
-enough to react differently. Translate them into a user-facing message at the boundary
+You branch on your own error types. Your typed `ApiError` and `ValidationError` carry
+enough for you to react differently. You translate them into a user-facing message at the boundary
 (see `skills/engineering/errors/SKILL.md` for the what/why/action rules).
 
 ```typescript
@@ -218,7 +218,7 @@ function handle(result: Result) {
 
 ## Naming
 
-Conventions that match the wider ecosystem and `../standards/Principles.md` §1.
+These conventions match the wider ecosystem and `../standards/Principles.md` §1. You follow them so your team reads your code without friction.
 
 ```typescript
 // Types & interfaces, PascalCase nouns
@@ -240,10 +240,10 @@ const MAX_RETRIES = 3;
 // user-service.ts, api-client.ts
 ```
 
-- **No `I` prefix on interfaces** (`User`, not `IUser`), the ecosystem dropped it.
-- **No Hungarian notation** (`strName`, `bActive`). The type system already knows.
+- **No `I` prefix on interfaces** (`User`, not `IUser`), your ecosystem dropped it.
+- **No Hungarian notation** (`strName`, `bActive`). Your type system already knows.
 - **Domain words over generic ones**, `order`, not `data`; `notify`, not `handler`.
-  See `skills/engineering/craft/SKILL.md` for naming and comment quality.
+  See `skills/engineering/craft/SKILL.md` for naming and comment quality. Name it for what it means to your team.
 
 ---
 
@@ -277,7 +277,7 @@ test('throws on invalid age', () => {
 **Environment config, parse once, at the boundary**
 
 Read every env var in one place, validate it, and export a typed object. The rest of
-the app imports `config` and trusts it, no `process.env.FOO` scattered through the
+your app imports `config` and trusts it. You put no `process.env.FOO` scattered through your
 codebase, no `string | undefined` to guard at every use (`../standards/Principles.md` §15.1).
 
 **src/config.ts**
@@ -304,8 +304,8 @@ PORT=3000
 DEBUG=false
 ```
 
-Fail fast on startup if a required var is missing, a clear boot error beats a
-`fetch(undefined)` deep in a request handler.
+Fail fast on startup if a required var is missing. A clear boot error beats a
+`fetch(undefined)` deep in your request handler. Would you rather find out at boot or from your users?
 
 **tsconfig.json**
 ```json
@@ -330,41 +330,41 @@ Fail fast on startup if a required var is missing, a clear boot error beats a
 
 ## Summary
 
-Type everything with TypeScript.
-Keep modules small and focused.
-Keep business logic separate from presentation.
-Use strict mode, no shortcuts.
-Handle errors explicitly.
+You type everything with TypeScript.
+You keep your modules small and focused.
+You keep your business logic separate from presentation.
+You use strict mode, no shortcuts.
+You handle your errors explicitly. That is your discipline.
 
 ---
 
 ## Project Prompt
 
-Write TypeScript against the structure and rules above. Where they disagree with your
+You write TypeScript against the structure and rules above. Where they disagree with your
 defaults, this file wins.
 
-Read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting.
 
 **Type Safety**
-- Type everything, no `any`
-- Use interfaces for contracts
-- Strict mode enabled
-- Discriminated unions for state
+- You type everything, no `any`
+- You use interfaces for contracts
+- You keep strict mode enabled
+- You use discriminated unions for state
 
 **Error Handling**
-- Custom error classes for domain errors (carry context: operation, status, ids)
-- Try-catch for async operations
-- Never swallow errors silently
+- You use custom error classes for domain errors (carry context: operation, status, ids)
+- You use try-catch for async operations
+- You never swallow errors silently
 
 **Configuration**
-- All env vars parsed and validated once in `config.ts`, exported typed
-- Fail fast on a missing required var; no `process.env` reads elsewhere
-- `.env.example` committed, real `.env` gitignored
+- You parse and validate all env vars once in `config.ts`, exported typed
+- You fail fast on a missing required var; no `process.env` reads elsewhere
+- You commit `.env.example`, your real `.env` stays gitignored
 
 **Testing**
-- Unit tests for all business logic
-- Mock external dependencies
-- Test all error paths
+- You write unit tests for all business logic
+- You mock external dependencies
+- You test all error paths
 
 ### Setup
 
@@ -383,20 +383,19 @@ npx tsc --init
 4. Typed, validated `config.ts` + `.env.example`
 5. Custom error classes that carry operation, status, and ids
 6. README with setup instructions
-7. Basic test suite
+7. Basic test suite. You prove your code works.
 
 ### Validation Checklist
 
 - [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
 - [ ] No secrets committed; env examples use placeholders only
-
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
 - [ ] No `any` types
-- [ ] Type all function signatures
+- [ ] You type all function signatures
 - [ ] Custom error classes for domain errors
 - [ ] No hard-coded hosts/URLs, all config via `config.ts`
-- [ ] Ids generated with `crypto.randomUUID()` / DB, never `Date.now()`
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
+- [ ] You generate ids with `crypto.randomUUID()` / DB, never `Date.now()`
+- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md)
 - [ ] TypeScript compiles with no errors
 
 ### Pre-Delivery

@@ -1,8 +1,8 @@
 # Python Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Prefer extending an existing repo over scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
 
-Clean, Pythonic structure for maintainable applications.
+You need a clean, Pythonic structure for your maintainable applications. Your future self will read this code.
 
 ---
 
@@ -27,16 +27,16 @@ project/
 ## Principles
 
 **Explicit is better than implicit**
-Don't hide behavior. Make it obvious.
+You don't hide behavior. You make it obvious. Your reader should not guess.
 
 **Simple is better than complex**
-If it's hard to explain, it's a bad idea.
+If it is hard to explain, it is a bad idea. Can you say it plainly?
 
 **Flat is better than nested**
-Avoid deep nesting. Extract functions.
+You avoid deep nesting. You extract functions.
 
 **Readability counts**
-Code is read far more than written.
+Your code is read far more than written. You write for your readers.
 
 ---
 
@@ -584,9 +584,9 @@ python_files = ["test_*.py"]
 
 ## Configuration
 
-Load and validate config once with `pydantic-settings`, export a single typed
-`settings`, and import it everywhere, no `os.environ` reads scattered through the code
-(`../standards/Principles.md` §15.1). A missing or wrong-typed var raises at startup.
+You load and validate config once with `pydantic-settings`, you export a single typed
+`settings`, and you import it everywhere. You put no `os.environ` reads scattered through your code
+(`../standards/Principles.md` §15.1). A missing or wrong-typed var raises at startup. That is what you want.
 
 ```python
 # app/config.py
@@ -614,45 +614,45 @@ PORT=3000
 DEBUG=false
 ```
 
-Secrets come from the environment, never from committed source.
+Your secrets come from the environment, never from committed source. Would you hand your keys to a stranger? Then don't commit them.
 
 ---
 
 ## Summary
 
-Write short, focused functions.
-Use type hints for clarity.
-Handle errors with exceptions.
-Keep classes small and single-purpose.
-Test everything with pytest.
-Follow PEP 8 for style.
+You write short, focused functions.
+You use type hints for clarity.
+You handle errors with exceptions.
+You keep your classes small and single-purpose.
+You test everything with pytest.
+You follow PEP 8 for style. Your team should recognize your discipline in every file.
 
 ---
 
 ## Project Prompt
 
-Write Python against the structure and rules above. Where they disagree with your
+You write Python against the structure and rules above. Where they disagree with your
 defaults, this file wins.
 
-Read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting.
 
 **Type Safety**
-- Type hints on all function signatures
+- Type hints on all function signatures. You leave nothing ambiguous.
 - Dataclasses for data containers
-- Use Protocol for interfaces
-- Annotate return types
+- You use Protocol for interfaces
+- You annotate return types
 
 **Error Handling**
 - Specific exceptions, not bare `except:`
 - Custom exception classes for domain errors
 - Context managers for resource cleanup
-- Never swallow exceptions silently
+- You never swallow exceptions silently
 
 **Testing**
 - pytest for all tests
-- Test all error paths
-- Use fixtures for setup
-- Mock external dependencies
+- You test all error paths
+- You use fixtures for setup
+- You mock external dependencies
 
 ### Setup
 
@@ -673,21 +673,20 @@ pip install fastapi uvicorn sqlalchemy pydantic pytest
 7. Environment configuration
 8. requirements.txt
 9. README with setup instructions
-10. pytest test suite
+10. pytest test suite. You prove your code works.
 
 ### Validation Checklist
 
 - [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
 - [ ] No secrets committed; env examples use placeholders only
-
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
 - [ ] Type hints on all functions
 - [ ] No bare `except:` clauses
 - [ ] Context managers for resources
 - [ ] Dataclasses for data containers
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
+- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md)
 - [ ] All tests pass
-- [ ] mypy type checking passes
+- [ ] mypy type checking passes. You prove your types hold.
 
 ### Pre-Delivery
 

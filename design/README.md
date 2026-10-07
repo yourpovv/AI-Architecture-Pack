@@ -1,7 +1,7 @@
 # design/ index
 
-Aesthetic systems and the places to get raw material. Everything in this folder is
-**opt-in**. A look should never fire on its own, the way a coding standard does.
+Listen. These are aesthetic systems. They are raw material for your work. Everything in this folder is
+**opt-in**. You pull one in when you mean it. A look should never fire on its own, the way a coding standard does. Your user deserves that discipline.
 
 | Skill | Use it for |
 |---|---|
@@ -22,15 +22,15 @@ Aesthetic systems and the places to get raw material. Everything in this folder 
 | **[image-to-code](./image-to-code/SKILL.md)** | Image-first pipeline: generate reference comps, analyze them, implement to match |
 | **[font-pairing](./font-pairing/SKILL.md)** | Type exploration on an existing frame: 5 heading/body pairings applied as labeled side-by-side duplicates. Pack-owned, needs Figma Plugin API access |
 
-Same layout as [`../skills/`](../skills/README.md): one folder per skill, named after the
-skill's `name`, so `cp -r design/apple-design .claude/skills/` is the whole install.
+It uses the same layout as [`../skills/`](../skills/README.md): one folder per skill, named after the
+skill's `name`, so `cp -r design/apple-design .claude/skills/` is the whole install. You can learn it once and use it twice.
 
 ---
 
 ## Which skill when
 
 `impeccable` and `design-taste-frontend` match on almost any design request, so
-name the specialist explicitly or the generalist wins by default.
+name the specialist explicitly or the generalist wins by default. That is your call. Make it on purpose.
 
 | The job | Load this | Not this |
 |---|---|---|
@@ -54,8 +54,8 @@ name the specialist explicitly or the generalist wins by default.
 
 ## Vendored sources
 
-Copied 2026-10-06, shallow clones, files verbatim. Re-pull upstream before treating
-any of them as current; do not fork their content into pack-owned wording.
+Copied 2026-10-06, shallow clones, files verbatim. You are responsible for checking. Re-pull upstream before treating
+any of them as current; do not fork their content into pack-owned wording. Respect the source.
 
 | Folders | Upstream | License |
 |---|---|---|
@@ -63,28 +63,28 @@ any of them as current; do not fork their content into pack-owned wording.
 | `impeccable` (upstream `NOTICE` kept as `NOTICE.upstream.md`) | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | Apache-2.0 |
 | `design-taste-frontend`, `redesign-existing-projects`, `image-to-code` | [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) | MIT |
 
-Deliberately not vendored:
-- `apple-design` from emilkowalski — the pack already ships its own `apple-design`,
+Left out on purpose. You do not need them:
+- `apple-design` from emilkowalski — you already ship your own `apple-design`,
   and two skills sharing one `name` means one install silently does nothing.
 - `write-swift`, `animate-expo`, `ask-sonner` from emilkowalski — Swift-only,
-  Expo-only, and a single-vendor library guide. Nothing in `languages/` or
-  `frameworks/` pairs with them.
+  Expo-only, and a single-vendor library guide. You have nothing in `languages/` or
+  `frameworks/` that pairs with them, so leave them out.
 - `design-taste-frontend-v1`, `gpt-taste`, `high-end-visual-design`, `minimalist-ui`,
   `industrial-brutalist-ui`, `stitch-design-taste`, `full-output-enforcement`,
   `brandkit`, `imagegen-frontend-web`, `imagegen-frontend-mobile` from taste-skill —
-  direction-specific or image-output variants. Add one when the brief names that
-  direction; the default stays `design-taste-frontend`.
+  direction-specific or image-output variants. Add one when your brief names that
+  direction; your default stays `design-taste-frontend`.
 
-When the brief names no direction, load `design-taste-frontend` first. It infers the
+When your brief names no direction, load `design-taste-frontend` first. It infers the
 design language from the brief; the aesthetic sub-flavors above load after it, never
-instead of it. For motion questions, `emil-design-eng` is the authority; for an
-existing page, start with `redesign-existing-projects` before restyling anything.
+instead of it. For motion questions, trust `emil-design-eng` as your authority; for an
+existing page, start with `redesign-existing-projects` before you restyle anything. Do the reading first. Then do the work.
 
 ---
 
 ## Resources
 
-Links, not dependencies. Pull what you need, then own it in your repo.
+Listen. These are links, not dependencies. You pull what you need, then you own it in your repo. That is the craft.
 
 ### Components
 
@@ -151,8 +151,8 @@ Links, not dependencies. Pull what you need, then own it in your repo.
 
 ### Color systems and accessibility
 
-Where the gradient tools above make one surface look good, these decide whether the whole
-palette holds up.
+The gradient tools above make one surface look good. These decide whether your whole
+palette holds up. Ask yourself which one your user will live with.
 
 | Source | What it is |
 |---|---|
@@ -168,7 +168,7 @@ palette holds up.
 
 ### Inspiration and reference
 
-Where the taste skills say "reference great websites": start here.
+When your taste skills tell you to "reference great websites", start here. Study the good work. Then do your own.
 
 | Source | What it is |
 |---|---|
@@ -188,21 +188,21 @@ Where the taste skills say "reference great websites": start here.
 
 ## Before you ship any of it
 
-- **Check the license.** These sources do not share one. Free to browse is not the same as
+- **Check the license.** These sources do not share one. You owe your user this check. Free to browse is not the same as
   free to ship in a commercial product, and the answer can differ per asset.
 - **Vendor it, do not hotlink it.** An external URL in production is an outage you do not
-  control and a tracking vector you did not agree to.
+  control and a tracking vector you did not agree to. Do not hand that risk to your user.
 - **Budget the weight.** 3D scenes and layered SVG backgrounds are the two easiest ways to
-  turn a fast page slow. Measure after you add one.
+  turn a fast page slow. You measure after you add one. That is your discipline.
 - **An animated gradient is a render loop.** A WebGL or shader background keeps running for
-  as long as the page is open, which costs battery on a laptop and more on a phone. Gate it
-  behind `prefers-reduced-motion`, and pause it when the tab is hidden.
+  as long as the page is open, which costs battery on a laptop and more on a phone. You gate it
+  behind `prefers-reduced-motion`, and you pause it when the tab is hidden. Respect the machine.
 - **Check contrast against the gradient, not against a flat color.** Text over a gradient
-  passes at one end and fails at the other. Test the worst point, not the average.
+  passes at one end and fails at the other. You test the worst point, not the average. Your user reads the worst point.
 - **Pick one icon set and one illustration style.** Mixing sources is the fastest way to
-  make a competent design look amateur.
+  make your competent work look amateur. Pick one. Stick to it.
 
 ## Adding a resource
 
-Add a row to the table it belongs in, with a description of what the source actually is.
-No adjectives, no ranking. If a category does not exist yet, add the heading.
+You add a row to the table it belongs in, with a description of what the source actually is.
+No adjectives, no ranking. If a category does not exist yet, you add the heading. Keep it plain.

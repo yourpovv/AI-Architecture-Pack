@@ -1,35 +1,35 @@
 # Universal Engineering Principles
 
-> A tech-stack-agnostic handbook covering Uncle Bob's Clean Code, the SOLID principles,
+> This is your tech-stack-agnostic handbook. It covers my Clean Code, the SOLID principles,
 > Clean Architecture, DRY/KISS/YAGNI, testing, concurrency, security, and the habits
-> that separate code you're proud of from code you regret. Drop this into any project.
+> that separate code you are proud of from code you regret. Drop it into any project you own.
 
-Keep it short where the rule is obvious, longer where the nuance matters.
+You keep it short where your rule is obvious, longer where the nuance matters.
 When two principles conflict, **clarity wins**.
 
 ### Mandatory lesson standards (authoritative for craft)
 
-**Day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md) — **60 detailed
+**Your day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md) — **60 detailed
 Uncle Bob / clean-code lessons** (side effects, naming, errors, comments, DRY, Demeter, CQS, …).
 
 - For naming, functions, comments, null, exceptions, structure: open the matching
-  `Clean-Code/` lesson file (flat `NN-*.md` or one from the grouped folders). **That file wins** over anything below in this handbook.
+  `Clean-Code/` lesson file for your task (flat `NN-*.md` or one from the grouped folders). **That file wins** over anything below in this handbook.
 - This `Principles.md` handbook covers **SOLID, architecture, testing, security,
-  concurrency**, and philosophy. Where a section here restates craft rules, it is a
-  **summary only** — if wording drifts, fix this file toward `Clean-Code/`, not the reverse.
-- Skills (`Errors.md`, `NecessaryComments.md`, `Craft.md`) are subordinate the same way.
+  concurrency**, and philosophy. Where a section here restates your craft rules, it is a
+  **summary only** — if the wording drifts, you fix this file toward `Clean-Code/`, not the reverse.
+- Your skills (`Errors.md`, `NecessaryComments.md`, `Craft.md`) are subordinate the same way.
 
 ---
 
 ## Agent load policy (read this first)
 
-This file is a **reference handbook**, not default agent context.
+This file is a **reference handbook**, not your default agent context.
 
-- **Do not** load the entire document into a session by default. It is long on purpose.
-- **Do** open the **one section** that matches the task (names, functions, errors, SOLID, testing, security, etc.).
-- Prefer project `AGENTS.md`, `standards/Clean-Code/` (one lesson), `skills/review/audit/SKILL.md`, and `skills/engineering/errors/SKILL.md` for day-to-day work.
-- Examples below use Java-like or web-flavored snippets as illustrations only. They are not a required stack. Translate the rule to the language in the current repo.
-- Project facts (owned code, secrets, verify commands) never live here. They live in the project's tracked agent contract and README.
+- **Do not** load the whole document into your session by default. It is long on purpose.
+- **Do** open the **one section** that matches your task (names, functions, errors, SOLID, testing, security, etc.).
+- Prefer your project `AGENTS.md`, `standards/Clean-Code/` (one lesson), `skills/review/audit/SKILL.md`, and `skills/engineering/errors/SKILL.md` for your day-to-day work.
+- The examples below use Java-like or web-flavored snippets as illustrations only. They are not your required stack. You translate the rule to the language in your current repo.
+- Your project facts (owned code, secrets, verify commands) never live here. They live in your project's tracked agent contract and README.
 
 ### Section map (jump, do not stream all)
 
@@ -52,48 +52,48 @@ This file is a **reference handbook**, not default agent context.
 
 ## 0. Philosophy (set the tone)
 
-- **Write code for the human reading it, not the machine executing it.** The compiler
-  doesn't care about your names, whitespace, or function length. Your future self
-  at 2 AM on a production incident does.
-- **Leave the campground cleaner than you found it.** (The Boy Scout Rule.) Every commit
-  is a chance to nudge the codebase toward better.
-- **You Aren't Gonna Need It (YAGNI).** Don't build for imagined requirements. Build
-  for the one in front of you, and make it easy to change when the next one shows up.
-- **Keep It Simple, Stupid (KISS).** Complexity isn't an achievement. The hardest part
-  of engineering is finding the simplest solution that works.
+- **Write your code for the human reading it, not the machine executing it.** Your compiler
+  does not care about your names, your whitespace, or your function length. You will care
+  at 2 AM on a production incident.
+- **Leave the campground cleaner than you found it.** (The Boy Scout Rule.) Every commit you make
+  is your chance to nudge the codebase toward better.
+- **You Aren't Gonna Need It (YAGNI).** Do not build for imagined requirements. Build
+  for the requirement in front of you, and make it easy to change when the next one shows up.
+- **Keep It Simple, Stupid (KISS).** Complexity is not an achievement. The hardest part
+  of your job is finding the simplest solution that works.
 - **Make it work, make it right, make it fast, in that order.** Premature optimization
-  is a tax on clarity. Measure, then optimize.
+  taxes your clarity. You measure, then you optimize.
 - **Prefer boring.** Exotic techniques, clever tricks, and novel abstractions are
-  liabilities. Boring code is predictable, teachable, and debuggable.
-- **Disagree and commit.** Teams ship. When a convention is set, follow it even if you
+  liabilities in your code. Boring code is predictable, teachable, and debuggable.
+- **Disagree and commit.** Teams ship. When your convention is set, you follow it even if you
   would have chosen differently.
 
 ---
 
 ## 1. Names
 
-Names are the first, cheapest, and most effective form of documentation.
+Your names are the first, cheapest, and most effective documentation you write.
 
 ### 1.1 Intention-revealing
 
 `daysElapsed`, not `d`. `customerAccount`, not `acc`. If you need a comment to explain
-a name, the name is wrong.
+your name, your name is wrong.
 
 ### 1.2 Avoid disinformation
 
-Don't name something `accountList` unless it's literally a `List`. Don't use names that
-look alike (`XYZControllerForEfficientHandlingOfStrings` and
+Don't name something `accountList` unless it is literally a `List` in your code. Don't use names that
+look alike to your reader (`XYZControllerForEfficientHandlingOfStrings` and
 `XYZControllerForEfficientStorageOfStrings`).
 
 ### 1.3 Meaningful distinctions
 
-`a1, a2, a3` tells the reader nothing. If two things have the same role, unify them;
-if they're different, name the difference.
+`a1, a2, a3` tells your reader nothing. If two things have the same role in your code, unify them;
+if they are different, you name the difference.
 
 ### 1.4 Pronounceable and searchable
 
-`genymdhms` fails both tests. `generationTimestamp` passes. Single-letter variables are
-fine as loop counters; anywhere else they hide.
+`genymdhms` fails both tests for you. `generationTimestamp` passes. A single-letter variable is
+fine as your loop counter; anywhere else it hides.
 
 ### 1.5 Conventions
 
@@ -104,19 +104,19 @@ fine as loop counters; anywhere else they hide.
 
 ### 1.6 Scope ↔ name length
 
-Short scope, short name. Long scope, long name. A counter `i` in a 5-line loop is fine.
-A global named `x` is malpractice.
+Short scope, short name. Long scope, long name. A counter `i` in your 5-line loop is fine.
+A global named `x` is malpractice. Ask yourself: how far must your reader carry this name?
 
 ### 1.7 No puns, no cuteness, no encodings
 
-`HolyHandGrenade` doesn't tell you what it does. Hungarian notation (`sName`, `bIsActive`)
-survived the 90s; let it rest. Don't prefix interfaces with `I` unless the team standard
+`HolyHandGrenade` does not tell your reader what it does. Hungarian notation (`sName`, `bIsActive`)
+survived the 90s; let it rest. Don't prefix your interfaces with `I` unless your team standard
 requires it, `Account` vs `AccountImpl` is usually enough.
 
 ### 1.8 Rename when you learn
 
-The moment you understand something better than its name suggests, rename it. Modern
-editors make rename-refactors safe and global.
+The moment you understand something better than its name says, you rename it. Your modern
+editors make rename-refactors safe and global. Why keep a lie?
 
 ---
 
@@ -124,21 +124,21 @@ editors make rename-refactors safe and global.
 
 ### 2.1 Small
 
-A function should fit on a screen without scrolling. Under 20 lines is a good target;
-under 10 is better. Blocks inside `if`/`for`/`while` should usually be **one line**
-(a call to a well-named function).
+Your function should fit on your screen without scrolling. Under 20 lines is a good target for you;
+under 10 is better. Blocks inside your `if`/`for`/`while` should usually be **one line**
+(a call to a well-named function you trust).
 
 ### 2.2 Do one thing
 
-A function does one thing if you can't extract another function from it with a name
+Your function does one thing if you cannot extract another function from it with a name
 other than a restatement of its implementation. If you can say "this function does
-X, *and* then Y", it's doing two things.
+X, *and* then Y", it is doing two things. Listen. That *and* is your warning.
 
 ### 2.3 One level of abstraction per function
 
-Mixing high-level policy and low-level string mashing in the same function is the
-single most common source of unreadable code. Read your function top-to-bottom: every
-line should be at the same conceptual altitude.
+Mixing high-level policy and low-level string mashing in your same function is the
+single most common source of unreadable code you will write. Read your function top-to-bottom: every
+line should sit at the same conceptual altitude.
 
 ### 2.4 Few arguments
 
@@ -150,29 +150,30 @@ line should be at the same conceptual altitude.
 
 ### 2.5 No flag arguments
 
-`render(true)` tells the reader nothing. Split into `renderForSuite()` and
-`renderForSingleTest()`. If the function behaves differently based on a flag, it's
+`render(true)` tells your reader nothing. You split it into `renderForSuite()` and
+`renderForSingleTest()`. If your function behaves differently based on a flag, it is
 doing two things (rule 2.2).
 
 ### 2.6 No side effects the name doesn't announce
 
-`checkPassword(user, pw)` should not *also* log the user in. `getUser()` should not
-*also* mutate state. If your function does X and Y, name it X-and-Y, or split it.
+`checkPassword(user, pw)` should not *also* log your user in. `getUser()` should not
+*also* mutate your state. If your function does X and Y, you name it X-and-Y, or you split it.
+Would you trust a name that hides half the work?
 
 ### 2.7 Command-query separation
 
 Authoritative detail: [`Clean-Code/40-command-query-separation.md`](./Clean-Code/40-command-query-separation.md).
 
-A function either *does* something (command) or *answers* something (query), never both.
-Queries have no observable side effects. Commands may return the artifact they created;
-they must not smuggle a second “did it already exist?” question. Never name a writer `get*` / `check*`.
+Your function either *does* something (command) or *answers* something (query), never both.
+Your queries have no observable side effects. Your commands may return the artifact they created;
+they must not smuggle a second “did it already exist?” question. Never name your writer `get*` / `check*`.
 
 ### 2.8 Don't return null, don't pass null
 
 Authoritative detail: [`Clean-Code/13-stop-returning-null.md`](./Clean-Code/13-stop-returning-null.md).
 
-**Never return null** from APIs you control. Return an empty collection, a Special Case /
-Null Object, or throw. Do not pass null — reject at the boundary. Do not hide failures
+**Never return null** from APIs you control. You return an empty collection, a Special Case /
+Null Object, or you throw. You do not pass null — you reject it at the boundary. You do not hide your failures
 as empty success (`catch { return [] }`).
 
 ### 2.9 Prefer exceptions to return codes
@@ -180,14 +181,14 @@ as empty success (`catch { return [] }`).
 Authoritative detail: [`Clean-Code/03-exceptions-over-error-codes.md`](./Clean-Code/03-exceptions-over-error-codes.md),
 [`34`](./Clean-Code/34-catch-is-not-if.md), [`37`](./Clean-Code/37-algorithm-breathes.md).
 
-Happy path is a flat list of steps. Throw on operational failure with context; catch at
-the boundary that can translate or report. Do not use catch as an ordinary branch.
-Do not return status-code bags in languages that have exceptions.
+Your happy path is a flat list of steps. You throw on operational failure with context; you catch at
+the boundary that can translate or report. You do not use catch as an ordinary branch.
+You do not return status-code bags in languages that have exceptions.
 
 ### 2.10 Extract 'til you drop
 
-Each helper you extract is an opportunity to give something a name. Named behaviors
-are the vocabulary of your codebase.
+Each helper you extract is your opportunity to give something a name. Your named behaviors
+are the vocabulary of your codebase. Will your team thank you for that name?
 
 ---
 
@@ -195,33 +196,33 @@ are the vocabulary of your codebase.
 
 Authoritative detail: [`Clean-Code/`](./Clean-Code/README.md) lessons **05–10, 17, 19, 33, 38, 41**.
 
-> Comments are a last resort. Prefer rename/extract. When needed: why, warnings,
+> Your comments are a last resort. You prefer rename/extract. When you need one: why, warnings,
 > public API docs, licenses — not narration or history museums.
 
 ### 3.1 Good comments (rare)
 
-- **Legal.** Copyright/license headers required by policy (Clean-Code 07, 41).
-- **Intent.** *Why* you chose this approach when it's non-obvious (17).
-- **Warnings / amplification.** Load-bearing constraints others might “optimize” away (08).
-- **Public API docs.** Exported symbols: what, inputs, outputs, failures, example (41) — not noise (19).
-- **TODO with context.** Blocker or ticket, not `// TODO fix this` (08).
+- **Legal.** Your copyright/license headers required by policy (Clean-Code 07, 41).
+- **Intent.** *Why* you chose this approach when it is non-obvious to your reader (17).
+- **Warnings / amplification.** Your load-bearing constraints others might “optimize” away (08).
+- **Public API docs.** Your exported symbols: what, inputs, outputs, failures, example (41) — not noise (19).
+- **TODO with context.** Your blocker or ticket, not `// TODO fix this` (08).
 
 ### 3.2 Bad comments (common)
 
-- **Redundant**, `// increment i` before `i++`.
-- **Misleading**, code and comment disagree because one got updated.
-- **Mandated**, a comment required on every getter adds noise.
-- **Journal**, "Changed Sep 3, then again Sep 4". That's what version control is for.
-- **Attributions/bylines**, `// added by Steve`. Git blame knows.
-- **Closing-brace labels**, `} // end if`. If you need this, the block is too long.
-- **Commented-out code**, delete it. Version control remembers.
-- **Non-local info**, commenting function A with policy that lives on function B.
-- **Noise**, `// Default constructor.` above a default constructor.
+- **Redundant**, `// increment i` before your `i++`.
+- **Misleading**, your code and comment disagree because you updated one.
+- **Mandated**, a comment you require on every getter adds noise to your code.
+- **Journal**, "Changed Sep 3, then again Sep 4". That is what your version control is for.
+- **Attributions/bylines**, `// added by Steve`. Your git blame knows.
+- **Closing-brace labels**, `} // end if`. If you need this, your block is too long.
+- **Commented-out code**, you delete it. Your version control remembers.
+- **Non-local info**, you comment function A with policy that lives on function B.
+- **Noise**, `// Default constructor.` above your default constructor.
 
 ### 3.3 When in doubt
 
-If removing the comment wouldn't confuse a future reader, remove it. If it would,
-see if a better name or an extracted function would remove the need.
+If removing your comment would not confuse your future reader, you remove it. If it would,
+you try a better name or an extracted function first to remove the need.
 
 ---
 
@@ -229,37 +230,37 @@ see if a better name or an extracted function would remove the need.
 
 ### 4.1 Vertical density and openness
 
-Lines that are conceptually related sit together with no blank line between them.
-Conceptually distinct blocks are separated by exactly one blank line. No double-blanks.
+Lines that are conceptually related sit together in your file with no blank line between them.
+Conceptually distinct blocks you separate by exactly one blank line. No double-blanks.
 
 ### 4.2 Vertical ordering (newspaper metaphor)
 
-A well-written source file reads like a newspaper: the headline (module intent) at
+You write your source file like a newspaper: the headline (module intent) at
 the top, the most important concepts near the top, details (helpers) flowing down.
-A reader should be able to stop at any point and still have context.
+Your reader should be able to stop at any point and still have context.
 
 ### 4.3 Declarations close to use
 
-A loop's counter belongs at the top of the loop. A helper variable belongs just above
-its first use. Don't hoist things to the top of a function for cosmetic symmetry.
+Your loop's counter belongs at the top of your loop. Your helper variable belongs just above
+its first use. You do not hoist things to the top of your function for cosmetic symmetry.
 
 ### 4.4 Horizontal formatting
 
-- Lines under ~100-120 columns. Wrap long expressions; use intermediate named variables.
-- One statement per line.
-- Consistent whitespace around operators and after commas.
-- Indent to show hierarchy; never use indentation to fake alignment.
+- Lines under ~100-120 columns in your code. You wrap long expressions; you use intermediate named variables.
+- One statement per line in your code.
+- Consistent whitespace around your operators and after your commas.
+- You indent to show hierarchy; you never use indentation to fake alignment.
 
 ### 4.5 Team rules trump personal preference
 
-Pick a formatter (Prettier, gofmt, rustfmt, Black, …) and a linter (ESLint, Clippy,
-Ruff, …). Run them on commit. The style debate is over; you get your time back.
+You pick a formatter (Prettier, gofmt, rustfmt, Black, …) and a linter (ESLint, Clippy,
+Ruff, …). You run them on commit. Your style debate is over; you get your time back.
 
 ### 4.6 File organization
 
-- One public concept per file, a class, a component, a module.
-- Small helpers that exist only to support the public concept stay in the same file.
-- File name matches the concept name.
+- One public concept per your file, a class, a component, a module.
+- Small helpers that exist only to support your public concept stay in the same file.
+- Your file name matches the concept name.
 
 ---
 
@@ -267,61 +268,62 @@ Ruff, …). Run them on commit. The style debate is over; you get your time back
 
 ### 5.1 Make errors a normal part of the design
 
-Errors aren't the exception; bugs are. Plan your error flow before your happy path.
+Your errors are not the exception; your bugs are. You plan your error flow before your happy path.
+What will you do when this fails?
 
 ### 5.2 Prefer exceptions, not return codes
 
 Authoritative: [`Clean-Code/03`](./Clean-Code/03-exceptions-over-error-codes.md).
 
-Return codes force every caller to remember to check. Exceptions keep the algorithm
-readable. In languages without exceptions (e.g. Go), use that language’s **single**
+Return codes force every caller you write to remember to check. Exceptions keep your algorithm
+readable. In languages without exceptions (e.g. Go), you use that language’s **single**
 idiomatic error channel with context — still no nested status pyramids and no
 TypeScript/Java-style `{ ok, error }` bags when exceptions exist.
 
 ### 5.3 Provide context
 
-`throw new IOException("couldn't read")` is useless. Include *what* was being done,
-*which* resource, *with what* inputs (minus secrets). Stack traces alone aren't enough.
+`throw new IOException("couldn't read")` is useless to your reader. You include *what* you were doing,
+*which* resource you touched, *with what* inputs (minus secrets). Your stack traces alone are not enough.
 (Also required by Clean-Code 03.)
 
 ### 5.4 Wrap third-party exceptions at boundaries
 
 Authoritative: [`Clean-Code/31`](./Clean-Code/31-wrap-third-party-apis.md).
 
-Your domain code shouldn't leak vendor exceptions. Catch at the wrapper, translate
-into your domain’s error vocabulary, re-throw.
+Your domain code should not leak vendor exceptions. You catch at the wrapper, you translate
+into your domain’s error vocabulary, you re-throw.
 
 ### 5.5 Fail fast
 
-Detect bad state at its source, not three layers deep. Validate inputs at the entry
-point. Never let a bad value quietly propagate through the system.
+You detect bad state at its source, not three layers deep. You validate your inputs at the entry
+point. You never let a bad value quietly propagate through your system.
 
 ### 5.6 Don't swallow exceptions
 
 Authoritative: [`Clean-Code/34`](./Clean-Code/34-catch-is-not-if.md).
 
-Empty `catch` is always wrong. Catch that turns failure into fake success (`[]`,
-default “ok”) is always wrong. Best-effort work still logs with context and a short
-why; usually rethrow after translation. Expected business branches use Special Case /
+Your empty `catch` is always wrong. Your catch that turns failure into fake success (`[]`,
+default “ok”) is always wrong. Your best-effort work still logs with context and a short
+why; usually you rethrow after translation. Your expected business branches use Special Case /
 defaults — not try/catch.
 
 ### 5.7 One failure mechanism in exception languages
 
-Use exceptions end-to-end inside the app; map to HTTP/status once at the edge.
-Do not mix exception throws with ad-hoc error-code returns in the same layer.
+You use exceptions end-to-end inside your app; you map to HTTP/status once at the edge.
+You do not mix exception throws with ad-hoc error-code returns in your same layer.
 
 ### 5.8 Treat internal errors and user errors differently
 
-- **User errors** (bad input, not-found, permission denied) → clear message, 4xx-class.
-- **Internal errors** (broken invariant, network flake) → opaque user message, 5xx-class,
-  full detail in logs. User-facing copy: `skills/engineering/errors/SKILL.md` Part B (subordinate to craft rules above).
+- **User errors** (bad input, not-found, permission denied) → you return a clear message, 4xx-class.
+- **Internal errors** (broken invariant, network flake) → you return an opaque user message, 5xx-class,
+  full detail in your logs. User-facing copy: `skills/engineering/errors/SKILL.md` Part B (subordinate to craft rules above).
 
 ### 5.9 Special-Case / Null-Object pattern
 
 Authoritative: [`Clean-Code/13`](./Clean-Code/13-stop-returning-null.md), [`34`](./Clean-Code/34-catch-is-not-if.md).
 
-Instead of null and guards everywhere, return a Special Case object with the same
-interface, or an empty collection / zero. Throw when absence is a true failure.
+Instead of null and guards everywhere in your code, you return a Special Case object with the same
+interface, or an empty collection / zero. You throw when absence is a true failure.
 
 ---
 
@@ -329,8 +331,8 @@ interface, or an empty collection / zero. Throw when absence is a true failure.
 
 ### 6.1 Tell, don't ask
 
-Don't fetch a field and compute on it externally. Ask the object to do the work.
-`bill.calculateTotal()` > `calculateTotal(bill.lineItems)`.
+Don't fetch a field and compute on it externally in your code. You ask the object to do the work.
+`bill.calculateTotal()` > `calculateTotal(bill.lineItems)`. Would you rather read the intention or the math?
 
 ### 6.2 Law of Demeter
 
@@ -340,40 +342,40 @@ A method `f` of class `C` should call only methods of:
 - objects passed as arguments,
 - objects held in `C`'s fields.
 
-Not: `a.getB().getC().doSomething()` (a "train wreck"). If you must, make the whole
-chain one method.
+Not: `a.getB().getC().doSomething()` (a "train wreck" in your code). If you must, you make the whole
+chain one method on the object that owns the knowledge.
 
 ### 6.3 Data objects vs behavior objects
 
 Authoritative: [`Clean-Code/29`](./Clean-Code/29-objects-vs-data-structures.md), [`21`](./Clean-Code/21-expose-behavior-not-data.md).
 
-- **Data objects (structs, DTOs)** — expose fields, **no business behavior**. Correct
-  and intentional at boundaries (API responses, DB rows). Do **not** “fix” a DTO by
+- **Data objects (structs, DTOs)** — you expose fields, **no business behavior**. Correct
+  and intentional at your boundaries (API responses, DB rows). Do **not** “fix” your DTO by
   stuffing domain rules into it.
-- **Behavior objects** — hide data, expose operations. Domain rules live here.
+- **Behavior objects** — you hide data, you expose operations. Your domain rules live here.
 - **Hybrids** (public getters/setters for everything *and* business methods) lose both
-  advantages — split them.
-- **Anemic domain types** (should own rules but only carry fields) are a smell — move
-  behavior into domain objects/services, not into DTOs.
+  advantages for you — you split them.
+- **Anemic domain types** (should own rules but only carry fields) are a smell in your code — you move
+  behavior into your domain objects/services, not into DTOs.
 
 ### 6.4 Encapsulate at boundaries, not inside
 
-Your internal code should pass rich objects freely. At the system boundary (HTTP,
-DB, file), serialize to data objects. Don't leak JSON or ORM entities into your
+Your internal code should pass rich objects freely. At your system boundary (HTTP,
+DB, file), you serialize to data objects. You do not leak JSON or ORM entities into your
 domain.
 
 ### 6.5 Boundaries around third-party code
 
-Wrap external libraries in a thin adapter you control. You get:
+You wrap external libraries in a thin adapter you control. You get:
 - A single place to replace the library.
 - A single place to handle its idiosyncrasies.
-- A smaller API surface to learn and test.
+- A smaller API surface for you to learn and test.
 
 ### 6.6 Learning tests
 
-Before depending on a third-party API, write tests that *prove your understanding*
+Before you depend on a third-party API, you write tests that *prove your understanding*
 of it. When the library upgrades, those tests tell you whether the upgrade broke
-your assumptions. Cheap insurance.
+your assumptions. Cheap insurance for you.
 
 ---
 
@@ -383,8 +385,8 @@ your assumptions. Cheap insurance.
 
 > A class should have one reason to change.
 
-If `Report` handles formatting *and* persistence *and* scheduling, three stakeholders
-will pull it in three directions. Split.
+If your `Report` handles formatting *and* persistence *and* scheduling, three stakeholders
+will pull it in three directions. You split it. How many reasons would force you to touch this class?
 
 ### 7.2 Classes should be small
 

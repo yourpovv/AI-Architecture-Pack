@@ -1,8 +1,8 @@
 > **Additional context needed**: target platforms/devices and usage contexts.
 
-Adapt an existing design to a different context: another screen size, device, platform, or use case. The trap is treating adaptation as scaling. The job is rethinking the experience for the new context.
+Adapt an existing design to a different context: another screen size, device, platform, or use case. Listen. The trap is treating this as scaling. Your job is to rethink the experience for the new context. Ask yourself: would your user feel at home here?
 
-**Web only** (mobile web included). Native platforms (`ios` / `android` / `adaptive`) route to [adapt.native.md](adapt.native.md) instead; if the project is native, switch to it now.
+**Web only** (mobile web included). Native platforms (`ios` / `android` / `adaptive`) route to [adapt.native.md](adapt.native.md) instead; if your project is native, switch to it now.
 
 ---
 
@@ -11,9 +11,9 @@ Adapt an existing design to a different context: another screen size, device, pl
 Understand what needs adaptation and why:
 
 1. **Identify the source context**:
-   - What was it designed for originally? (Desktop web? Mobile app?)
-   - What assumptions were made? (Large screen? Mouse input? Fast connection?)
-   - What works well in current context?
+   - What was it designed for originally? (Desktop web? Mobile app?) You need to know what you inherited.
+   - What assumptions were made? (Large screen? Mouse input? Fast connection?) Name them plainly.
+   - What works well in current context? Keep what earns its place.
 
 2. **Understand target context**:
    - **Device**: Mobile, tablet, desktop, TV, watch, print?
@@ -28,11 +28,11 @@ Understand what needs adaptation and why:
    - What won't work? (Hover states on touch, tiny touch targets)
    - What's inappropriate? (Desktop patterns on mobile, mobile patterns on desktop)
 
-**CRITICAL**: Adaptation is rethinking the experience for the new context, not scaling pixels.
+**CRITICAL**: Adaptation is rethinking the experience for the new context, not scaling pixels. Would you ship a photocopy and call it craft?
 
 ## Plan Adaptation Strategy
 
-Create context-appropriate strategy:
+Create a strategy that fits the context. You owe your user a design that feels native where they meet it:
 
 ### Mobile Adaptation (Desktop → Mobile)
 
@@ -165,7 +165,7 @@ Choose appropriate breakpoints:
 - Persistent side navigation on desktop
 - Breadcrumbs on smaller screens for context
 
-**IMPORTANT**: Test on real devices. Device emulation in DevTools is helpful but not perfect.
+**IMPORTANT**: Test on real devices. Device emulation in DevTools helps you, but it is not proof. Your user holds the real thing in their hand.
 
 **NEVER**:
 - Hide core functionality on mobile (if it matters, make it work)
@@ -194,7 +194,7 @@ Test thoroughly across contexts:
 - **Scroll across it**: A swipe along the page's scroll axis across the control scrolls the page or container without activating it; a drag that starts on the control along its axis moves the control, not the page. Neither failure throws an error, so try both
 - **Evidence**: Say what produced the evidence: an emulated viewport, synthesized touch input through a browser tool, which engine ran it (Chromium is not Safari), or a physical device. Screenshots and resized viewports verify layout, never a gesture. Name what stayed untested and move on; unreachable hardware is a reported gap, not a blocker
 
-When the adaptation feels native to each context, hand off to `/impeccable polish` for the final pass.
+When the adaptation feels native to each context, hand off to `/impeccable polish` for the final pass. You have done the rethinking. Now make it clean.
 
 ---
 

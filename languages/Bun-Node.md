@@ -1,8 +1,8 @@
 # Bun / Node.js Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Prefer extending an existing repo over scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
 
-Clean structure for server-side JavaScript/TypeScript applications.
+You need a clean structure for your server-side JavaScript/TypeScript applications. Without it, your team hunts for code instead of reading it.
 
 ---
 
@@ -26,16 +26,16 @@ project/
 ## Principles
 
 **Async/await everywhere**
-No callbacks. Use promises with async/await.
+No callbacks. You use promises with async/await. Your callers should read your flow top to bottom.
 
 **Single responsibility**
-Each module does one thing well.
+Each module does one thing well. If it does two, you split it.
 
 **Explicit dependencies**
-Import what you need. No globals.
+You import what you need. No globals. Globals hide who depends on what.
 
 **Type safety**
-Use TypeScript for production apps.
+You use TypeScript for your production apps. The compiler catches what your eyes miss.
 
 ---
 
@@ -340,9 +340,9 @@ router.get('/', asyncHandler(async (req, res) => {
 
 ## Configuration
 
-Parse and validate every env var once with Zod, export a typed `config`, and import
-that everywhere, never read `process.env` deep in the app (`../standards/Principles.md` §15.1).
-A missing or malformed var fails loudly at boot, not mid-request.
+You parse and validate every env var once with Zod, you export a typed `config`, and you import
+that everywhere. You never read `process.env` deep in your app (`../standards/Principles.md` §15.1).
+A missing or malformed var fails loudly at boot, not mid-request. Listen. Would you rather crash on boot or fail on a user?
 
 **src/config.ts**
 ```typescript
@@ -506,44 +506,44 @@ describe('UserService', () => {
 
 ## Summary
 
-Use async/await for all async operations.
-Keep routes thin, logic in services.
-Handle errors explicitly.
-Use TypeScript for type safety.
-Test services and routes.
-Keep functions small and focused.
+You use async/await for all async operations.
+You keep your routes thin, your logic in services.
+You handle your errors explicitly.
+You use TypeScript for type safety.
+You test your services and routes.
+You keep your functions small and focused. That is your craft.
 
 ---
 
 ## Project Prompt
 
-Build an HTTP API on Bun or Node against the structure and rules above. Where they
+You build an HTTP API on Bun or Node against the structure and rules above. Where they
 disagree with your defaults, this file wins.
 
-Read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting.
 
 **Architecture**
-- Follow the exact structure defined above
-- Strict separation: routes → services → data access
+- You follow the exact structure defined above
+- Strict separation: routes → services → data access. You respect the direction.
 - No business logic in routes
-- All dependencies injected explicitly
+- You inject all dependencies explicitly
 
 **Security**
-- Validate all input in middleware
-- Never trust client data
+- You validate all input in middleware
+- You never trust client data
 - Environment variables for secrets
 - Rate limiting
-- Don't leak internals in error responses
+- You don't leak internals in error responses. Your users should see a message, not your stack.
 
 **Error Handling**
 - Custom error classes for different scenarios
 - Central error middleware
-- Proper HTTP status codes
+- Proper HTTP status codes. They mean something to your callers.
 
 **Testing**
 - Unit tests for all services
 - Integration tests for routes
-- Mock external dependencies
+- You mock external dependencies
 
 ### Setup
 
@@ -569,16 +569,15 @@ bun add -d @types/express
 
 - [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
 - [ ] No secrets committed; env examples use placeholders only
-
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
 - [ ] No nested conditionals beyond one level
-- [ ] All dependencies injected
+- [ ] You inject all dependencies
 - [ ] No comments explaining what code does
-- [ ] Names match domain language and local convention (skills/engineering/craft/SKILL.md); no empty Manager/Handler/Processor stacks without a reason
-- [ ] All errors handled properly
+- [ ] Your names match domain language and local convention (skills/engineering/craft/SKILL.md); no empty Manager/Handler/Processor stacks without a reason
+- [ ] You handle all errors properly
 - [ ] Input validation on all routes
-- [ ] SOLID principles followed
-- [ ] Code reads like prose
+- [ ] You follow SOLID principles
+- [ ] Your code reads like prose. Can your teammate read it aloud?
 
 ### Pre-Delivery
 

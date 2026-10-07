@@ -1,10 +1,10 @@
 # Luau Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Prefer extending an existing repo over scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
 
-Clean structure for Roblox game development with Luau.
+You need a clean structure for your Roblox game development with Luau. Your players will never see it. Your team will live in it.
 
-**Roblox Luau only.** This file does not cover other Lua runtimes. If you are on a different Lua platform, follow that project's own resource conventions instead.
+**Roblox Luau only.** This file does not cover other Lua runtimes. If you are on a different Lua platform, you follow that project's own resource conventions instead.
 
 ---
 
@@ -30,19 +30,19 @@ game/
 ## Principles
 
 **Server authority**
-Server validates everything. Client is for display only.
+Your server validates everything. Your client is for display only. Why would you trust the machine you do not control?
 
 **Separate concerns**
-Keep UI, game logic, and data separate.
+You keep UI, game logic, and data separate. Mix them and you pay for it.
 
 **Small modules**
-Each script does one thing well.
+Each script does one thing well. If it does two, you split it.
 
 **Type everything**
-Use Luau's type system fully.
+You use Luau's type system fully. It catches what your eyes miss.
 
 **No globals**
-Use ModuleScripts and require().
+You use ModuleScripts and require(). Globals hide who depends on what.
 
 ---
 
@@ -530,49 +530,49 @@ end
 
 ## Summary
 
-Server validates everything.
-Use ModuleScripts, avoid globals.
-Type all functions and data.
-Keep modules small and focused.
-Clean up connections and data.
-Use RemoteEvents for client-server communication.
+Your server validates everything.
+You use ModuleScripts, you avoid globals.
+You type all functions and data.
+You keep your modules small and focused.
+You clean up connections and data.
+You use RemoteEvents for client-server communication. That is your discipline.
 
 ---
 
 ## Project Prompt
 
-Write Luau for Roblox against the structure and rules above. Where they disagree with
+You write Luau for Roblox against the structure and rules above. Where they disagree with
 your defaults, this file wins.
 
-Read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting.
 
 **Server Authority**
-- Server validates all actions
-- Never trust client input
-- Server owns game state
-- Rate limiting on RemoteEvents
+- Your server validates all actions
+- You never trust client input
+- Your server owns game state
+- Rate limiting on RemoteEvents. Exploiters will test you.
 
 **Networking**
 - RemoteEvents for client → server actions
 - RemoteFunctions for client requests
 - BindableEvents for server-to-server
-- Minimal network traffic
+- Minimal network traffic. Every byte costs your players.
 
 **Performance**
 - No .Touched in loops
-- Use GetPartBoundsInBox for area checks
-- Cache frequently accessed services
-- Debounce expensive operations
+- You use GetPartBoundsInBox for area checks
+- You cache frequently accessed services
+- You debounce expensive operations
 
 **Error Handling**
 - pcall for risky operations
-- Validate remote arguments
-- Graceful degradation
+- You validate remote arguments
+- Graceful degradation. Your game stays up when one part fails.
 
 **Resource Management**
-- Disconnect connections on cleanup
-- Clear tables when done
-- Destroy unused instances
+- You disconnect connections on cleanup
+- You clear tables when done
+- You destroy unused instances
 
 ### Setup
 
@@ -583,7 +583,7 @@ rojo init                     # creates default.project.json
 rojo serve                    # connect from the Rojo plugin in Studio
 ```
 
-Tooling: `selene` for linting, `stylua` for formatting, `luau-lsp` for types. No npm, the toolchain installs via `aftman`/`rokit`.
+Tooling: `selene` for linting, `stylua` for formatting, `luau-lsp` for types. No npm, your toolchain installs via `aftman`/`rokit`. You learn the tools your project uses.
 
 ### Deliverables
 
@@ -600,24 +600,23 @@ Tooling: `selene` for linting, `stylua` for formatting, `luau-lsp` for types. No
 
 - [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
 - [ ] No secrets committed; env examples use placeholders only
-
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] Server validates all client actions
+- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] Your server validates all client actions
 - [ ] Type annotations on all functions
 - [ ] No globals (use ModuleScripts)
-- [ ] Connections cleaned up properly
-- [ ] No trust in client data
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] Exploits patched (RemoteEvents)
+- [ ] You clean up connections properly
+- [ ] You trust no client data
+- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md)
+- [ ] Exploits patched (RemoteEvents). Have you tried to break it yourself?
 
 ### Security Checklist
 
-- [ ] Server validates all RemoteEvent arguments
+- [ ] Your server validates all RemoteEvent arguments
 - [ ] Rate limiting on player actions
 - [ ] Sanity checks on numerical values
 - [ ] Item existence checks before granting
-- [ ] Client cannot set own stats
-- [ ] Exploit testing completed
+- [ ] Your client cannot set its own stats
+- [ ] Exploit testing completed. You attack your own game before someone else does.
 
 ### Pre-Delivery
 

@@ -11,86 +11,86 @@ description: >
 
 # Necessary Comments (Universal)
 
-Source: Robert C. Martin, ["Necessary
+Listen. You read Robert C. Martin, ["Necessary
 Comments"](https://blog.cleancoder.com/uncle-bob/2017/02/23/NecessaryComments.html),
-read in full before applying this skill to a real review, plus the comment
+in full before you apply this skill to a real review, plus the comment
 chapter of *Clean Code* (`standards/Principles.md` §3).
 
 **Authority:** comment craft is defined by `standards/Clean-Code/` lessons
 **05–10, 17, 19, 33, 38, 41** (and protective cases in **08**). If this skill and
 those lessons disagree, **Clean-Code wins**.
 
-**The default is zero.** Every comment is a confession that the code failed to
-explain itself. Before writing one, try a rename, an extraction, or a smaller
-function first. Most of the time one of those wins and the comment becomes
+**Your default is zero.** Every comment you write is a confession that your code failed to
+explain itself. Before you write one, you try a rename, an extraction, or a smaller
+function first. Most of the time one of those wins and your comment becomes
 unnecessary.
 
 ---
 
 ## 1. The test for "necessary"
 
-A comment earns its place only when **the code cannot express it, no matter
-how it's restructured.** Concretely, that's a short list:
+Your comment earns its place only when **your code cannot express it, no matter
+how you restructure it.** Concretely, that is a short list for you:
 
-1. **An algorithm's shape isn't visible in the code.** A choking / debounce /
-   backoff algorithm's behavior across several timed scenarios is easier to
+1. **Your algorithm's shape isn't visible in your code.** A choking / debounce /
+   backoff algorithm's behavior across several timed scenarios is easier for you to
    read from a small timing diagram in a comment than to infer from the
    conditionals implementing it. The diagram is the necessary part, not prose
    restating the `if` statements.
-2. **A decision that looks wrong without its rationale.** Code that looks like
-   an obvious "bug" to a future reader (an inverted condition, a skipped
-   validation, a magic offset) needs one line saying why, or someone will
+2. **A decision that looks wrong without its rationale.** When your code looks like
+   an obvious "bug" to your future reader (an inverted condition, a skipped
+   validation, a magic offset), you owe one line saying why, or someone will
    "fix" it back into an actual bug.
-3. **A warning of consequences.** `// don't call on the hot path, allocates`,
-   `// deliberately not thread-safe, see #142`. The cost isn't visible at the
+3. **A warning of consequences from you.** `// don't call on the hot path, allocates`,
+   `// deliberately not thread-safe, see #142`. The cost isn't visible at your
    call site.
 4. **Best-effort failure handling (rare).** Empty `catch` is **forbidden**
-   (Clean-Code **34**). If work is truly best-effort, **log with context** and a
-   short why-comment — or rethrow. Prefer design that needs no catch.
-5. **Public API docs.** Javadoc / TSDoc / rustdoc on exported symbols (Clean-Code
+   for you (Clean-Code **34**). If your work is truly best-effort, you **log with context** and add a
+   short why-comment — or you rethrow. You prefer design that needs no catch.
+5. **Public API docs from you.** Javadoc / TSDoc / rustdoc on exported symbols (Clean-Code
    **41**): what, inputs, outputs, failures, example. Not noise (**19**). Still
-   must not narrate the private implementation.
-6. **Legal notices**, required license/copyright headers (Clean-Code **07**, **41**).
+   you must not narrate the private implementation.
+6. **Legal notices**, required license/copyright headers you must keep (Clean-Code **07**, **41**).
 
-If a comment doesn't fit one of those, it almost certainly doesn't survive
-this skill.
+If your comment doesn't fit one of those, it almost certainly doesn't survive
+this skill. Ask yourself: can you say it in code instead?
 
 ---
 
 ## 2. The test for "not necessary" (rename or extract instead)
 
-- **Restates the next line.** `// increment i` above `i++`. Delete it.
-- **Explains what a poorly-named thing does.** Rename the thing. A comment
+- **It restates your next line.** `// increment i` above `i++`. You delete it.
+- **It explains what your poorly-named thing does.** You rename the thing. A comment
   that says "system" means the guard/lock is protecting a subsystem you
-  could have named; name it, and the comment stops earning its keep.
-- **Narrates a well-known idiom.** Recovering a poisoned mutex, guarding a
-  null, wrapping a third-party error, anything a competent reader of the
-  language already recognizes on sight, doesn't need a caption. If the
-  *idiom* needs teaching, that's a team wiki page, not a comment on every
+  could have named; you name it, and your comment stops earning its keep.
+- **It narrates a well-known idiom you already know.** Recovering a poisoned mutex, guarding a
+  null, wrapping a third-party error, anything a competent reader of your
+  language already recognizes on sight, doesn't need a caption from you. If the
+  *idiom* needs teaching, that belongs in your team wiki page, not a comment on every
   occurrence of it.
-- **Cites something the reader can't open.** A comparison to another
+- **It cites something your reader can't open.** A comparison to another
   project's file, an old ticket number with no link, an author's name. If
-  the reference isn't reachable from this repo, it's not evidence, it's
+  the reference isn't reachable from your repo, it's not evidence for your team, it's
   trivia. (`standards/Principles.md` §3.2, "non-local information".)
-- **A banner or section label.** `// ==== Helpers ====` above a group of
-  functions that already read as a group. The blank line already did that
+- **It is a banner or section label from you.** `// ==== Helpers ====` above a group of
+  functions that already read as a group. Your blank line already did that
   job.
-- **Duplicates a doc comment one function away.** State a rule once, at the
-  layer that owns it; don't re-explain it at every call site.
+- **It duplicates a doc comment one function away.** You state a rule once, at the
+  layer that owns it; you don't re-explain it at every call site.
 
 ---
 
 ## 3. Applying this to a review
 
-1. Read every comment in scope. For each: which numbered case in §1 does it
-   satisfy? If none, it's a candidate for deletion.
-2. Before deleting, check whether removing it would leave a future reader
-   confused about *why*, not *what*. "Why" gaps are real findings; "what"
-   gaps mean the code needs a better name, not the comment back.
-3. Don't swing to zero-tolerance past the point of usefulness. A necessary
-   comment that's merely a little long is a trim, not a deletion, if the
-   only content past the second sentence is restating code, cut from there.
-4. Rustdoc/TSDoc/Javadoc on exported symbols is exempt from "restates the
+1. You read every comment in scope. For each: which numbered case in §1 does it
+   satisfy? If none, it is a candidate for your deletion.
+2. Before you delete, you check whether removing it would leave your future reader
+   confused about *why*, not *what*. "Why" gaps are real findings for you; "what"
+   gaps mean your code needs a better name, not the comment back.
+3. You don't swing to zero-tolerance past the point of usefulness. A necessary
+   comment that's merely a little long is a trim for you, not a deletion, if the
+   only content past the second sentence is restating code, you cut from there.
+4. Rustdoc/TSDoc/Javadoc on your exported symbols is exempt from "restates the
    code" scrutiny at the *signature* level (params, return, throws) but not
    from narrating the *body*.
 
@@ -100,9 +100,9 @@ this skill.
 
 | Keep | Cut |
 |---|---|
-| Timing/algorithm diagram code can't show | Restates the next line |
-| Why a "looks like a bug" line is correct | Explains a poorly-named symbol (rename instead) |
-| Consequence warning (perf, thread-safety, hot path) | Narrates a well-known language idiom |
-| Justified empty/swallowed branch | Cites another repo/project the reader can't open |
-| Exported-symbol API doc (signature-level) | Section-banner / position marker |
-| Legal notice | Duplicate of a doc comment elsewhere |
+| Timing/algorithm diagram your code can't show | Restates your next line |
+| Why your "looks like a bug" line is correct | Explains your poorly-named symbol (rename instead) |
+| Consequence warning for your team (perf, thread-safety, hot path) | Narrates a well-known language idiom |
+| Justified empty/swallowed branch you logged | Cites another repo/project your reader can't open |
+| Exported-symbol API doc you own (signature-level) | Section-banner / position marker |
+| Legal notice you must keep | Duplicate of a doc comment elsewhere |

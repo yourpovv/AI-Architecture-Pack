@@ -1,6 +1,6 @@
-Run systematic **technical** quality checks and generate a comprehensive report. Don't fix issues; document them for other commands to address.
+Run systematic **technical** quality checks and generate a comprehensive report for your user. Don't fix issues; document them so other commands can address them. Be honest. Your user depends on it.
 
-This is a code-level audit, not a design critique. Check what's measurable and verifiable in the implementation.
+This is a code-level audit, not a design critique. Check what is measurable and verifiable in your implementation.
 
 **Web only.** Native platforms (`ios` / `android` / `adaptive`) route to [audit.native.md](audit.native.md) instead; if the project is native, switch to it now.
 
@@ -127,7 +127,7 @@ After presenting the summary, tell the user:
 >
 > Re-run `/impeccable audit` after fixes to see your score improve.
 
-**IMPORTANT**: Be thorough but actionable. Too many P3 issues creates noise. Focus on what actually matters.
+**IMPORTANT**: Be thorough but actionable. Too many P3 issues creates noise. Focus on what actually matters to your user. Would you want this list handed to you?
 
 **NEVER**:
 - Report issues without explaining impact (why does this matter?)

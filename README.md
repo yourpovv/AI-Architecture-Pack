@@ -2,9 +2,9 @@
 
 # Architecture Pack
 
-**Engineering standards, agent skills, and task prompts for people who build with AI.**
+**Engineering standards, agent skills, and task prompts for you — the person who builds with AI.**
 
-Portable, stack-agnostic, and project-neutral. Drag the pieces you need into any repo.
+Portable, stack-agnostic, and project-neutral. Take only what your code needs and drop it into any repo you own.
 
 <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-2f363d?style=flat-square"></a>
 <img alt="Stack agnostic" src="https://img.shields.io/badge/scope-stack--agnostic-2f363d?style=flat-square">
@@ -18,12 +18,12 @@ Portable, stack-agnostic, and project-neutral. Drag the pieces you need into any
 ## TL;DR
 
 1. Copy [`standards/Clean-Code/`](standards/Clean-Code/README.md) and one
-   [`languages/*`](languages/README.md) file into your project's `docs/`.
-2. Write a short `AGENTS.md` at the repo root pointing at them, listing what the agent may
-   edit and how to verify its work.
-3. Tell the agent to **load one file at a time**, never the whole folder.
+   [`languages/*`](languages/README.md) file into your `docs/`.
+2. Write a short `AGENTS.md` at the repo root pointing at them. List what the agent may
+   edit and how you will verify its work.
+3. Tell your agent to **load one file at a time**, never the whole folder.
 
-Then install the audit harness, so every review runs with an explicit scope and stays
+Then install the audit harness. Every review then runs with an explicit scope and stays
 `report-only` until you say otherwise:
 
 ```bash
@@ -31,26 +31,26 @@ cp -r skills/review/audit .claude/skills/
 ```
 
 [Project templates](#project-templates) gives you the exact file list per stack. Everything
-after it is the reasoning.
+after it is why it matters.
 
 ---
 
 ## Why this exists
 
-Two things go wrong when you build software with an agent.
+Listen. Two things go wrong when you build software with an agent.
 
-**It has no standard to code against.** Every file invents its own conventions, and by week
-two the project has stopped being one codebase. Nothing is technically broken, so nothing
-gets fixed, and the thing slowly becomes unmaintainable in a way that is hard to point at.
+**It has no standard to code against.** Every file invents its own conventions. By week
+two your project has stopped being one codebase. Nothing is technically broken, so nothing
+gets fixed. And your code slowly becomes unmaintainable in a way you cannot point at.
 
-**It gets handed everything at once.** The whole repo, plus every doc you own, plus a
-20-page style guide. The instructions that actually matter end up buried, and the context
+**It gets handed everything at once.** The whole repo. Every doc you own. Plus a
+20-page style guide. The instructions that matter end up buried. And your context
 window has no room left for the code you asked about.
 
-This pack fixes both. The standards are split one rule per file, so an agent opens the
+This pack fixes both. Your standards are split one rule per file. Your agent opens the
 single lesson a task needs instead of swallowing the folder. Every review prompt carries
-its own scope and mode, so an audit cannot quietly turn into a rewrite. And nothing here is
-tied to one project, so the same pieces go into every repo you own.
+its own scope and mode. So an audit cannot quietly turn into a rewrite. And nothing here is
+tied to one project. You use the same pieces in every repo you own.
 
 ---
 
@@ -63,38 +63,38 @@ tied to one project, so the same pieces go into every repo you own.
 <tbody>
 <tr>
   <td><a href="standards/README.md"><b><code>standards/</code></b></a></td>
-  <td>60 clean-code lesson standards, one rule per file, plus a universal handbook covering SOLID, architecture, testing, and security</td>
-  <td>Every serious project</td>
+  <td>60 clean-code lesson standards, one rule per file, plus a universal handbook on SOLID, architecture, testing, and security</td>
+  <td>Every serious project of yours</td>
 </tr>
 <tr>
   <td><a href="skills/README.md"><b><code>skills/</code></b></a></td>
-  <td>Guidance that fires on its own. Audit harness, error handling, comment discipline, prose rules, sub-agent routing, <code>.claude/</code> setup</td>
-  <td>Install once, forget about it</td>
+  <td>Guidance that fires on its own for you. Audit harness, error handling, comment discipline, prose rules, sub-agent routing, <code>.claude/</code> setup</td>
+  <td>Install once. Then leave it alone.</td>
 </tr>
 <tr>
   <td><a href="languages/README.md"><b><code>languages/</code></b></a></td>
-  <td>Structure, idioms, testing, and a ready-to-paste project prompt for TypeScript, Node/Bun, Go, Python, C++, and Luau</td>
-  <td>Pick exactly one</td>
+  <td>You get structure, idioms, testing, and a ready-to-paste project prompt for TypeScript, Node/Bun, Go, Python, C++, and Luau</td>
+  <td>Pick exactly one for your project</td>
 </tr>
 <tr>
   <td><a href="frameworks/README.md"><b><code>frameworks/</code></b></a></td>
-  <td>Framework conventions on top of a language: React + Tailwind, Tauri, Electron, Valkyrie</td>
-  <td>When one applies</td>
+  <td>You get framework conventions on top of your language: React + Tailwind, Tauri, Electron, Valkyrie</td>
+  <td>When one applies to your code</td>
 </tr>
 <tr>
   <td><a href="prompts/README.md"><b><code>prompts/</code></b></a></td>
-  <td>Paste-in tasks. Reviews and audits, greenfield scaffolds, and workflow rules that stop the agent guessing</td>
-  <td>One per task</td>
+  <td>Paste-in tasks for you. Reviews and audits, greenfield scaffolds, and workflow rules that stop your agent guessing</td>
+  <td>One per task you run</td>
 </tr>
 <tr>
   <td><a href="design/README.md"><b><code>design/</code></b></a></td>
-  <td>Aesthetic systems, plus vetted sources for components, icons, illustrations, and 3D assets</td>
-  <td>Opt-in only</td>
+  <td>Aesthetic systems for you, plus vetted sources for components, icons, illustrations, and 3D assets</td>
+  <td>Opt in only if you need it</td>
 </tr>
 <tr>
   <td><a href="STACK.md"><b><code>STACK.md</code></b></a></td>
-  <td>A worked walkthrough for choosing a stack, plus the services and AI tooling worth reaching for</td>
-  <td>Starting something new</td>
+  <td>A worked walkthrough for choosing your stack, plus the services and AI tooling worth reaching for</td>
+  <td>When you start something new</td>
 </tr>
 </tbody>
 </table>

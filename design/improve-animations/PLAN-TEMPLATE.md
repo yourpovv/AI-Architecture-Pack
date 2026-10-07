@@ -1,6 +1,6 @@
 # Plan Template
 
-Every plan written by `improve-animations` follows this structure. The executor may be a less capable model with zero context and zero taste — the plan must contain everything, exactly. No references to "the audit above" or "the easing we discussed."
+Every plan you write with `improve-animations` follows this structure. Your executor may be a weaker model with no context and no taste — so your plan must carry everything, exactly. No references to "the audit above" or "the easing we discussed." Would you sign your name to a vague spec?
 
 ```markdown
 # NNN — <Short imperative title>
@@ -13,7 +13,7 @@ Every plan written by `improve-animations` follows this structure. The executor 
 
 ## Problem
 
-What is wrong, where, and why it matters to how the product feels. Cite every
+What is wrong, where it lives, and why your user feels it. Cite every
 location as `path/to/file.tsx:123` and include the current code verbatim:
 
 ​```css
@@ -23,8 +23,8 @@ location as `path/to/file.tsx:123` and include the current code verbatim:
 
 ## Target
 
-The exact end state. Every value spelled out — curves, durations, spring
-configs, media queries. Never "use a nicer easing":
+The exact end state you stand behind. Every value spelled out — curves, durations, spring
+configs, media queries. Never write "use a nicer easing":
 
 ​```css
 /* target */
@@ -36,7 +36,7 @@ configs, media queries. Never "use a nicer easing":
 
 ## Repo conventions to follow
 
-How this codebase already does it, with one exemplar the executor should
+How this codebase already does it, with one exemplar your executor should
 imitate (token names, file placement, prop patterns):
 
 - Easing tokens live in `src/styles/tokens.css`; add new curves there, e.g. `--ease-out: cubic-bezier(0.23, 1, 0.32, 1);`
@@ -67,7 +67,7 @@ imitate (token names, file placement, prop patterns):
 
 ## Notes for the plan author
 
-- One plan per finding. If two findings share every file and the same fix pattern (e.g. the same easing token swap across components), they may merge into one plan.
-- Pull every value from [AUDIT.md](AUDIT.md) — never approximate from memory.
-- The feel check is not optional. Motion can be mechanically correct and still feel wrong; give the executor (or the human reviewing the executor's diff) concrete things to watch for in slow motion.
+- One plan per finding, written the way you would want to receive it. If two findings share every file and the same fix pattern (e.g. the same easing token swap across components), they may merge into one plan.
+- Pull every value from [AUDIT.md](AUDIT.md) — never approximate from memory. Your user pays for your discipline here.
+- The feel check is not optional. Motion can pass every mechanical check and still feel wrong to your user. Give your executor (or the human reviewing the executor's diff) concrete things to watch for in slow motion.
 - After writing plans, create or update `plans/README.md` with: a table of plans (number, title, severity, status), the recommended execution order, and any dependencies between plans.

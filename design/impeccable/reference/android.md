@@ -1,12 +1,12 @@
 # Android platform
 
-For native Android apps: Jetpack Compose, Android Views, React Native, Expo, Flutter shipping to Android hardware.
+For native Android apps: Jetpack Compose, Android Views, React Native, Expo, Flutter shipping to Android hardware. You build for a real device in a real hand.
 
-On native, the visitor mode narrows what expression may override. Material Design 3 governs structure, navigation, and interaction in every mode; brand expresses through Material's theming (color roles, type scale, shape, motion). A Material-everywhere cross-platform app that also ships to iPhone still owes iOS its OS guarantees on that hardware: safe-area insets, Reduce Motion, edge-swipe back.
+On native, the visitor mode narrows what expression may override. Material Design 3 governs structure, navigation, and interaction in every mode; your brand expresses through Material's theming (color roles, type scale, shape, motion). A Material-everywhere cross-platform app that also ships to iPhone still owes iOS its OS guarantees on that hardware: safe-area insets, Reduce Motion, edge-swipe back. Why? Because your user trusts the platform.
 
 ## The Android slop test
 
-Would a fluent Android user trust this app, or trip on off-spec components? The most common tell is an iOS app wearing Android's skin: a bottom-only navigation copied from iPhone, a back arrow that ignores the system Back gesture, Cupertino-shaped switches and dialogs. Material 3 is the rulebook; follow its components and theme the brand through it.
+Would a fluent Android user trust your app, or trip on off-spec components? Listen. The most common tell is an iOS app wearing Android's skin: a bottom-only navigation copied from iPhone, a back arrow that ignores the system Back gesture, Cupertino-shaped switches and dialogs. Material 3 is your rulebook; follow its components and theme your brand through it. That is discipline.
 
 ## Layout & structure
 

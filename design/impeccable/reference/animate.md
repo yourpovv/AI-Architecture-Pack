@@ -1,6 +1,6 @@
 > **Additional context needed**: performance constraints.
 
-Use motion to explain state, relationship, and hierarchy, or to create one authored moment the surface has earned. Decoration without purpose is animation debt.
+Use motion to explain state, relationship, and hierarchy to your user, or to create one authored moment your surface has earned. Listen. Decoration without purpose is debt. You pay it later.
 
 ---
 
@@ -12,9 +12,9 @@ Use motion to explain state, relationship, and hierarchy, or to create one autho
 
 ## Find the job
 
-Inspect the existing motion language, interaction states, target devices, and performance budget. Find only the places where motion would:
+Inspect the existing motion language, interaction states, target devices, and performance budget. Find only the places where motion would help your user:
 
-- acknowledge an action;
+- acknowledge an action you just took for them;
 - make a state change or spatial relationship legible;
 - preserve continuity through navigation or layout change;
 - direct attention at a meaningful moment;
@@ -86,4 +86,4 @@ Every web animation needs a `prefers-reduced-motion` path with an intentional al
 - Expensive effects stay smooth on the target device.
 - Removing an animation would lose meaning or authored character, not merely decoration.
 
-When motion earns its place, hand off to `/impeccable polish` for the final pass.
+When motion earns its place, hand off to `/impeccable polish` for the final pass. You made it mean something. Now make it clean.

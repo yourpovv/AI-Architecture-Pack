@@ -12,27 +12,27 @@ description: >
 
 # Commits
 
-An agent can produce a week of changes in an hour. Without a commit policy you end up
-with one enormous uncommitted diff that nobody can review, bisect, or roll back, and
-the only way out is to read all of it at once.
+Listen. Your agent can produce a week of your changes in an hour. Without a commit policy you end up
+with one enormous uncommitted diff that nobody on your team can review, bisect, or roll back, and
+your only way out is to read all of it at once.
 
-The fix is boring and it works: commit each task as it finishes.
+Your fix is boring and it works: you commit each task as it finishes.
 
 ## The rule
 
-**One commit per completed task, made as soon as the task is done.** Not batched at
-the end of the session, not held until the human asks.
+**One commit per completed task, made as soon as your task is done.** You do not batch at
+the end of your session, you do not hold until your human asks.
 
-Give the agent standing authorization for this in your `CLAUDE.md`. Approval per commit
-defeats the point, because the cost of the policy is entirely in the interruptions.
+You give your agent standing authorization for this in your `CLAUDE.md`. Approval per commit
+defeats your point, because the cost of your policy is entirely in the interruptions.
 
 ## Staging
 
-**Stage the files that task touched.** `git add <paths>`, never `git add .`.
+**You stage the files your task touched.** `git add <paths>`, never `git add .`.
 
-Agent sessions leave debris: scratch files, a log the agent wrote to think, a config it
+Your agent sessions leave debris: scratch files, a log your agent wrote to think, a config it
 edited while diagnosing something unrelated. `git add .` sweeps all of it into a commit
-that claims to be one change. Naming paths is also a last check on scope, since a task
+that claims to be one change. Naming paths is also your last check on scope, since a task
 that touches files you did not expect is a task that did something you did not expect.
 
 ## Messages
@@ -43,42 +43,42 @@ that touches files you did not expect is a task that did something you did not e
 
 | Type | For |
 |---|---|
-| `feat` | New behavior a user can observe |
-| `fix` | Corrected behavior that was wrong |
-| `refactor` | Same behavior, different structure |
-| `docs` | Documentation only |
-| `test` | Tests only |
-| `chore` | Tooling, deps, config, housekeeping |
-| `style` | Formatting with no logic change |
+| `feat` | New behavior your user can observe |
+| `fix` | Behavior you corrected that was wrong |
+| `refactor` | Same behavior, structure you changed |
+| `docs` | Documentation only you touched |
+| `test` | Tests only you touched |
+| `chore` | Tooling, deps, config, housekeeping you did |
+| `style` | Formatting with no logic change from you |
 
 `feat: add user auth endpoint`. `fix: resolve null check in parser`.
 
-Describe what changed, not what you did. "Update files" and "address feedback" are not
-commit messages, they are the absence of one.
+You describe what changed, not what you did. Ask yourself: would you accept
+"Update files" and "address feedback" as commit messages? You should not, they are the absence of one.
 
 ## Pushing
 
-**Never push automatically.** Commits stay local until the human asks for them.
+**You never push automatically.** Your commits stay local until your human asks for them.
 
-Local commits are cheap to amend, reorder, or drop. A pushed commit is a fact other
+Your local commits are cheap to amend, reorder, or drop. A pushed commit is a fact other
 people build on, and undoing it is their problem as much as yours. That decision belongs
-to the person who knows what else is in flight.
+to the person who knows what else is in flight — you ask, you do not assume.
 
 ## Splitting
 
-If a task touched several concerns, make several commits in sequence rather than one
-that needs a paragraph to explain. The test is whether you can describe the change in
+If your task touched several concerns, you make several commits in sequence rather than one
+that needs a paragraph to explain. Your test is whether you can describe your change in
 one line without using "and". If you cannot, it is more than one commit.
 
 ## Who commits
 
-The session that owns the work owns the commits. See
-[`sub-agents`](../sub-agents/SKILL.md): by default a sub-agent does not commit, because the
-parent is the only one that can see whether the change is really finished. Never grant
+Your session that owns the work owns your commits. See
+[`sub-agents`](../sub-agents/SKILL.md): by default your sub-agent does not commit, because your
+parent is the only one that can see whether your change is really finished. You never grant
 commit authority to parallel agents sharing a worktree.
 
-Verify before every commit. Read the diff you are about to stage and run the project's
-verify gate. A clean commit history full of broken commits is worse than no history,
+You verify before every commit. You read the diff you are about to stage and run your project's
+verify gate. A clean commit history full of broken commits is worse than no history for you,
 because it looks trustworthy.
 
 ---

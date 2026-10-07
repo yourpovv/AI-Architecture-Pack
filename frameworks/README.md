@@ -1,7 +1,7 @@
 # frameworks/ index
 
-Framework conventions layered on top of a language file. Always load a
-[`../languages/*`](../languages/README.md) file as well, since these assume the language
+These are your framework conventions. They sit on top of a language file. You always load a
+[`../languages/*`](../languages/README.md) file as well, because these rules assume your language
 rules are already in play.
 
 | File | Use it for | Pair with |
@@ -20,19 +20,19 @@ rules are already in play.
 | Node APIs in the main process and a mature plugin ecosystem | Electron |
 | The smallest possible binary and a CLI-driven build | Valkyrie |
 
-`Tauri.md` calls out **house style vs minimal** near the top. Read that section before you
-start, because it decides how opinionated the generated UI will be.
+You read `Tauri.md` and its **house style vs minimal** near the top before you
+start. Why? It decides how opinionated your generated UI will be.
 
 ## After you ship
 
-`../prompts/reviews/Tauri-QC.md` is the one framework-specific review prompt in the pack.
-Everything else under `../prompts/reviews/` is stack-neutral and works here too.
+`../prompts/reviews/Tauri-QC.md` is your one framework-specific review prompt in this pack.
+Everything else under `../prompts/reviews/` is stack-neutral. You can use those reviews here too.
 
 ## Adding a framework
 
-1. Copy the closest existing file.
-2. State which language file it assumes in the first paragraph.
-3. Keep the **Agent load** blockquote at the top.
-4. Cover what the framework changes, not what the language already covers. Duplication
-   between layers is how the two drift apart.
-5. Add a row to the table above.
+1. You copy the closest existing file.
+2. You state which language file yours assumes in your first paragraph.
+3. You keep the **Agent load** blockquote at the top.
+4. You cover what your framework changes, not what your language already covers. Duplication
+   between layers is how your two layers drift apart.
+5. You add a row to the table above.

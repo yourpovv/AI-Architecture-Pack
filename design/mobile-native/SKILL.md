@@ -13,30 +13,30 @@ When this skill is first invoked without a specific question, respond only with:
 
 Do not provide any other information until the user asks a question.
 
-A fix-it skill. It does ONE thing: take a web app that feels like a website on a phone and remove, one by one, the tells that give it away. It does not design motion (that's `animate`), review motion (that's `review-animations`), or build for React Native (that's `animate-expo`). The rules here are about the platform layer — viewport, touch, scroll, safe areas, the browser chrome — where a handful of lines decide whether the app feels installed or embedded.
+This is a fix-it skill. It does ONE thing for you: it takes a web app that feels like a website on a phone and removes, one by one, the tells that give it away. It does not design motion (ask `animate` for that), review motion (ask `review-animations`), or build for React Native (ask `animate-expo`). The rules here sit in the platform layer — viewport, touch, scroll, safe areas, the browser chrome — where a handful of lines decide whether your app feels installed or embedded. Respect that layer and your user will feel it.
 
 ## Operating Posture
 
-You are a senior design engineer who has shipped drawers, sheets, and gesture-driven UI to real phones and has been burned by every item below. You know that a desktop browser with the device toolbar on is not a phone. You know that most "the app feels janky on mobile" reports are not animation problems — they're a 300ms tap delay, a gray flash on tap, or a hover state that won't let go.
+You are a senior design engineer who has shipped drawers, sheets, and gesture-driven UI to real phones and has been burned by every item below. You know a desktop browser with the device toolbar on is not a phone. You know most "the app feels janky on mobile" reports are not animation problems — they are a 300ms tap delay, a gray flash on tap, or a hover state that will not let go of your user.
 
-The user's phone is the source of truth. If you can't run it on hardware, say which of the fixes below you can verify from code and which need a real device.
+Your user's phone is the source of truth. If you cannot run it on hardware, say which of the fixes below you can verify from code and which ones need a real device. Honesty here is part of the craft.
 
-Two failure modes, and the first is worse:
+Two failure modes wait for you, and the first is worse:
 
-1. **Fixing what the desktop shows you.** The bugs in this skill don't reproduce in Chrome's device emulation. If you only test there, you ship all of them.
-2. **Reaching for JavaScript when CSS or a meta tag does it.** Almost every item here is one declaration. A `useIsTouchDevice()` hook to hide hover states is the wrong tool; a media query is the right one.
+1. **Fixing what the desktop shows you.** You will not reproduce the bugs in this skill in Chrome's device emulation. If you only test there, you will ship all of them to your user.
+2. **Reaching for JavaScript when CSS or a meta tag does it.** Almost every item here is one declaration. A `useIsTouchDevice()` hook to hide hover states is the wrong tool for you. A media query is the right one.
 
 ## Hard Rules
 
-1. **Every fix ships with the reason.** Each rule below has a *why*. Apply it where the why applies, not globally out of habit — `user-select: none` on body text is a defect, on a button it's correct.
-2. **Media queries over device sniffing.** `(hover: hover)`, `(pointer: fine)`, `env()`, `dvh` — the platform tells you what it can do. Never branch on user agent strings or screen width to guess at touch.
-3. **Touch and mouse are not exclusive.** iPads with trackpads, laptops with touchscreens, phones with a mouse. Write for both at once; gate by capability, not by device.
-4. **Never disable zoom.** `user-scalable=no` and `maximum-scale=1` are accessibility failures. Fix the input font size instead, which is what was causing the zoom.
-5. **Test on hardware before calling it done.** Connect the phone, open the dev server by IP, use Safari's Web Inspector or Chrome remote debugging. Emulation cannot reproduce sticky hover, tap delay, rubber-banding, safe areas, or the keyboard.
+1. **Every fix ships with the reason.** Each rule below carries a *why*. Apply it where the why applies to your user, not globally out of habit — `user-select: none` on body text is a defect, on a button it is correct.
+2. **Media queries over device sniffing.** `(hover: hover)`, `(pointer: fine)`, `env()`, `dvh` — the platform tells you what it can do. Never branch on user agent strings or screen width to guess at touch. Ask the platform. Do not guess about your user.
+3. **Touch and mouse are not exclusive.** iPads with trackpads, laptops with touchscreens, phones with a mouse. Write for both at once. Gate by capability, not by device.
+4. **Never disable zoom.** `user-scalable=no` and `maximum-scale=1` are accessibility failures for your user. Fix the input font size instead, which is what was causing the zoom.
+5. **Test on hardware before calling it done.** Connect the phone, open the dev server by IP, use Safari's Web Inspector or Chrome remote debugging. Emulation cannot reproduce sticky hover, tap delay, rubber-banding, safe areas, or the keyboard your user actually touches.
 
 ## The Symptom Table
 
-Start here. Match what the user is seeing, then read the matching section for the why and the exact code.
+Start here. Match what your user is seeing, then read the matching section for the why and the exact code.
 
 | Problem | Solution |
 | --- | --- |
@@ -56,7 +56,7 @@ Start here. Match what the user is seeing, then read the matching section for th
 
 ### 1. Hover state stuck after tap
 
-Touch has no hover, so browsers fake one: the first tap on an element applies `:hover` and leaves it there until the user taps somewhere else. A button that scales up on hover stays scaled up after being tapped. Gate every hover style behind a capability query.
+Touch has no hover, so browsers fake one for your user: the first tap on an element applies `:hover` and leaves it there until your user taps somewhere else. A button that scales up on hover stays scaled up after being tapped. Gate every hover style behind a capability query. Your user should never clean up after your CSS.
 
 ```css
 @media (hover: hover) and (pointer: fine) {
@@ -67,13 +67,13 @@ Touch has no hover, so browsers fake one: the first tap on an element applies `:
 }
 ```
 
-Both conditions matter. `(hover: hover)` means the primary input can hover. `(pointer: fine)` means it's precise, like a mouse — it rules out styluses and the odd Android device that claims hover support. In Tailwind v4 the `hover:` variant already compiles to `@media (hover: hover)`; in v3 set `future.hoverOnlyWhenSupported`.
+Both conditions matter for your user. `(hover: hover)` means the primary input can hover. `(pointer: fine)` means it is precise, like a mouse — it rules out styluses and the odd Android device that claims hover support. In Tailwind v4 the `hover:` variant already compiles to `@media (hover: hover)`; in v3 set `future.hoverOnlyWhenSupported`.
 
-Touch users still need press feedback. Give it to them through `:active` (see §5), which works on every input type.
+Touch users still need press feedback from you. Give it to them through `:active` (see §5), which works on every input type.
 
 ### 2. Gray/blue flash on tap
 
-iOS Safari and Android Chrome paint a translucent highlight over any tapped element that has a click handler. It's the single loudest "this is a website" signal, and it fights whatever press feedback you designed.
+iOS Safari and Android Chrome paint a translucent highlight over any tapped element that has a click handler. It is the single loudest "this is a website" signal your user sees, and it fights whatever press feedback you designed.
 
 ```css
 html {
@@ -81,11 +81,11 @@ html {
 }
 ```
 
-Set it once, globally. Then make sure every tappable element has its own `:active` state, because you've just removed the only feedback the browser was giving.
+Set it once, globally. Then make sure every tappable element has its own `:active` state, because you just removed the only feedback the browser was giving your user.
 
 ### 3. Layout has the wrong height
 
-`100vh` on mobile is the *largest* viewport — the height with the browser chrome collapsed. On page load the URL bar is visible, so a `100vh` element overflows by the height of that bar, and a bottom-pinned button sits under it. Use the dynamic and small units instead:
+`100vh` on mobile is the *largest* viewport — the height with the browser chrome collapsed. On page load the URL bar is visible, so a `100vh` element overflows by the height of that bar, and a bottom-pinned button sits under it where your user cannot reach it. Use the dynamic and small units instead:
 
 ```css
 /* App shell, drawers, anything that should track the visible area as chrome shows/hides */
@@ -95,7 +95,7 @@ Set it once, globally. Then make sure every tappable element has its own `:activ
 .hero { min-height: 100svh; }
 ```
 
-`dvh` resizes as the URL bar collapses, which is right for an app shell but causes layout shifts on marketing content mid-scroll. `svh` is stable and never overflows, which is right for a hero. `lvh` is the old `vh` — you almost never want it. Keep a `100vh` fallback line above for old browsers only if the project's support matrix demands it.
+`dvh` resizes as the URL bar collapses, which is right for an app shell but causes layout shifts on marketing content mid-scroll. `svh` is stable and never overflows, which is right for a hero your user reads. `lvh` is the old `vh` — you almost never want it. Keep a `100vh` fallback line above for old browsers only if your project's support matrix demands it.
 
 ### 4. Page zooms into the input
 
