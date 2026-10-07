@@ -5,7 +5,7 @@ so every file applies to every repo you own.
 
 | Path | What it is | How to load it |
 |---|---|---|
-| **[Clean-Code/](./Clean-Code/README.md)** | 41 lesson standards, one rule per file. The mandatory craft baseline | Open the single `NN-*.md` that matches the task. Never the whole folder |
+| **[Clean-Code/](./Clean-Code/README.md)** | 60 lesson standards (41 flat + 19 grouped), one rule per file. The mandatory craft baseline | Open the single lesson file that matches the task. Never the whole folder |
 | **[Principles.md](./Principles.md)** | SOLID, Clean Architecture, testing, concurrency, security, and the surrounding philosophy | Section-load. It is long, and loading all of it wastes the budget you need for code |
 
 ## Which one answers your question

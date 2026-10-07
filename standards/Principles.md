@@ -9,11 +9,11 @@ When two principles conflict, **clarity wins**.
 
 ### Mandatory lesson standards (authoritative for craft)
 
-**Day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md) — **41 detailed
+**Day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md) — **60 detailed
 Uncle Bob / clean-code lessons** (side effects, naming, errors, comments, DRY, Demeter, CQS, …).
 
 - For naming, functions, comments, null, exceptions, structure: open the matching
-  `Clean-Code/NN-*.md` file. **That file wins** over anything below in this handbook.
+  `Clean-Code/` lesson file (flat `NN-*.md` or one from the grouped folders). **That file wins** over anything below in this handbook.
 - This `Principles.md` handbook covers **SOLID, architecture, testing, security,
   concurrency**, and philosophy. Where a section here restates craft rules, it is a
   **summary only** — if wording drifts, fix this file toward `Clean-Code/`, not the reverse.

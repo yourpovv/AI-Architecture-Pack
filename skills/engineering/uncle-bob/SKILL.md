@@ -4,7 +4,7 @@ description: >
   Robert C. Martin's craft and professionalism applied as methodology, not as a
   report about any one repository. Use when reviewing structure, naming,
   comments, architecture seams, TDD discipline, or professional scope decisions.
-  Pair with standards/Clean-Code/ for mandatory lesson standards (01–41),
+  Pair with standards/Clean-Code/ for mandatory lesson standards (01–41 plus grouped tile lessons),
   standards/Principles.md for the broader handbook, and skills/engineering/errors/SKILL.md for failure
   handling. Language- and framework-agnostic. Never treat paths or product names
   in other project notes as facts about the current tree.

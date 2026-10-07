@@ -63,7 +63,7 @@ tied to one project, so the same pieces go into every repo you own.
 <tbody>
 <tr>
   <td><a href="standards/README.md"><b><code>standards/</code></b></a></td>
-  <td>41 clean-code lesson standards, one rule per file, plus a universal handbook covering SOLID, architecture, testing, and security</td>
+  <td>60 clean-code lesson standards, one rule per file, plus a universal handbook covering SOLID, architecture, testing, and security</td>
   <td>Every serious project</td>
 </tr>
 <tr>
@@ -110,7 +110,7 @@ your-project/
 ├── AGENTS.md                        <- you write this, see step 2
 └── docs/
     ├── standards/
-    │   ├── Clean-Code/              <- the mandatory 41
+    │   ├── Clean-Code/              <- the mandatory 60
     │   └── Principles.md
     ├── languages/TypeScript.md      <- exactly one
     └── frameworks/Tauri.md          <- optional
@@ -206,8 +206,8 @@ the framework change per project, the definition of good code does not.
 
 **Load one file at a time.**
 
-A pack like this is worth nothing if the agent reads all of it. Context spent on 41 lessons
-you are not applying is context it cannot spend on your code, and a model given forty rules
+A pack like this is worth nothing if the agent reads all of it. Context spent on 60 lessons
+you are not applying is context it cannot spend on your code, and a model given sixty rules
 at once follows none of them well.
 
 So every file here is built to be opened alone. The standards are one rule per file. The
@@ -327,9 +327,10 @@ Architecture/
 ├── standards/                      UNIVERSAL, applies to every project
 │   ├── README.md
 │   ├── Principles.md               SOLID, architecture, testing, security
-│   └── Clean-Code/                 41 lesson standards, one rule per file
+│   └── Clean-Code/                 60 lesson standards, one rule per file
 │       ├── README.md               the full map plus topic clusters
-│       └── 01-*.md ... 41-*.md
+│       ├── 01-*.md ... 41-*.md
+│       └── solid|classes|function-design|unit-tests|boundaries/
 │
 ├── skills/                         INSTALLABLE, one folder per skill
 │   ├── README.md

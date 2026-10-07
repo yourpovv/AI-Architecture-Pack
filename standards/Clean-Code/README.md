@@ -42,7 +42,7 @@ Other packs were rewritten to follow this order. Prefer structure fixes (rename,
 
 ---
 
-## Full map (01–41) + grouped lessons
+## Full map (01–41 + grouped lessons, 60 total)
 
 | # | File | One-line rule |
 |---|---|---|
