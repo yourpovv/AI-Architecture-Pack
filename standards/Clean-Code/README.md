@@ -34,15 +34,15 @@ Other packs were rewritten to follow this order. Prefer structure fixes (rename,
 
 ## Agent load policy
 
-1. Do **not** default-load all 41 files.  
-2. Load the **single** `NN-*.md` that matches naming, errors, comments, structure, etc.  
+1. Do **not** default-load all 60 files.  
+2. Load the **single** lesson file that matches naming, errors, comments, structure, etc. — flat `NN-*.md` or one file from `solid|classes|function-design|unit-tests|boundaries/`.  
 3. For a full audit, load this README + scan the map, then open only files for findings.  
 4. Prefer structure fixes (rename, extract, split, wrap) over adding comments or return codes.  
 5. On conflict with `Principles.md` or `skills/*`, follow **this folder**.
 
 ---
 
-## Full map (01–41)
+## Full map (01–41) + grouped lessons
 
 | # | File | One-line rule |
 |---|---|---|
@@ -90,17 +90,44 @@ Other packs were rewritten to follow this order. Prefer structure fixes (rename,
 
 ---
 
+## Grouped lessons (tile-aligned)
+
+| Group | # | File | One-line rule |
+|---|---|---|---|
+| SOLID | 01 | [01-single-responsibility-principle.md](./solid/01-single-responsibility-principle.md) | One job per class |
+| SOLID | 02 | [02-a-reason-to-change.md](./solid/02-a-reason-to-change.md) | One actor, one class |
+| CLASSES | 01 | [01-naming-pressure.md](./classes/01-naming-pressure.md) | Argued name means unfinished split |
+| CLASSES | 02 | [02-feature-envy.md](./classes/02-feature-envy.md) | Move method to its data |
+| CLASSES | 03 | [03-hidden-classes.md](./classes/03-hidden-classes.md) | Split where data stops being shared |
+| CLASSES | 04 | [04-policy-and-detail.md](./classes/04-policy-and-detail.md) | Declare workflow or do work, never both |
+| CLASSES | 05 | [05-prefactoring.md](./classes/05-prefactoring.md) | Refactor on real requirements, not guesses |
+| CLASSES | 06 | [06-overengineering.md](./classes/06-overengineering.md) | Split only for test/dedup/name/extension |
+| FUNCTION DESIGN | 01 | [01-function-contexts.md](./function-design/01-function-contexts.md) | Private is the change boundary |
+| FUNCTION DESIGN | 02 | [02-naming-altitude.md](./function-design/02-naming-altitude.md) | Name the why, one level above the how |
+| FUNCTION DESIGN | 03 | [03-name-length.md](./function-design/03-name-length.md) | Narrow scope long name, wide scope short |
+| UNIT TESTS | 01 | [01-the-three-laws-of-tdd.md](./unit-tests/01-the-three-laws-of-tdd.md) | Only code tests asked for |
+| UNIT TESTS | 02 | [02-keep-your-tests-clean.md](./unit-tests/02-keep-your-tests-clean.md) | Tests to production standard |
+| UNIT TESTS | 03 | [03-tests-enable-the-ilities.md](./unit-tests/03-tests-enable-the-ilities.md) | Tests make change safe |
+| UNIT TESTS | 04 | [04-writing-clean-tests.md](./unit-tests/04-writing-clean-tests.md) | Build world, act once, assert claim |
+| UNIT TESTS | 05 | [05-one-concept-per-test.md](./unit-tests/05-one-concept-per-test.md) | One test, one promise |
+| UNIT TESTS | 06 | [06-f-i-r-s-t.md](./unit-tests/06-f-i-r-s-t.md) | F.I.R.S.T. tests |
+| BOUNDARIES | 01 | [01-wrap-third-party-code.md](./boundaries/01-wrap-third-party-code.md) | Own the call surface, limit blast radius |
+| BOUNDARIES | 02 | [02-the-adapter-pattern.md](./boundaries/02-the-adapter-pattern.md) | Wish interface, translate at border |
+
+---
+
 ## Topic clusters (load by concern)
 
 | Concern | Lessons |
 |---|---|
-| **Naming** | 04, 06, 20, 30, 36, 39 |
-| **Functions & structure** | 01, 02, 15, 18, 22, 23, 24, 26, 27, 28, 40 |
+| **Naming** | 04, 06, 20, 30, 36, 39, CLASSES 01, FUNCTION DESIGN 02–03 |
+| **Functions & structure** | 01, 02, 15, 18, 22, 23, 24, 26, 27, 28, 40, SOLID 01–02, CLASSES 02–04, CLASSES 06 |
 | **Errors** | 03, 12, 13, 34, 37 |
 | **Comments** | 05, 07, 08, 09, 10, 17, 19, 33, 38, 41 |
-| **Objects & design** | 16, 21, 29, 31, 32 |
+| **Objects & design** | 16, 21, 29, 31, 32, FUNCTION DESIGN 01, BOUNDARIES 01–02, CLASSES 05 |
 | **DRY & tools** | 14, 25, 35 |
 | **Variables / formatting** | 11, 35 |
+| **Testing** | UNIT TESTS 01–06 |
 
 ---
 
@@ -118,8 +145,9 @@ Other packs were rewritten to follow this order. Prefer structure fixes (rename,
 
 ## Editing a lesson
 
-The 41 lesson files are hand-maintained. Edit the `NN-*.md` file directly, then update its
-one-line rule in the map above so the two never drift apart.
+The 60 lesson files are hand-maintained. Edit the lesson file directly
+(flat `NN-*.md`, or the grouped `solid|classes|function-design|unit-tests|boundaries/` files),
+then update its one-line rule in the map above so the two never drift apart.
 
 Keep the shared trailing **Authority** block identical across files. If that block changes,
-change it in all 41.
+change it in all 60.
