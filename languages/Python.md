@@ -1,8 +1,8 @@
 # Python Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open the rest only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project. Do not invent a toolchain. You work with what your team already uses.
 
-You need a clean, Pythonic structure for your maintainable applications. Your future self will read this code.
+You need a clean and Pythonic structure for your maintainable applications. Your future self will read this code. You write today for the reader you will be in six months.
 
 ---
 

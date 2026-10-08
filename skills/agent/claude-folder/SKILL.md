@@ -13,14 +13,15 @@ description: >
 # The .claude/ Folder
 
 Listen. Here is what each part does for you, what you actually create, and the traps that waste your
-afternoon. Harness details change between releases, so you treat this as your map and
-the official docs as your authority on exact key names.
+afternoon. Harness details change between releases, so you treat this file as your map. You treat
+the official docs as your authority on exact key names. That is the tradeoff you accept.
 
 **Reference:** [code.claude.com/docs](https://code.claude.com/docs), or `/help` in the tool.
 
 ## The two-file core
 
-Most projects you touch need exactly two files. Everything else is optional for you.
+Most projects you touch need exactly two files. Everything else is optional for you. Keep it that way
+until you feel real pain.
 
 | File | Tracked? | Role |
 |---|---|---|
@@ -29,7 +30,8 @@ Most projects you touch need exactly two files. Everything else is optional for 
 
 **You keep `CLAUDE.md` short.** Somewhere under 200 lines is a good ceiling for you. It loads
 into every single session you run, so every line you add is rent you pay forever. You push depth
-into linked files and reference them by path; your agent will open what it needs.
+into linked files and reference them by path. Your agent will open what it needs. Short files respect
+your team.
 
 `CLAUDE.md` is only part of that rent you pay. Every installed skill's description, every
 MCP server's tool schemas, and every hook's output ride along in your same
@@ -39,7 +41,7 @@ and how you measure it.
 
 A common and good split for you: `AGENTS.md` at the root as the portable contract that any
 harness reads, and `CLAUDE.md` for the parts specific to this tool. You cross-reference
-rather than duplicating, or your two files will drift.
+rather than duplicating. If your two files drift, your agents get mixed orders.
 
 ## Directories under .claude/
 
@@ -62,26 +64,29 @@ At your repo root, `.mcp.json` declares MCP servers. Root only for you.
 you register them in `settings.json` under the `hooks` key with an event and a matcher.
 The directory is a convention for where you keep your scripts, not a trigger.
 
-If your hook is not firing, you check registration before you debug your script.
+If your hook is not firing, you check registration before you debug your script. Registration is
+the usual culprit. Do you want to waste an hour on code that never ran. Check first.
 
 Hooks are the only mechanism that *enforces* anything for you. A rule you write in
-`CLAUDE.md` is advisory: it holds while your agent remembers it. A hook is
-mechanical and runs regardless. So you put taste and context in `CLAUDE.md`, and you put
-the one or two rules you actually cannot afford to have violated into a hook.
+`CLAUDE.md` is advisory. It holds while your agent remembers it. A hook is
+mechanical and runs regardless. So you put taste and context in `CLAUDE.md`. You put
+the one or two rules you actually cannot afford to have violated into a hook. That is professional
+judgment.
 
 Worth a hook for you: blocking edits that reintroduce a banned pattern, formatting on
-write, refusing destructive shell commands, notifying you when your long run ends.
+write, refusing destructive shell commands, notifying you when your long run ends. You pick the
+ones that protect your team.
 
 ## Gitignore
 
 You ignore `.claude/settings.local.json` **in your repo's own `.gitignore`**, not just
 your global one. A global ignore protects the machine it is on and nobody else on your team.
-You check with `git check-ignore -v <path>`; it prints which ignore file matched, so
-you can see whether your protection travels with your repo.
+You check with `git check-ignore -v <path>`. It prints which ignore file matched, so
+you can see whether your protection travels with your repo. Your teammates depend on that.
 
 ## Minimum viable setup
 
-For a new project, you work in order:
+For a new project, you work in order. You start small and you earn each new file:
 
 1. `CLAUDE.md` with your project's rules. Short.
 2. `.gitignore` entry for `.claude/settings.local.json`.
@@ -90,4 +95,4 @@ For a new project, you work in order:
 You stop there. You add `skills/`, `agents/`, `commands/`, or `output-styles/` when a real
 need appears, not because the directory exists. Empty scaffolding is a cost with
 no return for you, and a folder full of half-written skills makes your agent worse at
-picking the right one.
+picking the right one. Discipline is leaving things out until you need them.

@@ -1,8 +1,8 @@
 # Go Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open the rest only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project. Do not invent a toolchain. You work with what your team already uses.
 
-You need a simple, idiomatic structure for your Go applications. Clarity is the feature.
+You need a simple and idiomatic structure for your Go applications. Clarity is the feature. You pick the plain path. Your team reads it without effort.
 
 ---
 
@@ -27,19 +27,19 @@ project/
 ## Principles
 
 **Keep it simple**
-Go is designed for clarity. You don't fight it. You use what the language gives you.
+Go is designed for clarity. You don't fight it. You use what the language gives you. Simple code stays working.
 
 **Small packages**
-Each package has one clear purpose. If you cannot name it plainly, it does too much.
+Each package has one clear purpose. If you cannot name it plainly, it does too much. You split it until the name is plain.
 
 **Accept interfaces, return structs**
-This makes your code flexible and testable. Your callers will thank you.
+This makes your code flexible and testable. Your callers will thank you. You depend on promises, not on concrete things.
 
 **Handle errors explicitly**
-No exceptions. You check every error. What else would a professional do?
+No exceptions. You check every error. What else would a professional do? You face each failure where it happens.
 
 **Avoid globals**
-You pass dependencies explicitly. Globals hide who depends on what.
+You pass dependencies explicitly. Globals hide who depends on what. You keep the wiring where your reader can see it.
 
 ---
 
@@ -627,9 +627,7 @@ func TestService(t *testing.T) {
 
 ## Configuration
 
-You load config once at startup into a typed struct, you validate it, and you pass it down via
-dependency injection. You put no `os.Getenv` calls scattered through your packages
-(`../standards/Principles.md` §15.1). You fail fast on a missing required var.
+You load config once at startup into a typed struct. You validate it and you pass it down with dependency injection. You put no `os.Getenv` calls scattered through your packages (`../standards/Principles.md` §15.1). You fail fast on a missing required var. You want the crash at boot, not in a request.
 
 ```go
 // internal/config/config.go
@@ -666,50 +664,43 @@ func getenv(key, fallback string) string {
 }
 ```
 
-`main.go` calls `config.Load()` first and exits non-zero if it errors. Your secrets come
-from the environment, never from committed files. Listen. Committed secrets do not stay secret.
+`main.go` calls `config.Load()` first and it exits non-zero if it errors. Your secrets come from the environment, never from committed files. Listen. Committed secrets do not stay secret. You keep them out of your history.
 
 ---
 
 ## Summary
 
-You keep your packages small and focused.
-You handle every error explicitly.
-You use short, clear names.
-You accept interfaces, you return structs.
-You write table-driven tests.
-You keep your functions short and simple. That is your discipline.
+You keep your packages small and focused. You handle every error explicitly. You use short and clear names. You accept interfaces and you return structs. You write table-driven tests. You keep your functions short and simple. That is your discipline. Your team feels it in every file.
 
 ---
 
 ## Project Prompt
 
-You write Go against the structure and rules above. Where they disagree with your defaults,
-this file wins.
+You write Go against the structure and rules above. Where they disagree with your defaults, this file wins. Your habits yield to this contract.
 
-You read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting. You ground yourself first. Then you build.
 
 **Error Handling**
-- You check every error explicitly (no `_` ignoring)
-- You wrap errors with context: `fmt.Errorf("context: %w", err)`
-- You return errors, you don't panic
-- Custom error types for domain errors
+- You check every error explicitly (no `_` ignoring). You face each one.
+- You wrap errors with context: `fmt.Errorf("context: %w", err)`. Your caller sees where it broke.
+- You return errors, you don't panic. Panic is for what you cannot handle.
+- Custom error types for domain errors. Your errors speak your domain.
 
 **Interfaces**
-- Small interfaces (1-3 methods)
-- You define them at point of use, not implementation
-- No god interfaces. Can you name what it does? Then it is too big.
+- Small interfaces (1-3 methods). You keep them narrow.
+- You define them at point of use, not implementation. The caller owns the need.
+- No god interfaces. Can you name what it does? Then it is too big. You split it.
 
 **Concurrency**
-- Goroutines for I/O, not CPU
-- You always provide context for cancellation
-- You close channels from sender
-- You use mutexes or channels for shared state
+- Goroutines for I/O, not CPU. You spend threads where you wait.
+- You always provide context for cancellation. You give your work a way out.
+- You close channels from sender. One owner closes the pipe.
+- You use mutexes or channels for shared state. You guard what you share.
 
 **Testing**
-- Table-driven tests
-- You use interfaces for mocking
-- You test all error paths
+- Table-driven tests. You list your cases plainly.
+- You use interfaces for mocking. You test your logic, not the network.
+- You test all error paths. Your failures get the same care as your happy path.
 
 ### Setup
 
@@ -720,29 +711,29 @@ mkdir -p cmd/api internal/{handlers,services,repository,models}
 
 ### Deliverables
 
-1. Complete project following architecture structure above
-2. HTTP handlers with proper routing
-3. Service layer with business logic
-4. Repository layer for data access
-5. Dependency injection in main.go
-6. Context-aware operations
-7. Every error checked and wrapped with context
-8. README with setup instructions
-9. Test files for all packages. You prove each one.
+1. Complete project following architecture structure above. You show the whole shape working.
+2. HTTP handlers with proper routing. Your edges stay thin.
+3. Service layer with business logic. Your rules live in one place.
+4. Repository layer for data access. Your storage stays behind a boundary.
+5. Dependency injection in main.go. Your wiring stays visible.
+6. Context-aware operations. Your work can stop when asked.
+7. Every error checked and wrapped with context. Your failures explain themselves.
+8. README with setup instructions. Your teammate boots it without asking you.
+9. Test files for all packages. You prove each one. That is your craft.
 
 ### Validation Checklist
 
-- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed; env examples use placeholders only
-- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] You check all errors (no `_` ignoring)
-- [ ] You wrap errors with context
-- [ ] Interfaces at point of use
-- [ ] No stuttering in names
-- [ ] You pass context to long operations
-- [ ] Proper resource cleanup (defer)
-- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] `go vet` and `golint` clean
+- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed). You do not claim a green build you never ran.
+- [ ] No secrets committed. Env examples use placeholders only. You keep real keys out of history.
+- [ ] Your functions are small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md). One job keeps you honest.
+- [ ] You check all errors (no `_` ignoring). You face each one.
+- [ ] You wrap errors with context. Your caller knows where it broke.
+- [ ] Interfaces at point of use. The caller names the need.
+- [ ] No stuttering in names. You say it once.
+- [ ] You pass context to long operations. You give your work a way out.
+- [ ] Proper resource cleanup (defer). You release what you take.
+- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md). Your team hears its own language.
+- [ ] `go vet` and `golint` clean. You ship a clean build.
 
 ### Pre-Delivery
 

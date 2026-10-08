@@ -2,9 +2,9 @@
 
 # Architecture Pack
 
-**Engineering standards, agent skills, and task prompts for you — the person who builds with AI.**
+**Engineering standards, agent skills, and task prompts for you. You are the one who builds with AI.**
 
-Portable, stack-agnostic, and project-neutral. Take only what your code needs and drop it into any repo you own.
+It is portable. It is stack-agnostic. It is project-neutral. Take only what your code needs. Drop it into any repo you own.
 
 <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-2f363d?style=flat-square"></a>
 <img alt="Stack agnostic" src="https://img.shields.io/badge/scope-stack--agnostic-2f363d?style=flat-square">
@@ -17,21 +17,21 @@ Portable, stack-agnostic, and project-neutral. Take only what your code needs an
 
 ## TL;DR
 
-1. Copy [`standards/Clean-Code/`](standards/Clean-Code/README.md) and one
+1. You copy [`standards/Clean-Code/`](standards/Clean-Code/README.md) and one
    [`languages/*`](languages/README.md) file into your `docs/`.
-2. Write a short `AGENTS.md` at the repo root pointing at them. List what the agent may
+2. You write a short `AGENTS.md` at the repo root pointing at them. List what the agent may
    edit and how you will verify its work.
-3. Tell your agent to **load one file at a time**, never the whole folder.
+3. Tell your agent to **load one file at a time**. Never hand it the whole folder.
 
-Then install the audit harness. Every review then runs with an explicit scope and stays
+Then you install the audit harness. Every review runs with an explicit scope. It stays
 `report-only` until you say otherwise:
 
 ```bash
 cp -r skills/review/audit .claude/skills/
 ```
 
-[Project templates](#project-templates) gives you the exact file list per stack. Everything
-after it is why it matters.
+[Project templates](#project-templates) gives you the exact file list per stack. What follows
+tells you why it matters for your code.
 
 ---
 
@@ -40,15 +40,15 @@ after it is why it matters.
 Listen. Two things go wrong when you build software with an agent.
 
 **It has no standard to code against.** Every file invents its own conventions. By week
-two your project has stopped being one codebase. Nothing is technically broken, so nothing
-gets fixed. And your code slowly becomes unmaintainable in a way you cannot point at.
+two your project has stopped being one codebase. Nothing looks broken, so nothing
+gets fixed. And your code slowly turns unmaintainable in a way you cannot point at.
 
 **It gets handed everything at once.** The whole repo. Every doc you own. Plus a
 20-page style guide. The instructions that matter end up buried. And your context
-window has no room left for the code you asked about.
+window has no room left for your code.
 
-This pack fixes both. Your standards are split one rule per file. Your agent opens the
-single lesson a task needs instead of swallowing the folder. Every review prompt carries
+This pack fixes both for you. Your standards are split one rule per file. Your agent opens the
+single lesson your task needs instead of swallowing the folder. Every review prompt carries
 its own scope and mode. So an audit cannot quietly turn into a rewrite. And nothing here is
 tied to one project. You use the same pieces in every repo you own.
 
@@ -63,13 +63,13 @@ tied to one project. You use the same pieces in every repo you own.
 <tbody>
 <tr>
   <td><a href="standards/README.md"><b><code>standards/</code></b></a></td>
-  <td>60 clean-code lesson standards, one rule per file, plus a universal handbook on SOLID, architecture, testing, and security</td>
-  <td>Every serious project of yours</td>
+  <td>60 clean-code lessons for you, one rule per file, plus a universal handbook on SOLID, architecture, testing, and security</td>
+  <td>Every serious project you own</td>
 </tr>
 <tr>
   <td><a href="skills/README.md"><b><code>skills/</code></b></a></td>
-  <td>Guidance that fires on its own for you. Audit harness, error handling, comment discipline, prose rules, sub-agent routing, <code>.claude/</code> setup</td>
-  <td>Install once. Then leave it alone.</td>
+  <td>Guidance that fires on its own for you. You get audit harness, error handling, comment discipline, prose rules, sub-agent routing, <code>.claude/</code> setup</td>
+  <td>You install once. Then you leave it alone.</td>
 </tr>
 <tr>
   <td><a href="languages/README.md"><b><code>languages/</code></b></a></td>
@@ -83,13 +83,13 @@ tied to one project. You use the same pieces in every repo you own.
 </tr>
 <tr>
   <td><a href="prompts/README.md"><b><code>prompts/</code></b></a></td>
-  <td>Paste-in tasks for you. Reviews and audits, greenfield scaffolds, and workflow rules that stop your agent guessing</td>
+  <td>Paste-in tasks for you. You get reviews and audits, greenfield scaffolds, and workflow rules that stop your agent guessing</td>
   <td>One per task you run</td>
 </tr>
 <tr>
   <td><a href="design/README.md"><b><code>design/</code></b></a></td>
   <td>Aesthetic systems for you, plus vetted sources for components, icons, illustrations, and 3D assets</td>
-  <td>Opt in only if you need it</td>
+  <td>Opt in only if your code needs it</td>
 </tr>
 <tr>
   <td><a href="STACK.md"><b><code>STACK.md</code></b></a></td>
@@ -116,12 +116,12 @@ your-project/
     └── frameworks/Tauri.md          <- optional
 ```
 
-Keep the same relative layout so the cross-references inside the files still resolve.
+Keep the same relative layout. Your cross-references still resolve then.
 
 ### 2. Write a short `AGENTS.md` at the repo root
 
-This is the step people skip, and it is the one that decides whether any of the rest works.
-It is the only file that is allowed to know about *your* project.
+This is the step people skip. It decides whether any of the rest works for you.
+It is the only file allowed to know about *your* project.
 
 ```markdown
 ## Coding standards
@@ -142,8 +142,8 @@ bun run typecheck
 
 ### 3. Say the rules once, at the start
 
-> Read `AGENTS.md` first. Coding standards live in `docs/standards/Clean-Code/`. Load only
-> the lesson file that matches the task. For any review, read `docs/skills/review/audit/SKILL.md` and set
+> Read `AGENTS.md` first. Your coding standards live in `docs/standards/Clean-Code/`. Load only
+> the lesson file that matches your task. For any review, read `docs/skills/review/audit/SKILL.md` and set
 > scope and mode (`report-only` by default). Load one language or framework file, and one
 > prompt. Do not load the whole `Clean-Code/` folder or all of `Principles.md` unless you are
 > auditing against the full map.
@@ -152,7 +152,7 @@ bun run typecheck
 
 ## Project templates
 
-Each row is a complete setup. Copy the files, then paste the prompt.
+Each row is a complete setup for you. You copy the files. Then you paste the prompt.
 
 <table>
 <thead>
@@ -197,21 +197,21 @@ Each row is a complete setup. Copy the files, then paste the prompt.
 </tbody>
 </table>
 
-Every one of them starts with `standards/Clean-Code/`. That is deliberate. The language and
-the framework change per project, the definition of good code does not.
+Every one of them starts with `standards/Clean-Code/`. That is deliberate. Your language and
+your framework change per project. Your definition of good code does not.
 
 ---
 
 ## The rule that makes this work
 
-**Load one file at a time.**
+**You load one file at a time.**
 
-A pack like this is worth nothing if the agent reads all of it. Context spent on 60 lessons
-you are not applying is context it cannot spend on your code, and a model given sixty rules
+A pack like this is worth nothing if your agent reads all of it. Context spent on 60 lessons
+you are not applying is context it cannot spend on your code. A model given sixty rules
 at once follows none of them well.
 
-So every file here is built to be opened alone. The standards are one rule per file. The
-language guides open with an `Agent load` line naming which sections to read first. The
+So every file here is built for you to open alone. The standards are one rule per file. Your
+language guides open with an `Agent load` line naming which sections to read first. Your
 prompts are self-contained tasks.
 
 <details>
@@ -221,43 +221,43 @@ prompts are self-contained tasks.
 
 **Default load**
 
-1. Project `AGENTS.md`
-2. Relevant README or tracker
-3. `skills/review/audit/SKILL.md` when reviewing, auditing, or shipping
-4. **One** language or framework file
-5. **One** prompt matching the task
+1. Your project `AGENTS.md`
+2. Your relevant README or tracker
+3. Your `skills/review/audit/SKILL.md` when you review, audit, or ship
+4. **One** language or framework file for your code
+5. **One** prompt matching your task
 
 **On demand**
 
 | Doc | When |
 |---|---|
-| `standards/Clean-Code/NN-*.md` | The primary craft standards. One lesson, by topic |
-| `standards/Clean-Code/README.md` | The full map, when auditing against every rule |
-| `standards/Principles.md` | SOLID, testing, security, concurrency. Craft defers to Clean-Code |
-| `skills/engineering/errors/SKILL.md` | Failure handling and user-facing error copy |
-| `skills/engineering/uncle-bob/SKILL.md` | Structure, seams, professionalism |
-| `skills/engineering/craft/SKILL.md` | Naming, comments, structure |
-| `skills/engineering/necessary-comments/SKILL.md` | Deciding whether a comment earns its keep |
-| `skills/writing/create-readme/SKILL.md` | Writing a README from the real tree |
-| `skills/writing/prose/SKILL.md` | Any README, doc, PR body, or commit message. The prose rules the rest of the pack defers to |
-| `skills/web/web-seo/SKILL.md` | Shipping a public site |
-| `skills/agent/sub-agents/SKILL.md` | Delegating work and picking model tiers |
-| `skills/agent/context-budget/SKILL.md` | A session feels expensive, or usage limits keep getting hit |
-| `skills/agent/commits/SKILL.md` | An agent is about to commit, or a session has piled up changes |
-| `skills/agent/claude-folder/SKILL.md` | Setting up `.claude/`, or a hook that will not fire |
-| `prompts/workflow/Before-Implementing.md` | The agent is about to build on a guess |
-| `prompts/reviews/PR-Review.md` | Pre-merge go or no-go |
-| `prompts/reviews/Docs-Review.md` | Docs have drifted from the code, or read like nobody proofread them |
-| `design/apple-design/SKILL.md` | An explicit Apple aesthetic request |
-| `STACK.md` | No stack has been chosen yet |
+| `standards/Clean-Code/NN-*.md` | Your primary craft standards. One lesson, by topic |
+| `standards/Clean-Code/README.md` | The full map, when you audit against every rule |
+| `standards/Principles.md` | SOLID, testing, security, concurrency for your code. Craft defers to Clean-Code |
+| `skills/engineering/errors/SKILL.md` | Failure handling and user-facing error copy for your code |
+| `skills/engineering/uncle-bob/SKILL.md` | Structure, seams, professionalism for your code |
+| `skills/engineering/craft/SKILL.md` | Naming, comments, structure for your code |
+| `skills/engineering/necessary-comments/SKILL.md` | Deciding whether your comment earns its keep |
+| `skills/writing/create-readme/SKILL.md` | Writing a README from your real tree |
+| `skills/writing/prose/SKILL.md` | Any README, doc, PR body, or commit message for you. The prose rules the rest of the pack defers to |
+| `skills/web/web-seo/SKILL.md` | Shipping your public site |
+| `skills/agent/sub-agents/SKILL.md` | Delegating your work and picking model tiers |
+| `skills/agent/context-budget/SKILL.md` | Your session feels expensive, or your usage limits keep getting hit |
+| `skills/agent/commits/SKILL.md` | Your agent is about to commit, or your session has piled up changes |
+| `skills/agent/claude-folder/SKILL.md` | Setting up your `.claude/`, or your hook that will not fire |
+| `prompts/workflow/Before-Implementing.md` | Your agent is about to build on a guess |
+| `prompts/reviews/PR-Review.md` | Your pre-merge go or no-go |
+| `prompts/reviews/Docs-Review.md` | Your docs have drifted from your code, or read like nobody proofread them |
+| `design/apple-design/SKILL.md` | Your explicit Apple aesthetic request |
+| `STACK.md` | You have chosen no stack yet |
 
 **Never default-load**
 
 - The entire `standards/Clean-Code/` folder
 - All of `standards/Principles.md`
 - The entire `prompts/` tree
-- `STACK.md` on a project that already chose its stack
-- `design/apple-design/SKILL.md` for non-Apple UI
+- `STACK.md` on your project that already chose its stack
+- `design/apple-design/SKILL.md` for your non-Apple UI
 
 </details>
 
@@ -266,13 +266,12 @@ prompts are self-contained tasks.
 
 <br>
 
-1. Project **`AGENTS.md`**, and only for an exception it names explicitly
-2. **`standards/Clean-Code/`**, the craft source of truth
-3. **`skills/engineering/uncle-bob/SKILL.md`**, the methodology
-4. Other `skills/*` and **`standards/Principles.md`**
-
-An agent that hits contradictory advice needs a rule to follow, otherwise it invents a
-preference and you get a different answer every session.
+1. Your project **`AGENTS.md`**, and only for an exception it names explicitly
+2. **`standards/Clean-Code/`**, your craft source of truth
+3. **`skills/engineering/uncle-bob/SKILL.md`**, your methodology
+4. Your other `skills/*` and **`standards/Principles.md`**
+Your agent hits contradictory advice. It needs a rule to follow. Otherwise it invents a
+preference. You get a different answer every session.
 
 </details>
 
@@ -280,22 +279,22 @@ preference and you get a different answer every session.
 
 ## Prompts vs skills
 
-Two ways to deliver guidance, and the difference is who decides when it fires.
+You have two ways to deliver guidance. The difference is who decides when it fires for you.
 
 |  | `prompts/` | `skills/` and `design/` |
 |---|---|---|
-| **How you use it** | Paste into chat, deliberately | Install once, it triggers itself |
-| **Frontmatter** | Optional | `name` plus a `description` full of trigger phrases |
-| **Best for** | One-off tasks with a clear start and end | Standing rules that should apply without you remembering |
+| **How you use it** | You paste into chat, deliberately | You install once. It triggers itself for you |
+| **Frontmatter** | Optional for you | Your `name` plus a `description` full of trigger phrases |
+| **Best for** | One-off tasks with a clear start and end for you | Standing rules that should apply without you remembering |
 
-Every review and audit prompt obeys [`skills/review/audit/SKILL.md`](skills/review/audit/SKILL.md): explicit scope,
-`report-only` by default, no silent full-repo rewrite, and verify commands discovered from
-your project rather than invented.
+Every review and audit prompt obeys [`skills/review/audit/SKILL.md`](skills/review/audit/SKILL.md) for you. It demands explicit scope. It stays
+`report-only` by default. No silent full-repo rewrite. You verify with commands discovered from
+your project, never invented.
 
 ### Installing the skills
 
-Every skill is already a folder holding a `SKILL.md`, named the way Claude Code expects.
-Copy the folder and you are done:
+Every skill is already a folder holding a `SKILL.md` for you, named the way Claude Code expects.
+You copy the folder and you are done:
 
 ```bash
 cp -r skills/review/audit .claude/skills/

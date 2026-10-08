@@ -1,8 +1,8 @@
 # TypeScript Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open the rest only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project. Do not invent a toolchain. You work with what your team already uses.
 
-Clean structure for your TypeScript applications. You will thank yourself for it.
+You want a clean structure for your TypeScript applications. You set it up now. You thank yourself later when your team can still read your code.
 
 ---
 
@@ -21,25 +21,23 @@ project/
 └── tsconfig.json
 ```
 
-Organize `src/` by **domain**, not by type, once it grows. A `users/` folder holding
-its own logic, API calls, and types beats parallel `lib/` / `api/` trees you have to
-jump between. You keep it flat until that hurts. Why split what still fits together?
+You organize `src/` by **domain**, not by type, once it grows. A `users/` folder holding its own logic, API calls, and types beats parallel `lib/` / `api/` trees you have to jump between. You keep it flat until that hurts. Why split what still fits together? You split when your team feels the pain.
 
 ---
 
 ## Principles
 
 **Type everything**
-You use TypeScript's type system fully. An untyped boundary is a lie you tell your team.
+You use the type system fully. An untyped boundary is a lie you tell your team. You do not ship lies.
 
 **Single responsibility**
-Each module does one thing well. If it does two, you split it.
+Each module does one thing well. If it does two, you split it. You keep each piece honest.
 
 **Explicit dependencies**
-You import what you need. No globals. Globals hide who depends on what.
+You import what you need. No globals. Globals hide who depends on what. You make your debts visible.
 
 **Strict mode**
-You enable all strict checks. No shortcuts. Shortcuts bill you later.
+You enable all strict checks. No shortcuts. Shortcuts bill you later. Would you rather pay now or pay more later?
 
 ---
 
@@ -81,17 +79,13 @@ function isValidAge(age: number): boolean {
 }
 ```
 
-> `crypto.randomUUID()` is collision-free and available in Node 19+, Bun, Deno, and
-> browsers. Never mint ids with `Date.now()`, two calls in the same millisecond
-> collide. In a real app the database (or `ulid`/`uuid`) usually owns id generation.
+> `crypto.randomUUID()` is collision-free and it runs in Node 19+, Bun, Deno, and browsers. Never mint ids with `Date.now()`. Two calls in the same millisecond collide. In a real app your database (or `ulid`/`uuid`) usually owns id generation. You let the right owner make the id.
 
 ---
 
 ## API Layer
 
-The base URL comes from your typed config (see [Configuration](#configuration)), you never
-hard-code a host. Your errors carry the operation and status so a 3 a.m. log tells you what broke
-(`../standards/Principles.md` §5.3). Will you remember the context six months from now? Your log should.
+Your base URL comes from your typed config (see [Configuration](#configuration)). You never hard-code a host. Your errors carry the operation and status so a 3 a.m. log tells you what broke (`../standards/Principles.md` §5.3). Will you remember the context six months from now? Your log should. You write it for your tired self.
 
 **api/users.ts**
 ```typescript
@@ -130,9 +124,7 @@ export async function deleteUser(id: string): Promise<void> {
 }
 ```
 
-One `request` helper wraps `fetch` so the URL, error shape, and JSON parsing live in
-one place. When you add auth headers or a retry later, you edit a single function, not
-three. That is the whole point.
+One `request` helper wraps `fetch` so the URL, error shape, and JSON parsing live in one place. When you add auth headers or a retry later, you edit a single function, not three. That is the whole point. You fix it once. Your team thanks you.
 
 ---
 
@@ -140,9 +132,7 @@ three. That is the whole point.
 
 **Try-catch for async operations**
 
-You branch on your own error types. Your typed `ApiError` and `ValidationError` carry
-enough for you to react differently. You translate them into a user-facing message at the boundary
-(see `skills/engineering/errors/SKILL.md` for the what/why/action rules).
+You branch on your own error types. Your typed `ApiError` and `ValidationError` carry enough for you to react differently. You translate them into a user-facing message at the boundary (see `skills/engineering/errors/SKILL.md` for the what/why/action rules). You never show your insides to your user.
 
 ```typescript
 import { ApiError } from '../api/users';
@@ -218,7 +208,7 @@ function handle(result: Result) {
 
 ## Naming
 
-These conventions match the wider ecosystem and `../standards/Principles.md` §1. You follow them so your team reads your code without friction.
+These conventions match the wider ecosystem and `../standards/Principles.md` §1. You follow them so your team reads your code without friction. You remove one small tax your readers would pay.
 
 ```typescript
 // Types & interfaces, PascalCase nouns
@@ -240,10 +230,10 @@ const MAX_RETRIES = 3;
 // user-service.ts, api-client.ts
 ```
 
-- **No `I` prefix on interfaces** (`User`, not `IUser`), your ecosystem dropped it.
-- **No Hungarian notation** (`strName`, `bActive`). Your type system already knows.
-- **Domain words over generic ones**, `order`, not `data`; `notify`, not `handler`.
-  See `skills/engineering/craft/SKILL.md` for naming and comment quality. Name it for what it means to your team.
+- **No `I` prefix on interfaces** (`User`, not `IUser`). Your ecosystem dropped it. You drop it too.
+- **No Hungarian notation** (`strName`, `bActive`). Your type system already knows. You trust it.
+- **Domain words over generic ones**, `order`, not `data`. `notify`, not `handler`.
+  See `skills/engineering/craft/SKILL.md` for naming and comment quality. Name it for what it means to your team. Your names teach your readers.
 
 ---
 
@@ -276,9 +266,7 @@ test('throws on invalid age', () => {
 
 **Environment config, parse once, at the boundary**
 
-Read every env var in one place, validate it, and export a typed object. The rest of
-your app imports `config` and trusts it. You put no `process.env.FOO` scattered through your
-codebase, no `string | undefined` to guard at every use (`../standards/Principles.md` §15.1).
+Read every env var in one place, validate it, and export a typed object. The rest of your app imports `config` and trusts it. You put no `process.env.FOO` scattered through your codebase. You leave no `string | undefined` to guard at every use (`../standards/Principles.md` §15.1). You do the hard work once at the edge.
 
 **src/config.ts**
 ```typescript
@@ -297,15 +285,14 @@ export const config = {
 } as const;
 ```
 
-**.env.example** (commit this; the real `.env` is gitignored)
+**.env.example** (commit this. The real `.env` is gitignored)
 ```
 API_URL=http://localhost:3000
 PORT=3000
 DEBUG=false
 ```
 
-Fail fast on startup if a required var is missing. A clear boot error beats a
-`fetch(undefined)` deep in your request handler. Would you rather find out at boot or from your users?
+You fail fast on startup if a required var is missing. A clear boot error beats a `fetch(undefined)` deep in your request handler. Would you rather find out at boot or from your users? You want the machine to tell you early.
 
 **tsconfig.json**
 ```json
@@ -330,41 +317,36 @@ Fail fast on startup if a required var is missing. A clear boot error beats a
 
 ## Summary
 
-You type everything with TypeScript.
-You keep your modules small and focused.
-You keep your business logic separate from presentation.
-You use strict mode, no shortcuts.
-You handle your errors explicitly. That is your discipline.
+You type everything with TypeScript. You keep your modules small and focused. You keep your business logic separate from presentation. You use strict mode and you allow no shortcuts. You handle your errors explicitly. That is your discipline. Your team can see it in your code.
 
 ---
 
 ## Project Prompt
 
-You write TypeScript against the structure and rules above. Where they disagree with your
-defaults, this file wins.
+You write TypeScript against the structure and rules above. Where they disagree with your defaults, this file wins. Listen. Your defaults do not matter here. This contract does.
 
-You read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting. You ground yourself first. Then you build.
 
 **Type Safety**
-- You type everything, no `any`
-- You use interfaces for contracts
-- You keep strict mode enabled
-- You use discriminated unions for state
+- You type everything, no `any`. You say what you mean.
+- You use interfaces for contracts. Your team codes against promises, not guesses.
+- You keep strict mode enabled. You let the compiler catch you early.
+- You use discriminated unions for state. You make impossible states unrepresentable.
 
 **Error Handling**
-- You use custom error classes for domain errors (carry context: operation, status, ids)
-- You use try-catch for async operations
-- You never swallow errors silently
+- You use custom error classes for domain errors (carry context: operation, status, ids). You give your caller what they need to act.
+- You use try-catch for async operations. You face failure where it happens.
+- You never swallow errors silently. Hiding a failure is lying to your team.
 
 **Configuration**
-- You parse and validate all env vars once in `config.ts`, exported typed
-- You fail fast on a missing required var; no `process.env` reads elsewhere
-- You commit `.env.example`, your real `.env` stays gitignored
+- You parse and validate all env vars once in `config.ts`, exported typed. You do it once at the edge.
+- You fail fast on a missing required var. You allow no `process.env` reads elsewhere. One source keeps you sane.
+- You commit `.env.example`, your real `.env` stays gitignored. You show the shape. You hide the secrets.
 
 **Testing**
-- You write unit tests for all business logic
-- You mock external dependencies
-- You test all error paths
+- You write unit tests for all business logic. You prove your rules hold.
+- You mock external dependencies. You test your code, not the network.
+- You test all error paths. Your failures get the same care as your happy path.
 
 ### Setup
 
@@ -377,26 +359,26 @@ npx tsc --init
 
 ### Deliverables
 
-1. Complete project following architecture structure above
-2. Type-safe modules with interfaces
-3. Business logic separated from I/O
-4. Typed, validated `config.ts` + `.env.example`
-5. Custom error classes that carry operation, status, and ids
-6. README with setup instructions
-7. Basic test suite. You prove your code works.
+1. Complete project following architecture structure above. You show the whole shape working.
+2. Type-safe modules with interfaces. Your contracts are plain to read.
+3. Business logic separated from I/O. Your rules do not know about the wire.
+4. Typed, validated `config.ts` + `.env.example`. Your settings come from one trusted place.
+5. Custom error classes that carry operation, status, and ids. Your failures explain themselves.
+6. README with setup instructions. Your teammate can boot it without asking you.
+7. Basic test suite. You prove your code works. That is your craft.
 
 ### Validation Checklist
 
-- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed; env examples use placeholders only
-- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] No `any` types
-- [ ] You type all function signatures
-- [ ] Custom error classes for domain errors
-- [ ] No hard-coded hosts/URLs, all config via `config.ts`
-- [ ] You generate ids with `crypto.randomUUID()` / DB, never `Date.now()`
-- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] TypeScript compiles with no errors
+- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed). You do not claim a green build you never ran.
+- [ ] No secrets committed. Env examples use placeholders only. You keep real keys out of history.
+- [ ] Your functions are small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md). One job keeps you honest.
+- [ ] No `any` types. You say what you take and what you return.
+- [ ] You type all function signatures. You leave nothing vague at the edge.
+- [ ] Custom error classes for domain errors. Your errors teach your caller.
+- [ ] No hard-coded hosts/URLs, all config via `config.ts`. Your code runs anywhere your config points it.
+- [ ] You generate ids with `crypto.randomUUID()` / DB, never `Date.now()`. You do not risk a collision.
+- [ ] Your names match domain and local convention (skills/engineering/craft/SKILL.md). Your team hears its own language.
+- [ ] TypeScript compiles with no errors. You ship a clean build.
 
 ### Pre-Delivery
 

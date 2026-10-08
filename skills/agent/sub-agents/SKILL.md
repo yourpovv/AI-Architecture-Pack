@@ -16,31 +16,33 @@ description: >
 
 ## The frame: delegation does not reduce tokens
 
-Every sub-agent starts cold and re-derives context the parent already holds, so a
+Every sub-agent starts cold and re-derives context your parent already holds, so a
 fan-out almost always spends **more** raw tokens than doing the work inline. What
-delegation actually buys is parallelism, independence from a polluted context, and
-the option to run cheap work on a cheap model.
+delegation actually buys you is parallelism, independence from a polluted context, and
+the option to run cheap work on a cheap model. You pay extra tokens to buy those three.
 
-Usage limits are weighted by model cost, so the saving comes from **routing**, not
+Usage limits are weighted by model cost, so your saving comes from **routing**, not
 from delegating. Anyone who reports large savings from a delegation policy is
 reporting the effect of moving bulk work down a tier. If you delegate rarely, this
-file saves you nothing.
+file saves you nothing. That is honest math.
 
 ## Never spawn unprompted
 
-Sub-agents cost real money and real wall-clock time, and their output lands without
-the human having seen the plan. Do not fan out because a task "looks parallel".
+Sub-agents cost your real money and your real wall-clock time, and their output lands without
+the human having seen the plan. Do not fan out because a task "looks parallel". That is laziness,
+not craft.
 
 Delegate when the human asked for it. Otherwise propose it in one or two sentences
 (the shape, and roughly what it costs) and wait for a yes. A task with several parts,
-or one described as "thorough", is not a delegation trigger. Handle it inline.
+or one described as "thorough", is not a delegation trigger. You handle it inline. You own it.
 
 ## Set the model on every call
 
 Every delegated call sets its model parameter **explicitly**. Omitting it silently
 inherits the parent session model, so one expensive session quietly spawns a fleet
 of expensive agents. That single omission is the most common source of runaway cost
-in agent work, and it is invisible until the bill arrives.
+in agent work, and it is invisible until the bill arrives. You set the model every time. No
+exceptions.
 
 ## Tier table
 
@@ -51,19 +53,21 @@ in agent work, and it is invisible until the bill arrives.
 | Top (e.g. Opus) | Genuinely hard: concurrency, subtle algorithms, gnarly debugging, adversarial verification |
 | Independent (e.g. Fable) | Rare. Only when independence from the parent's context is the point, such as reviewing the parent's own plan or a large diff. Ask first, every time |
 
-Model names differ per harness and change over time. Map the harness to these tiers
-rather than hard-coding a name this pack cannot guarantee still exists.
+Model names differ per harness and change over time. You map the harness to these tiers
+rather than hard-coding a name this pack cannot guarantee still exists. Your tiers survive. Names
+do not.
 
 **When unsure between two tiers, pick the cheaper one and escalate on failure.** A
-failed cheap attempt costs less than a needless expensive one, and the failure
-usually sharpens the brief for the retry.
+failed cheap attempt costs you less than a needless expensive one, and the failure
+usually sharpens your brief for the retry. Cheap first is professional discipline.
 
 ## Brief quality beats tier
 
 A vague brief on an expensive model is worse value than a sharp brief on a cheap
-one. Before reaching for a higher tier, check whether the task is genuinely hard or
+one. Before reaching for a higher tier, you check whether your task is genuinely hard or
 merely under-specified. Acceptance criteria, exact file paths, and a stated
-definition of done move work **down** a tier more reliably than any model upgrade.
+definition of done move your work **down** a tier more reliably than any model upgrade. Clarity
+beats horsepower.
 
 ## When not to delegate at all
 
@@ -78,9 +82,9 @@ definition of done move work **down** a tier more reliably than any model upgrad
 
 ## Brief like the agent has never met you
 
-It has not. A sub-agent sees none of the conversation, none of the decisions you
+It has not. A sub-agent sees none of your conversation, none of the decisions you
 already made, and none of the constraints the human stated an hour ago. Every brief
-is self-contained or the work comes back wrong:
+you write is self-contained or the work comes back wrong. You give it everything it needs.
 
 - Exact file paths, not descriptions of where the code probably lives
 - The specific change, not the goal it serves
@@ -88,57 +92,60 @@ is self-contained or the work comes back wrong:
 - The verify command to run, taken from the project rather than invented
 - The commit policy, stated explicitly
 
-A sharp brief is also what moves work **down** a tier. Most tasks that seem to need
-an expensive model are just under-specified.
+A sharp brief is also what moves your work **down** a tier. Most tasks that seem to need
+an expensive model are just under-specified. Have you written down what done looks like. If not,
+you are not ready to delegate.
 
 ## Commit authority
 
-Default: **the sub-agent does not commit.** The parent session owns staging and
+Default: **the sub-agent does not commit.** Your parent session owns staging and
 commits, because the parent is the only one that can see whether the change is
-actually finished.
+actually finished. You keep that authority close.
 
 One exception. An agent that is the sole writer in its own worktree, working through
-several sequential tasks, can be told to commit atomically as it goes. Never grant
+several sequential tasks, can be told to commit atomically as it goes. You never grant
 that to parallel agents sharing a worktree. Two agents staging into one index produce
-commits that contain each other's half-finished work.
+commits that contain each other's half-finished work. That is a mess you will own at midnight.
 
-Fan out only when the work partitions cleanly by file, with no overlapping writes. If
-two agents need to touch the same file, that is one task, not two.
+You fan out only when the work partitions cleanly by file, with no overlapping writes. If
+two agents need to touch the same file, that is one task, not two. You keep it inline.
 
 ## Verify before you accept
 
 Never take a sub-agent's self-report as done. Agents report success on work that does
-not compile, and they report it confidently.
+not compile, and they report it confidently. You trust your eyes, not their confidence.
 
-Read the actual diff. Run the project's verify gate. Check the acceptance criteria you
-wrote. Only then is the work accepted. If you granted commit authority, review
-`git log -p` across its range and run the gate before treating any of it as finished.
+You read the actual diff. You run the project's verify gate. You check the acceptance criteria you
+wrote. Only then is the work accepted. If you granted commit authority, you review
+`git log -p` across its range and run the gate before treating any of it as finished. That is your
+professional pride on the line.
 
 ## If you are the expensive tier
 
 When you are the most costly model in the session, your comparative advantage is
-decomposition, judgement, verification, and integration. Spend your tokens there and
-route execution down.
+decomposition, judgement, verification, and integration. You spend your tokens there and
+you route execution down. That is how you serve your team best.
 
-Keep for yourself: planning, architecture, judgement calls, resolving ambiguity with
+You keep for yourself: planning, architecture, judgement calls, resolving ambiguity with
 the human, and final acceptance. A context-free agent on your own tier doing those
-costs the same and decides worse.
+costs the same and decides worse. Why pay for worse judgment. You do the thinking.
 
 This is a default with criteria, not an absolute. Understanding a codebase, answering
-a question, or making a small edit is still faster done directly.
+a question, or making a small edit is still faster done directly by you.
 
 ## Reporting back
 
-A sub-agent's report is not shown to the human. Relay what matters, in your own
-words, including anything the agent failed to do. Never present a pending agent's
-results as finished, and never invent what a running agent is likely to find.
+A sub-agent's report is not shown to the human. You relay what matters, in your own
+words, including anything the agent failed to do. You never present a pending agent's
+results as finished, and you never invent what a running agent is likely to find. Honesty is your
+craft.
 
-**Cap what comes back.** Ask for findings, not transcripts. An uncapped agent
-returns everything it read, that report lands in the parent's context, and the
+**Cap what comes back.** You ask for findings, not transcripts. An uncapped agent
+returns everything it read, that report lands in your parent's context, and your
 parent then re-reads it on every turn for the rest of the session. Output is the
-most expensive token there is, and a sub-agent's output becomes the parent's input
-forever. Tell it where to leave the full evidence on disk and what to summarize.
-See [`../context-budget/SKILL.md`](../context-budget/SKILL.md).
+most expensive token there is, and a sub-agent's output becomes your parent's input
+forever. You tell it where to leave the full evidence on disk and what to summarize.
+See [`../context-budget/SKILL.md`](../context-budget/SKILL.md). Your future self will thank you.
 
 ## Orchestrated workflows
 

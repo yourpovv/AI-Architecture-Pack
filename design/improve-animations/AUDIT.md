@@ -1,10 +1,10 @@
 # Animation Audit Playbook
 
-Here are your eight audit categories. You will learn what to check in each one, and the exact target values you will cite in your findings and plans. This is distilled from Emil Kowalski's design engineering philosophy ([emilkowal.ski](https://emilkowal.ski/)). Listen. Never approximate a value you find here — copy it.
+Here are your eight audit categories. You will learn what to check in each one. You will cite the exact target values in your findings and plans. This comes from Emil Kowalski's design engineering philosophy ([emilkowal.ski](https://emilkowal.ski/)). Listen. Never guess at a value you find here. Copy it.
 
 ## 1. Purpose & frequency
 
-Ask this of every animation you wrote: why does this animate? You owe your user a straight answer — spatial consistency, state indication, feedback, explanation, or preventing a jarring change. "It looks cool" on an element you see all day is not a purpose.
+Ask this of every animation you wrote: why does this animate. You owe your user a straight answer. That means spatial consistency, state indication, feedback, explanation, or preventing a jarring change. "It looks cool" on an element you see all day is not a purpose.
 
 | Frequency | Decision |
 | --- | --- |
@@ -13,19 +13,19 @@ Ask this of every animation you wrote: why does this animate? You owe your user 
 | Occasional (modals, drawers, toasts) | Standard animation |
 | Rare / first-time (onboarding, feedback, celebrations) | Can add delight |
 
-Look for this in your work: animations on keyboard-initiated actions, command palettes with open/close transitions (Raycast has none — and that is correct), decorative motion on list items or hover states your user hits constantly. Ask yourself what the honest fix is. Often the strongest fix is **delete the animation**.
+Look for this in your work. Watch for animations on keyboard actions. Watch for command palettes with open and close transitions. Raycast has none, and that is correct. Watch for decorative motion on list items or hover states your user hits all day. Ask what the honest fix is. Often the strongest fix is **delete the animation**.
 
 ## 2. Easing & duration
 
-Settle easing in this order. Ask what the element is doing, then pick:
+Settle easing in this order. Ask what the element is doing. Then pick:
 
-- Entering or exiting → **`ease-out`** (it starts fast, so your user feels a quick response)
+- Entering or exiting → **`ease-out`** (it starts fast, so your user feels the response right away)
 - Moving / morphing on screen → **`ease-in-out`** (you stay steady through the middle of the move)
-- Hover / color change → **`ease`** (small change, plain curve is enough)
-- Constant motion (marquee, progress) → **`linear`** (your user expects no surprise in steady motion)
-- Default → **`ease-out`** (when in doubt, be responsive)
+- Hover / color change → **`ease`** (small change, a plain curve is enough)
+- Constant motion (marquee, progress) → **`linear`** (your user expects steady motion with no surprises)
+- Default → **`ease-out`** (when in doubt, stay responsive)
 
-Treat **`ease-in` on UI as always a finding** — it starts slow, and it stalls at the exact moment your user is watching. The built-in CSS easings are too weak for deliberate motion. Your plans should introduce strong custom curves as tokens, matching your repo conventions:
+Treat **`ease-in` on UI as always a finding**. It starts slow. It stalls at the exact moment your user is watching. The built-in CSS easings are too weak for deliberate motion. Your plans should introduce strong custom curves as tokens. Match your repo conventions:
 
 ```css
 --ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* strong ease-out for UI */
@@ -33,7 +33,7 @@ Treat **`ease-in` on UI as always a finding** — it starts slow, and it stalls 
 --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);     /* iOS-like drawer curve */
 ```
 
-Your duration budgets — **UI animations stay under 300ms**. Respect what your user will sit through:
+Your duration budgets are firm. **UI animations stay under 300ms**. Respect what your user will sit through:
 
 | Element | Duration |
 | --- | --- |
@@ -43,28 +43,28 @@ Your duration budgets — **UI animations stay under 300ms**. Respect what your 
 | Modals, drawers | 200–500ms |
 | Marketing / explanatory | Can be longer |
 
-Look for this in your work: `ease-in` anywhere, bare `ease`/`linear` on entrances, durations over 300ms on UI elements, tooltip delay plus animation on every tooltip in a toolbar. After the first one, your user wants them instant.
+Look for this in your work. Look for `ease-in` anywhere. Look for bare `ease`/`linear` on entrances. Look for durations over 300ms on UI elements. Look for tooltip delay plus animation on every tooltip in a toolbar. After the first one, your user wants them instant.
 
 ## 3. Physicality & origin
 
-- **Never `scale(0)`** — nothing in the real world comes from nothing. Your target is `scale(0.9–0.97)` + `opacity: 0`.
+- **Never `scale(0)`**. Nothing real comes from nothing. Your target is `scale(0.9–0.97)` + `opacity: 0`.
 - **Popovers/dropdowns/tooltips scale from their trigger**, not from center:
   ```css
   .popover { transform-origin: var(--transform-origin); } /* Base UI */
   ```
-  **Modals are exempt** — they appear centered, so `transform-origin: center` is correct there. Do not report it.
-- **Press feedback**: `transform: scale(0.97)` on `:active` with `transition: transform 160ms ease-out`. Keep it subtle for your user (0.95–0.98).
+  **Modals are exempt**. They appear centered, so `transform-origin: center` is correct there. Do not report it.
+- **Press feedback**: `transform: scale(0.97)` on `:active` with `transition: transform 160ms ease-out`. Keep it subtle for your user (0.95 to 0.98).
 
-Look for this in your work: `scale(0)`, pure-fade entrances with no initial transform, `transform-origin: center` (or none) on trigger-anchored elements, pressable elements with no press feedback for your user.
+Look for this in your work. Look for `scale(0)`. Look for pure-fade entrances with no initial transform. Look for `transform-origin: center` (or none) on trigger-anchored elements. Look for pressable elements with no press feedback for your user.
 
 ## 4. Interruptibility
 
-CSS **transitions** retarget from where you are mid-animation. **Keyframes** restart you from zero. So anything your user triggers rapidly or reverses mid-motion (toasts stacking, toggles, drags, expand/collapse) must use transitions or springs.
+CSS **transitions** retarget from where you are mid-animation. **Keyframes** restart you from zero. So anything your user triggers fast or reverses mid-motion needs transitions or springs. Think toasts stacking, toggles, drags, expand/collapse.
 
-- Entry without JS means `@starting-style` (legacy fallback: a `data-mounted` attribute set in `useEffect`).
-- Gesture-driven motion should use springs — they carry your velocity when you interrupt them.
-- Spring configs, Apple-style (recommended): `{ type: "spring", duration: 0.5, bounce: 0.2 }`. Keep bounce subtle for your user (0.1–0.3); save visible bounce for drag-to-dismiss and playful moments.
-- **Asymmetric timing**: your deliberate phases (press, hold, destructive confirm) animate slower, then the system's response snaps. Symmetric timing on press-and-release is a finding. Why? Your user decides slowly and expects the machine to answer fast.
+- Entry without JS means `@starting-style` (legacy fallback is a `data-mounted` attribute set in `useEffect`).
+- Gesture-driven motion should use springs. They carry your velocity when you interrupt them.
+- Spring configs, Apple-style (recommended): `{ type: "spring", duration: 0.5, bounce: 0.2 }`. Keep bounce subtle for your user (0.1 to 0.3). Save visible bounce for drag-to-dismiss and playful moments.
+- **Asymmetric timing**: your deliberate phases (press, hold, destructive confirm) animate slower, then the system answers fast. Symmetric timing on press-and-release is a finding. Why? Your user decides slowly and expects the machine to answer fast.
 
 Look for this in your work: `@keyframes` on toasts/toggles/rapidly-triggered UI, gesture handlers that tween with fixed-duration keyframes, drags without velocity-based dismissal (dismiss on `Math.abs(distance)/elapsedMs > ~0.11`, not distance thresholds alone), hard stops at drag boundaries instead of rising friction for your user.
 

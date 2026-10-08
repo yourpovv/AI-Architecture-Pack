@@ -1,10 +1,10 @@
 # Shape
 
-Discover what should be made and how it should work, then return a confirmed design brief without code.
+You discover what should be made and how it should work. Then you return a confirmed design brief with no code. Why no code yet? You owe your user a clear plan before you spend their time building.
 
 ## Phase 1: Discovery interview
 
-Do not write code or choose visual direction yet.
+You write no code yet. You choose no visual direction yet.
 
 ### Cadence
 

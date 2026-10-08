@@ -1,8 +1,8 @@
 # Bun / Node.js Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project; do not invent a toolchain.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open the rest only when your task needs them. Read project `AGENTS.md` if present. For reviews use `skills/review/audit/SKILL.md` (scope + mode). For naming/comments use `skills/engineering/craft/SKILL.md` (not detector scoring). Extend an existing repo instead of scaffolding a parallel tree. Discover verify commands from the project. Do not invent a toolchain. You work with what your team already uses.
 
-You need a clean structure for your server-side JavaScript/TypeScript applications. Without it, your team hunts for code instead of reading it.
+You need a clean structure for your server-side JavaScript and TypeScript applications. Without it, your team hunts for code instead of reading it. You set the shape early. Your team moves fast inside it.
 
 ---
 
@@ -26,16 +26,16 @@ project/
 ## Principles
 
 **Async/await everywhere**
-No callbacks. You use promises with async/await. Your callers should read your flow top to bottom.
+No callbacks. You use promises with async and await. Your callers should read your flow top to bottom. Straight lines are easier to trust.
 
 **Single responsibility**
-Each module does one thing well. If it does two, you split it.
+Each module does one thing well. If it does two, you split it. You keep each piece small enough to hold in your head.
 
 **Explicit dependencies**
-You import what you need. No globals. Globals hide who depends on what.
+You import what you need. No globals. Globals hide who depends on what. You make the wiring plain.
 
 **Type safety**
-You use TypeScript for your production apps. The compiler catches what your eyes miss.
+You use TypeScript for your production apps. The compiler catches what your eyes miss. You let it do that work for you.
 
 ---
 
@@ -340,9 +340,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
 ## Configuration
 
-You parse and validate every env var once with Zod, you export a typed `config`, and you import
-that everywhere. You never read `process.env` deep in your app (`../standards/Principles.md` §15.1).
-A missing or malformed var fails loudly at boot, not mid-request. Listen. Would you rather crash on boot or fail on a user?
+You parse and validate every env var once with Zod. You export a typed `config` and you import that everywhere. You never read `process.env` deep in your app (`../standards/Principles.md` §15.1). A missing or malformed var fails loudly at boot, not mid-request. Listen. Would you rather crash on boot or fail on a user? You want the fast and loud failure.
 
 **src/config.ts**
 ```typescript
@@ -506,44 +504,38 @@ describe('UserService', () => {
 
 ## Summary
 
-You use async/await for all async operations.
-You keep your routes thin, your logic in services.
-You handle your errors explicitly.
-You use TypeScript for type safety.
-You test your services and routes.
-You keep your functions small and focused. That is your craft.
+You use async and await for all async operations. You keep your routes thin and you keep your logic in services. You handle your errors explicitly. You use TypeScript for type safety. You test your services and routes. You keep your functions small and focused. That is your craft. Your team reads it in your code.
 
 ---
 
 ## Project Prompt
 
-You build an HTTP API on Bun or Node against the structure and rules above. Where they
-disagree with your defaults, this file wins.
+You build an HTTP API on Bun or Node against the structure and rules above. Where they disagree with your defaults, this file wins. Your habits yield to this contract.
 
-You read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before starting. You ground yourself first. Then you build.
 
 **Architecture**
-- You follow the exact structure defined above
-- Strict separation: routes → services → data access. You respect the direction.
-- No business logic in routes
-- You inject all dependencies explicitly
+- You follow the exact structure defined above. You do not improvise a second shape.
+- Strict separation: routes → services → data access. You respect the direction. Your calls point one way.
+- No business logic in routes. Your routes handle the wire. Nothing more.
+- You inject all dependencies explicitly. Your wiring stays visible.
 
 **Security**
-- You validate all input in middleware
-- You never trust client data
-- Environment variables for secrets
-- Rate limiting
-- You don't leak internals in error responses. Your users should see a message, not your stack.
+- You validate all input in middleware. You catch bad data at the door.
+- You never trust client data. Why would you trust a machine you do not control?
+- Environment variables for secrets. You keep keys out of your code.
+- Rate limiting. You protect your service from floods.
+- You don't leak internals in error responses. Your users should see a message, not your stack. You give them help, not your insides.
 
 **Error Handling**
-- Custom error classes for different scenarios
-- Central error middleware
-- Proper HTTP status codes. They mean something to your callers.
+- Custom error classes for different scenarios. Your errors name the problem.
+- Central error middleware. One place owns the response.
+- Proper HTTP status codes. They mean something to your callers. You honor that contract.
 
 **Testing**
-- Unit tests for all services
-- Integration tests for routes
-- You mock external dependencies
+- Unit tests for all services. You prove your rules hold.
+- Integration tests for routes. You prove the wire works.
+- You mock external dependencies. You test your code, not the network.
 
 ### Setup
 
@@ -555,29 +547,29 @@ bun add -d @types/express
 
 ### Deliverables
 
-1. Complete project following architecture structure above
-2. All routes, services, repositories
-3. Database connection with proper pooling
-4. Authentication middleware
-5. Input validation using Zod
-6. Error handling middleware
-7. Environment configuration
-8. README with setup instructions
-9. Basic test suite
+1. Complete project following architecture structure above. You show the whole shape working.
+2. All routes, services, repositories. Each layer does its own job.
+3. Database connection with proper pooling. You share connections with care.
+4. Authentication middleware. You know who calls you.
+5. Input validation using Zod. You reject bad data early.
+6. Error handling middleware. One place shapes your failures.
+7. Environment configuration. Your settings come from one trusted place.
+8. README with setup instructions. Your teammate boots it without asking you.
+9. Basic test suite. You prove your code works.
 
 ### Validation Checklist
 
-- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed; env examples use placeholders only
-- [ ] Your functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] No nested conditionals beyond one level
-- [ ] You inject all dependencies
-- [ ] No comments explaining what code does
-- [ ] Your names match domain language and local convention (skills/engineering/craft/SKILL.md); no empty Manager/Handler/Processor stacks without a reason
-- [ ] You handle all errors properly
-- [ ] Input validation on all routes
-- [ ] You follow SOLID principles
-- [ ] Your code reads like prose. Can your teammate read it aloud?
+- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed). You do not claim a green build you never ran.
+- [ ] No secrets committed. Env examples use placeholders only. You keep real keys out of history.
+- [ ] Your functions are small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md). One job keeps you honest.
+- [ ] No nested conditionals beyond one level. You flatten your logic.
+- [ ] You inject all dependencies. Your wiring stays plain to see.
+- [ ] No comments explaining what code does. Your code says it plainly.
+- [ ] Your names match domain language and local convention (skills/engineering/craft/SKILL.md). No empty Manager, Handler, or Processor stacks without a reason. You name what it is.
+- [ ] You handle all errors properly. You face each failure.
+- [ ] Input validation on all routes. You guard every door.
+- [ ] You follow SOLID principles. You keep your design clean.
+- [ ] Your code reads like prose. Can your teammate read it aloud? That is your test.
 
 ### Pre-Delivery
 

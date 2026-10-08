@@ -2,34 +2,34 @@
 
 > This is your tech-stack-agnostic handbook. It covers my Clean Code, the SOLID principles,
 > Clean Architecture, DRY/KISS/YAGNI, testing, concurrency, security, and the habits
-> that separate code you are proud of from code you regret. Drop it into any project you own.
+> that separate code you are proud of from code you regret. You can drop it into any project you own. You will need it there.
 
-You keep it short where your rule is obvious, longer where the nuance matters.
-When two principles conflict, **clarity wins**.
+You keep your rule short where it is obvious. You write longer where the nuance matters for your reader.
+When two principles conflict, **clarity wins**. You choose the reading your teammate will grasp.
 
 ### Mandatory lesson standards (authoritative for craft)
 
-**Your day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md) — **60 detailed
-Uncle Bob / clean-code lessons** (side effects, naming, errors, comments, DRY, Demeter, CQS, …).
+**Your day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md). That is **60 detailed
+Uncle Bob / clean-code lessons** (side effects, naming, errors, comments, DRY, Demeter, CQS, …). You answer to them in your daily work.
 
 - For naming, functions, comments, null, exceptions, structure: open the matching
-  `Clean-Code/` lesson file for your task (flat `NN-*.md` or one from the grouped folders). **That file wins** over anything below in this handbook.
+  `Clean-Code/` lesson file for your task (flat `NN-*.md` or one from the grouped folders). **That file wins** over anything below in this handbook. You obey it.
 - This `Principles.md` handbook covers **SOLID, architecture, testing, security,
   concurrency**, and philosophy. Where a section here restates your craft rules, it is a
-  **summary only** — if the wording drifts, you fix this file toward `Clean-Code/`, not the reverse.
-- Your skills (`Errors.md`, `NecessaryComments.md`, `Craft.md`) are subordinate the same way.
+  **summary only**. If the wording drifts, you fix this file toward `Clean-Code/`, not the reverse. You never bend `Clean-Code/` to fit this handbook.
+- Your skills (`Errors.md`, `NecessaryComments.md`, `Craft.md`) are subordinate the same way. You hold them below your craft rules.
 
 ---
 
 ## Agent load policy (read this first)
 
-This file is a **reference handbook**, not your default agent context.
+This file is a **reference handbook**, not your default agent context. You keep it on your shelf until you need it.
 
-- **Do not** load the whole document into your session by default. It is long on purpose.
-- **Do** open the **one section** that matches your task (names, functions, errors, SOLID, testing, security, etc.).
-- Prefer your project `AGENTS.md`, `standards/Clean-Code/` (one lesson), `skills/review/audit/SKILL.md`, and `skills/engineering/errors/SKILL.md` for your day-to-day work.
-- The examples below use Java-like or web-flavored snippets as illustrations only. They are not your required stack. You translate the rule to the language in your current repo.
-- Your project facts (owned code, secrets, verify commands) never live here. They live in your project's tracked agent contract and README.
+- **Do not** load the whole document into your session by default. It is long on purpose. You would waste attention you need for your code.
+- **Do** open the **one section** that matches your task (names, functions, errors, SOLID, testing, security, etc.). You work faster when you read only what your task demands.
+- Prefer your project `AGENTS.md`, `standards/Clean-Code/` (one lesson), `skills/review/audit/SKILL.md`, and `skills/engineering/errors/SKILL.md` for your day-to-day work. You trust those first because they speak to your repo.
+- The examples below use Java-like or web-flavored snippets as illustrations only. They are not your required stack. You translate the rule to the language in your current repo. The rule stays the same even when your syntax changes.
+- Your project facts (owned code, secrets, verify commands) never live here. They live in your project's tracked agent contract and README. You keep this handbook clean of your private details.
 
 ### Section map (jump, do not stream all)
 
@@ -45,8 +45,8 @@ This file is a **reference handbook**, not your default agent context.
 | DRY / boundaries | 9-10 |
 | Git / review / refactor | 11-13 |
 | Observability | 14 |
-| Testing | search within file for testing sections |
-| Security / concurrency | search within file; pair with `prompts/reviews/` or `prompts/domains/*` |
+| Testing | search within file for testing sections for your task |
+| Security / concurrency | search within file for your task. Pair with `prompts/reviews/` or `prompts/domains/*` |
 
 ---
 
@@ -54,7 +54,7 @@ This file is a **reference handbook**, not your default agent context.
 
 - **Write your code for the human reading it, not the machine executing it.** Your compiler
   does not care about your names, your whitespace, or your function length. You will care
-  at 2 AM on a production incident.
+  at 2 AM on a production incident. Your reader pays for every shortcut you take.
 - **Leave the campground cleaner than you found it.** (The Boy Scout Rule.) Every commit you make
   is your chance to nudge the codebase toward better.
 - **You Aren't Gonna Need It (YAGNI).** Do not build for imagined requirements. Build

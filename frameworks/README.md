@@ -1,8 +1,8 @@
 # frameworks/ index
 
-These are your framework conventions. They sit on top of a language file. You always load a
-[`../languages/*`](../languages/README.md) file as well, because these rules assume your language
-rules are already in play.
+These are your framework conventions. They do not stand alone. You always load a
+[`../languages/*`](../languages/README.md) file with them, because these rules assume your language
+rules are already in play. Your language rules are the foundation. These rules build on that foundation.
 
 | File | Use it for | Pair with |
 |---|---|---|
@@ -21,18 +21,18 @@ rules are already in play.
 | The smallest possible binary and a CLI-driven build | Valkyrie |
 
 You read `Tauri.md` and its **house style vs minimal** near the top before you
-start. Why? It decides how opinionated your generated UI will be.
+start. Why does that choice matter? It decides how opinionated your generated UI will be. Make that call early.
 
 ## After you ship
 
 `../prompts/reviews/Tauri-QC.md` is your one framework-specific review prompt in this pack.
-Everything else under `../prompts/reviews/` is stack-neutral. You can use those reviews here too.
+Everything else under `../prompts/reviews/` is stack-neutral. A good review is a habit, not a phase. You can use those reviews here too.
 
 ## Adding a framework
 
-1. You copy the closest existing file.
-2. You state which language file yours assumes in your first paragraph.
-3. You keep the **Agent load** blockquote at the top.
+1. You copy the closest existing file. Do not start from a blank page.
+2. You state which language file yours assumes in your first paragraph. Make that debt plain.
+3. You keep the **Agent load** blockquote at the top. It tells your reader where to start.
 4. You cover what your framework changes, not what your language already covers. Duplication
-   between layers is how your two layers drift apart.
-5. You add a row to the table above.
+   between layers is how your two layers drift apart. One truth in one place.
+5. You add a row to the table above. Keep the index honest.

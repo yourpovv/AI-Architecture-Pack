@@ -1,14 +1,14 @@
 # Valkyrie Architecture
 
-> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. Prefer extending an existing repo over scaffolding a parallel tree.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. Respect what is there.
 
-Clean structure for lightweight desktop applications with Valkyrie.
+You keep a clean structure for your lightweight desktop app with Valkyrie. Small stays readable. Small stays honest.
 
 ---
 
 ## What is Valkyrie?
 
-Valkyrie is a CLI-driven desktop framework that uses the system WebView (webkit2gtk on Linux, Edge WebView2 on Windows) instead of bundling Chromium. Result: ~2 MB binaries vs Electron's 150-300 MB.
+Valkyrie is a CLI-driven desktop framework that uses the system WebView (webkit2gtk on Linux, Edge WebView2 on Windows) instead of bundling Chromium. Listen. You ship ~2 MB binaries instead of Electron's 150-300 MB. That size difference is the tradeoff you chose.
 
 | Framework | Binary Size |
 |-----------|-------------|
@@ -35,29 +35,29 @@ my-app/
     └── main.css        # Base styles
 ```
 
-> No `main.js` or preload.js, Valkyrie exposes a built-in `valkyrie` global to the WebView. No IPC bridge to write yourself.
+> No `main.js` or preload.js here. Valkyrie exposes a built-in `valkyrie` global to your WebView. You write no IPC bridge yourself.
 
 ---
 
 ## Principles
 
 **System WebView, not bundled Chromium**
-Renders in whatever WebView the OS provides. Test on your target platforms.
+You render in whatever WebView your OS provides. You test on your target platforms. What works in one WebView can surprise you in another.
 
 **valkyrie global is your API**
-All native calls go through `valkyrie.*`. Never try to access Node or OS APIs directly.
+All your native calls go through `valkyrie.*`. You never try to access Node or OS APIs directly. One door. Use it.
 
 **Single HTML entry**
-`index.html` is the shell. Keep it minimal; drive everything from JS modules.
+`index.html` is your shell. You keep it minimal. You drive everything from your JS modules.
 
 **Callbacks for native events**
-Assign `window.onFileOpen`, `window.onFolderOpen`, etc. before triggering dialogs.
+You assign `window.onFileOpen`, `window.onFolderOpen`, etc. before you trigger dialogs. Set the handler first. Then ask.
 
 **Small, focused modules**
-Each file owns one domain: state, dialogs, notifications, rendering.
+Each file owns one domain: state, dialogs, notifications, rendering. One file. One job.
 
 **Environment config via .env**
-Secrets and config live in `.env`, not hard-coded in JS.
+Your secrets and config live in `.env`, not hard-coded in your JS. Keep them out of your code.
 
 ---
 
@@ -86,7 +86,7 @@ valkyrie package
 
 ## The valkyrie Global API
 
-Valkyrie injects a `valkyrie` object into every WebView page. These are the only native calls available.
+Valkyrie injects a `valkyrie` object into every WebView page you own. These are the only native calls you get. Learn them. Stay inside them.
 
 ### Dialogs
 
@@ -407,8 +407,8 @@ body {
 
 ## Configuration
 
-Config lives in `.env`; Valkyrie injects it so you read it through `import.meta.env`.
-Keep secrets out of committed source, commit a `.env.example` with the keys, gitignore
+Your config lives in `.env`. Valkyrie injects it so you read it through `import.meta.env`.
+You keep secrets out of committed source. You commit a `.env.example` with the keys. You gitignore
 the real `.env`.
 
 **.env**
@@ -418,9 +418,9 @@ API_URL=https://api.example.com
 DEBUG=false
 ```
 
-Access them in your app via the `import.meta.env` object (Valkyrie handles .env injection).
-Read each value once at startup rather than reaching into `import.meta.env` all over the
-codebase.
+You access them in your app via the `import.meta.env` object (Valkyrie handles .env injection).
+You read each value once at startup. Do not reach into `import.meta.env` all over your
+codebase. One read. One place.
 
 ---
 
@@ -434,7 +434,7 @@ codebase.
 | File Pickers  | Zenity         | Win32            |
 | WebView       | webkit2gtk     | Edge WebView2    |
 
-macOS support is experimental.
+Your macOS support is experimental. Plan for that.
 
 ---
 
@@ -448,7 +448,7 @@ sudo pacman -S mingw-w64-gcc
 valkyrie build --target=windows
 ```
 
-First build downloads and compiles QuickJS and libuv for Windows. Subsequent builds use cached deps.
+Your first build downloads and compiles QuickJS and libuv for Windows. Your later builds use cached deps. Patience once. Speed after.
 
 ---
 
@@ -482,9 +482,9 @@ async function loadFile(path) {
 
 ## Testing
 
-Keep logic in pure modules so you can test them in plain Node/Bun without a WebView.
-The `valkyrie` global is injected at runtime, so **stub it** in tests, your `state`
-store, filtering, and `ui` helpers shouldn't touch it directly anyway.
+You keep logic in pure modules so you can test them in plain Node/Bun without a WebView.
+The `valkyrie` global is injected at runtime, so you **stub it** in your tests. Your `state`
+store, your filtering, and your `ui` helpers should not touch it directly anyway. Keep them clean.
 
 ```javascript
 // state.test.js  (vitest / bun test)
@@ -514,20 +514,20 @@ globalThis.valkyrie = {
 };
 ```
 
-Test the pure logic (state, filtering, formatting); leave the thin `valkyrie.*` wrappers
-to manual checks on each target platform, their behavior differs by WebView anyway.
+You test the pure logic (state, filtering, formatting). You leave the thin `valkyrie.*` wrappers
+to manual checks on each target platform. Their behavior differs by WebView anyway. Test what you can. Look at the rest.
 
 ---
 
 ## Summary
 
-No main process or preload to write, Valkyrie handles that.
-Use the `valkyrie` global for all native calls.
-Assign callbacks before triggering dialogs or clipboard reads.
-Keep modules small and single-purpose.
-Test on both Linux and Windows, WebView behavior differs.
-Use `.env` for configuration.
-Handle errors globally with `window.addEventListener('error'...)`.
+You write no main process or preload. Valkyrie handles that for you.
+You use the `valkyrie` global for all your native calls. One door.
+You assign callbacks before you trigger dialogs or clipboard reads. Handler first. Then ask.
+You keep modules small and single-purpose. One file. One job.
+You test on both Linux and Windows. WebView behavior differs. Believe it.
+You use `.env` for configuration. Keep secrets out of your code.
+You handle errors globally with `window.addEventListener('error'...)`. Catch it at the top.
 
 ---
 

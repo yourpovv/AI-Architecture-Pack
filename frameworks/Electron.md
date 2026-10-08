@@ -1,8 +1,8 @@
 # Electron Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. You pair this with the matching `languages/*` file and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair this with the matching `languages/*` file and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. Respect what is there.
 
-Clean structure for desktop applications with Electron.
+You keep a clean structure for your Electron desktop app. Clean means you can find things. Clean means your teammate can too.
 
 ---
 
@@ -32,19 +32,19 @@ project/
 ## Principles
 
 **Separate processes**
-Main for system, renderer for UI. Never mix.
+Your main process owns the system. Your renderer owns the UI. Never mix the two. Ask where each line belongs. Put it there.
 
 **Explicit IPC**
-Use namespaced channels. Never expose Node.js to renderer.
+You talk through namespaced channels. You never expose Node.js to your renderer. That boundary is your protection.
 
 **Single responsibility**
-Each module does one thing.
+Each module does one thing. One reason to change. That is how you stay honest.
 
 **No globals**
-Pass dependencies explicitly.
+You pass dependencies explicitly. No hidden globals. What a module needs, you hand it.
 
 **Clean up resources**
-Remove listeners, close files on exit.
+You remove listeners. You close files on exit. A craftsman leaves nothing running behind him.
 
 ---
 
@@ -546,12 +546,12 @@ test('state updates listeners', () => {
 
 ## Configuration
 
-Two kinds of config in a desktop app, keep them apart:
+You have two kinds of config in your desktop app. Keep them apart. Mixing them will hurt you:
 
-- **Runtime mode**, detect dev vs packaged with `app.isPackaged`, never `NODE_ENV`
-  guesses. Drive log verbosity, dev tools, and update channels off it.
-- **User settings**, persist in `app.getPath('userData')` (via `electron-store` or your
-  storage layer), never next to the binary, which may be read-only.
+- **Runtime mode**, you detect dev vs packaged with `app.isPackaged`, never `NODE_ENV`
+  guesses. You drive log verbosity, dev tools, and update channels off it. One check. One truth.
+- **User settings**, you persist in `app.getPath('userData')` (via `electron-store` or your
+  storage layer), never next to the binary, which may be read-only. Respect the platform.
 
 ```javascript
 // src/main/config.js
@@ -572,45 +572,45 @@ const config = {
 module.exports = { config };
 ```
 
-Secrets (API keys, signing tokens) live in the **main** process from environment
+Your secrets (API keys, signing tokens) live in your **main** process from environment
 variables at build/run time, never bundled into the renderer, where any user can read
-them. Expose only the results over IPC.
+them. You expose only the results over IPC.
 
 ---
 
 ## Summary
 
-Separate main and renderer processes strictly.
-Use contextIsolation and disable nodeIntegration.
-Namespace IPC channels clearly.
-Keep modules small and focused.
-Clean up resources on exit.
-Use state management for shared data.
+You separate your main and renderer processes strictly. No shortcuts.
+You use contextIsolation and you disable nodeIntegration. That setting is your lock.
+You namespace your IPC channels clearly. A name should say what it does.
+You keep your modules small and focused. Small is testable. Small is honest.
+You clean up your resources on exit. Leave the machine as you found it.
+You use state management for your shared data. One place for the truth.
 
 ---
 
 ## Project Prompt
 
-Build an Electron desktop app against the structure and rules above. Where they disagree
-with your defaults, this file wins.
+You build an Electron desktop app against the structure and rules above. Where they disagree
+with your defaults, this file wins. Obey it.
 
-Read `../standards/Principles.md` alongside this file before starting.
+You read `../standards/Principles.md` alongside this file before you start. Know your standards before you cut.
 
 **Security (Non-Negotiable)**
 - contextIsolation: true
 - nodeIntegration: false
-- Validate all IPC input on main process
-- Namespace IPC channels: `domain:action`
+- Validate all IPC input on main process. Trust nothing from your renderer
+- Namespace IPC channels: `domain:action`. The name tells the story
 
 **IPC Patterns**
-- Use invoke/handle for request-response
-- Use send/on for fire-and-forget
-- Clean error handling on both sides
+- Use invoke/handle for request-response. Ask, then answer
+- Use send/on for fire-and-forget. No reply expected
+- Clean error handling on both sides. Both ends own their failures
 
 **Resource Management**
-- Remove event listeners on cleanup
-- Close database connections on exit
-- Save state before exit
+- Remove event listeners on cleanup. No loose ends
+- Close database connections on exit. Close what you opened
+- Save state before exit. Do not lose your user's work
 
 ### Setup
 
@@ -622,39 +622,39 @@ mkdir -p src/ui/modules assets/icons dist
 
 ### Deliverables
 
-1. Complete project following architecture structure above
-2. Main process with system operations
-3. Preload bridge with secure IPC
-4. Renderer process with UI logic
-5. Storage layer for persistence
-6. State management system
-7. Custom window controls
-8. package.json with build config
-9. README with setup instructions
+1. Complete project following architecture structure above. No missing pieces
+2. Main process with system operations. It owns the system
+3. Preload bridge with secure IPC. That bridge is your boundary
+4. Renderer process with UI logic. It renders. It does not rule
+5. Storage layer for persistence. Your data survives a restart
+6. State management system. One truth for your UI
+7. Custom window controls. Make them behave
+8. package.json with build config. Your build stays repeatable
+9. README with setup instructions. The next person thanks you
 
 ### Validation Checklist
 
 - [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed; env examples use placeholders only
+- [ ] No secrets committed. Env examples use placeholders only
 
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] contextIsolation enabled
-- [ ] nodeIntegration disabled
-- [ ] No Node.js in renderer
-- [ ] All IPC channels namespaced
-- [ ] Input validation on main process
-- [ ] Event listeners cleaned up
+- [ ] Functions are small and single-purpose. Extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] contextIsolation enabled. You leave it on
+- [ ] nodeIntegration disabled. You leave it off
+- [ ] No Node.js in renderer. Your renderer stays clean
+- [ ] All IPC channels namespaced. Names tell the story
+- [ ] Input validation on main process. You trust nothing
+- [ ] Event listeners cleaned up. No loose ends
 - [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] Resources freed properly
+- [ ] Resources freed properly. Close what you opened
 
 ### Security Checklist
 
-- [ ] contextIsolation enabled
-- [ ] nodeIntegration disabled
-- [ ] webSecurity enabled
-- [ ] No eval() or Function() in renderer
-- [ ] CSP headers configured
-- [ ] All IPC input validated
+- [ ] contextIsolation enabled. You leave it on
+- [ ] nodeIntegration disabled. You leave it off
+- [ ] webSecurity enabled. You leave it on
+- [ ] No eval() or Function() in renderer. Your renderer stays clean
+- [ ] CSP headers configured. Lock the door
+- [ ] All IPC input validated. You trust nothing
 
 ### Pre-Delivery
 
