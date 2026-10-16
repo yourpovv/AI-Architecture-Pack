@@ -15,45 +15,41 @@ description: >
 
 # Context Budget
 
-Most advice about your agent cost tells you to do less work. Listen. This is about you paying less
-for your same work. You keep your output. You cut your waste.
+Most cost advice says to do less work. This file is about paying less for the same work.
 
-Three levers move your number, roughly in order of how much they matter to you:
+Three levers move the number, roughly in order of impact:
 
-1. **Your startup floor.** Everything you always load is billed on every single call you make.
-2. **Your cache.** A cache read costs you about a tenth of a fresh read. Small habits
-   throw it away without any visible signal to you.
-3. **Your output.** The most expensive token you can spend, and it becomes your input on
-   the next turn and every turn after that.
+1. **The startup floor.** Everything always loaded is billed on every call.
+2. **The cache.** A cache read costs about a tenth of a fresh read, and small habits throw the
+   cache away without any visible signal.
+3. **Output.** The most expensive token, and it becomes input on every later turn.
 
 ## 1. The startup floor
 
-Every request you make re-sends your whole conversation. Your system prompt, your
-`CLAUDE.md`, every installed skill's description, every MCP server's tool
-schemas, every hook's output. That block is your floor. You pay it on your turn one
-and your turn eighty alike. It never goes away on its own.
+Every request re-sends the whole conversation: the system prompt, `CLAUDE.md`, every installed
+skill's description, every MCP server's tool schemas, and every hook's output. That block is
+the floor. It costs the same on turn one and turn eighty.
 
-Caching softens your floor but cannot remove it, because you still pay for a cache read.
-The only way you shrink a floor is to put less on it for your team:
+Caching softens the floor but cannot remove it, since cache reads still cost something. The
+only way to shrink it is to put less on it:
 
-- You keep `CLAUDE.md` short. You push depth into linked files your agent opens on demand.
-  See [`../claude-folder/SKILL.md`](../claude-folder/SKILL.md).
-- You uninstall skills and MCP servers you do not use. Every one of them ships a
-  description into every request you make whether it fires or not.
-- You check what your hooks print. A chatty `SessionStart` hook is a permanent tax you pay.
+- Keep `CLAUDE.md` short and push depth into linked files the agent opens on demand. See
+  [`../claude-folder/SKILL.md`](../claude-folder/SKILL.md).
+- Uninstall skills and MCP servers you do not use. Each one ships its description into every
+  request whether it fires or not.
+- Check what hooks print. A chatty `SessionStart` hook is a permanent tax.
 
-This is also why your pack's core rule exists. You load one file at a time. A doc your
-agent opens for one task costs you once. A doc in your always-loaded context costs you forever.
-Which one do you want for a file you rarely need. You know the answer.
+This is why the pack's core rule is to load one file at a time. A doc opened for one task is
+paid for once. A doc in always-loaded context is paid for on every call.
 
 ## 2. The cache is a prefix match
 
-**Any byte you change anywhere in your prefix invalidates everything after it for you.**
-That single sentence explains almost every surprising cache miss you will see in your work.
+**Changing any byte in the prefix invalidates everything after it.** That one fact explains
+most surprising cache misses.
 
-Your prompt renders in a fixed order: **tools, then system, then messages**. So
-anything volatile you place early poisons everything downstream of it for you. Put stable
-things first. Put changing things last.
+The prompt renders in a fixed order: tools, then system, then messages. Anything volatile
+placed early invalidates everything downstream of it. Put stable content first and changing
+content last.
 
 | Operation | Cost, relative to an uncached read |
 |---|---|
@@ -61,15 +57,13 @@ things first. Put changing things last.
 | Cache write, 1-hour TTL | 2x |
 | Cache read | 0.1x |
 
-A 5-minute cache pays for itself on your second request (1.25 + 0.1 against 2.0
-uncached). The 1-hour TTL costs you double to write, so it needs a third request
-before it wins for you. You use it for gaps in your bursty traffic, not by default. That is the
-honest tradeoff. You pay more up front to save later.
+A 5-minute cache pays for itself on the second request (1.25 + 0.1 against 2.0 uncached). The
+1-hour TTL costs twice as much to write, so it needs a third request before it wins. Use it
+for bursty traffic with long gaps, not by default.
 
 ### Not everything invalidates everything
 
-This is the part you get wrong. There are three cache tiers for you, and a change only
-invalidates its own tier and below for you. Learn the tiers and you stop guessing.
+There are three cache tiers, and a change invalidates only its own tier and the ones after it.
 
 | What changed | Tools | System | Messages |
 |---|---|---|---|
@@ -79,97 +73,81 @@ invalidates its own tier and below for you. Learn the tiers and you stop guessin
 | `tool_choice`, images, thinking toggled | kept | kept | lost |
 | Message content | kept | kept | lost |
 
-So per-turn changes are cheap for you and structural changes are not. **Switching models
-mid-session is the single most expensive habit available to you**, because it is
-a full rebuild with no escape hatch for you: caches are model-scoped. If a cheap sub-task
-wants a cheap model, you delegate it to a sub-agent and leave your main loop where it
-is. See [`../sub-agents/SKILL.md`](../sub-agents/SKILL.md). Your main loop stays put.
+Per-turn changes are cheap and structural changes are not. **Switching models mid-session is
+the most expensive habit available,** because caches are model-scoped and a switch is a full
+rebuild. If a cheap sub-task wants a cheap model, delegate it to a sub-agent and leave the
+main loop on its model. See [`../sub-agents/SKILL.md`](../sub-agents/SKILL.md).
 
-Editing your `CLAUDE.md` mid-session is safe for you, because it does not take effect until
-your session reloads. You can fix it now and feel the gain on your next start.
+Editing `CLAUDE.md` mid-session is safe: it does not take effect until the session reloads.
 
 ### Silent invalidators
 
-Nothing errors for you. Your cache just never hits. You grep your prompt-building path for these
-silent killers:
+Nothing errors; the cache just never hits. Search the prompt-building path for:
 
 - `datetime.now()`, `Date.now()`, or any timestamp in the system prompt
 - UUIDs or request IDs generated per call and placed early
 - JSON serialized without sorted keys, or anything iterating a set
-- A user ID or session ID interpolated into the system prompt, which gives every
-  user their own private prefix that nobody else can share
+- A user ID or session ID interpolated into the system prompt, which gives every user a
+  private prefix nobody else can share
 - Conditional system sections, where every flag combination is a separate prefix
-- A tool list built per user, which lands at position zero and caches for nobody
+- A tool list built per user, which sits at position zero and caches for nobody
 
-The fix is the same in every case for you. You make it deterministic, or you move it after your
-last cache breakpoint. A fact you inject at turn five invalidates nothing before
-your turn five. Your past stays cached when you append at the end.
+The fix is always the same: make it deterministic, or move it after the last cache
+breakpoint. A fact injected at turn five invalidates nothing before turn five.
 
-### Two gotchas worth knowing
+### Two gotchas
 
-**Your minimum cacheable prefix.** Below it, nothing caches for you and nothing tells you.
-The threshold is model-dependent and it is **not monotonic across generations** for you,
-so a prompt that caches on one model silently will not on another. You check the
-current number for the model you are on rather than assuming. Trust the measurement, not your
-memory.
+**Minimum cacheable prefix.** Below a model-dependent threshold nothing caches, and nothing
+says so. The threshold is not monotonic across model generations, so a prompt that caches on
+one model may silently not cache on another. Check the current number for the model in use.
 
-**Your 20-block lookback.** A cache breakpoint searches backward at most 20
-content blocks for a prior entry. Your agentic loops blow through that easily, since
-every tool call you make adds two blocks. A turn with 15 tool calls has already pushed your
-previous breakpoint out of reach, and your next request silently starts cold. You keep your turns
-tight when you want your cache to hold.
+**20-block lookback.** A cache breakpoint searches back at most 20 content blocks for a prior
+entry. Agentic loops exceed that easily, since every tool call adds two blocks. After a turn
+with 15 tool calls, the previous breakpoint is out of reach and the next request starts cold.
+Keep turns tight when the cache matters.
 
 ### Verify instead of assuming
 
-The response usage object tells you the truth about your session. You read it like a professional:
+The response's usage object is the source of truth:
 
-- `cache_read_input_tokens` you served at 0.1x
-- `cache_creation_input_tokens` you wrote at 1.25x or 2x
-- `input_tokens` **only your uncached remainder**, not your total
+- `cache_read_input_tokens`: served at 0.1x
+- `cache_creation_input_tokens`: written at 1.25x or 2x
+- `input_tokens`: **only the uncached remainder**, not the total
 
-That last one trips you up. Your total prompt size is all three added together. A
-long session reporting a small `input_tokens` is a session with a working cache for you,
-not a small session. Do you see the difference. One is efficiency. The other is size.
+The total prompt size is all three added together. A long session reporting small
+`input_tokens` has a working cache; it is not a small session.
 
-If your `cache_read_input_tokens` is zero across repeated requests with what should be
-an identical prefix, you have a silent invalidator. You diff the rendered bytes of
-two consecutive requests and you will find it. Your eyes beat your guesses.
+If `cache_read_input_tokens` stays at zero across requests that should share a prefix, there is
+a silent invalidator. Diff the rendered bytes of two consecutive requests to find it.
 
 ## 3. Output is the most expensive token
 
-Your output costs several times what your input costs, and then it gets re-read as input on
-every subsequent turn you run. You pay for it once at the high rate and then forever at
-the low one. That is why you treat output as your most precious budget.
+Output costs several times as much as input, and then it is re-read as input on every later
+turn.
 
-- **You keep evidence on disk, not in context.** You write the full log, the whole test
-  output, the complete diff to a file and read back the part that matters. A
-  60,000-token log you dump into your conversation is not a one-time cost.
-- **You cap sub-agent reports.** An uncapped agent returns everything it saw, and you
-  then re-read that report on every turn that follows. You ask for findings,
-  not transcripts.
-- **You do not paste whole files when you need a function.**
+- **Keep evidence on disk, not in context.** Write the full log, test output, or diff to a file
+  and read back the part that matters. A 60,000-token log pasted into the conversation is not a
+  one-time cost.
+- **Cap sub-agent reports.** An uncapped agent returns everything it saw, and the parent
+  re-reads that report on every following turn. Ask for findings, not transcripts.
+- **Do not paste whole files** when one function is needed.
 
 ## 4. Measure, do not guess
 
-Every number above is a mechanism, not a prediction. What is actually expensive
-in your sessions is an empirical question, and the answer differs per project. You measure your
-own work like a craftsman.
+Everything above describes mechanisms, not predictions. What is expensive in a given project
+is an empirical question.
 
-Two rules keep the measurement honest for you:
+**Count tokens per accepted result, not per response.** An optimization that halves token use
+and doubles rework is not an optimization.
 
-**Count tokens per accepted result, not per response.** An optimization that
-halves token spend and doubles rework is not an optimization. Cheap output you
-throw away costs more than expensive output you keep. Your team pays for results, not attempts.
+**Change one thing at a time.** Trimming `CLAUDE.md` and dropping three MCP servers in the same
+session teaches you nothing about either.
 
-**Change one thing at a time.** Trim `CLAUDE.md` and drop three MCP servers in
-the same session and you have learned nothing about either. Professionals isolate their variables.
-
-[token-shield](https://github.com/khalilmaaouni/token-shield) is a Claude Code
-plugin that reads real usage counters out of your local session transcripts and
-reports cache hit ratios, first-request cost, and how much of your output came
-from sub-agents. It measures rather than estimates, and prints `NO DATA` instead
-of guessing when it cannot measure something. It is the fastest way for you to find out
-which of the three levers above is actually costing you. Use real numbers when you can.
+[token-shield](https://github.com/khalilmaaouni/token-shield) is a Claude Code plugin that reads
+real usage counters from local session transcripts and reports cache hit ratios, first-request
+cost, and the share of output that came from sub-agents. It prints `NO DATA` instead of
+guessing when it cannot measure something. It is the fastest way to find which lever is
+costing the most.
 
 ---
 
@@ -190,10 +168,9 @@ Cap what sub-agents report. Ask for findings, not transcripts. Their output
 becomes my input on every turn after this one.
 ```
 
-## One honest caveat
+## Caveat
 
-People report large drops in usage after adopting a policy like this, and the
-mechanism is real, but it is not magic. The saving comes from paying less for
-work you were doing anyway: a warm cache instead of a cold one, bulk work routed
-to a cheap model, evidence on disk instead of in the transcript. None of it makes
-a session that does more work cost less. You still pay for what you ask your machine to do.
+People report large drops in usage after adopting a policy like this. The mechanism is real
+but not magic: the saving comes from paying less for work you were doing anyway (a warm cache
+instead of a cold one, bulk work on a cheap model, evidence on disk instead of in the
+transcript). None of it makes a session that does more work cost less.

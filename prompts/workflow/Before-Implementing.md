@@ -6,7 +6,7 @@ Read the relevant code, tests, configs, and dependency manifests first. Anything
 **Goal.** One paragraph restating what I asked for in your own words, including the acceptance criteria you'll hold yourself to. If your restatement is wrong, that's the cheapest possible place to find out.
 **Blocking questions (0-3).** Only ask when a wrong answer means throwing work away, not adjusting it. Each question gets your recommended default so I can reply "yes to all" - never ask an open question where a proposed answer would do.
 If nothing is genuinely blocking, say so and list zero.
-**Assumptions, ** Numbered, specific, falsifiable.
+**Assumptions.** Numbered, specific, falsifiable.
 "Inputs are under 10k rows and
 fit in memory" is an assumption. "The code should be maintainable" is not. Cover whichever of these the task actually touches:
 - Data: shape, volume, trust level, encoding, what a malformed input looks like

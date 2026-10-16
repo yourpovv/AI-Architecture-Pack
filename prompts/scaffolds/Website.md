@@ -12,7 +12,7 @@ Build a website with TypeScript and Tailwind CSS. Use the major version the proj
 
 Section-load:
 
-- `languages/TypeScript.md` (structure, errors, validation)
+- `standards/Clean-Code/` (the lesson the task needs)
 - `frameworks/React-Tailwind.md` (components, Tailwind patterns)
 - Relevant `standards/Principles.md` sections only
 

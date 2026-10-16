@@ -22,7 +22,7 @@ Together they keep the suite protecting code without ever slowing you down.
 - Independent: no test sets up conditions for the next; each builds its own world.
 - Repeatable: no network/time/locale dependence; same outcome anywhere, anytime.
 - Self-validating: assert to pass/fail — never "read the log and decide".
-- Timely: test just before the code that makes it pass (see 55).
+- Timely: test just before the code that makes it pass (see unit-tests/01).
 
 ---
 

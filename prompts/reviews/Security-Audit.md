@@ -20,6 +20,6 @@ Hunt for:
 - IDOR
 - Missing validation on trust boundaries
 
-For each finding: file, exact exploit path, severity (critical/high/medium/low or harness levels), fix (applied only if mode is `fix`).
+For each finding: file, exact exploit path, severity (blocker/high/medium/low, as defined in the harness), fix (applied only if mode is `fix`).
 
 Do not say "looks secure" without tracing attack surfaces in scope. End with ship / don't-ship for the scoped surface.

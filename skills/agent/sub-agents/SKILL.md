@@ -24,25 +24,23 @@ the option to run cheap work on a cheap model. You pay extra tokens to buy those
 Usage limits are weighted by model cost, so your saving comes from **routing**, not
 from delegating. Anyone who reports large savings from a delegation policy is
 reporting the effect of moving bulk work down a tier. If you delegate rarely, this
-file saves you nothing. That is honest math.
+file saves you nothing.
 
 ## Never spawn unprompted
 
 Sub-agents cost your real money and your real wall-clock time, and their output lands without
-the human having seen the plan. Do not fan out because a task "looks parallel". That is laziness,
-not craft.
+the human having seen the plan. Do not fan out because a task "looks parallel".
 
 Delegate when the human asked for it. Otherwise propose it in one or two sentences
 (the shape, and roughly what it costs) and wait for a yes. A task with several parts,
-or one described as "thorough", is not a delegation trigger. You handle it inline. You own it.
+or one described as "thorough", is not a delegation trigger. Handle it inline.
 
 ## Set the model on every call
 
 Every delegated call sets its model parameter **explicitly**. Omitting it silently
 inherits the parent session model, so one expensive session quietly spawns a fleet
 of expensive agents. That single omission is the most common source of runaway cost
-in agent work, and it is invisible until the bill arrives. You set the model every time. No
-exceptions.
+in agent work, and it is invisible until the bill arrives. Set the model every time.
 
 ## Tier table
 
@@ -66,8 +64,7 @@ usually sharpens your brief for the retry. Cheap first is professional disciplin
 A vague brief on an expensive model is worse value than a sharp brief on a cheap
 one. Before reaching for a higher tier, you check whether your task is genuinely hard or
 merely under-specified. Acceptance criteria, exact file paths, and a stated
-definition of done move your work **down** a tier more reliably than any model upgrade. Clarity
-beats horsepower.
+definition of done move your work **down** a tier more reliably than any model upgrade.
 
 ## When not to delegate at all
 
@@ -93,19 +90,18 @@ you write is self-contained or the work comes back wrong. You give it everything
 - The commit policy, stated explicitly
 
 A sharp brief is also what moves your work **down** a tier. Most tasks that seem to need
-an expensive model are just under-specified. Have you written down what done looks like. If not,
-you are not ready to delegate.
+an expensive model are just under-specified. If you have not written down what done looks like, you are not ready to delegate.
 
 ## Commit authority
 
 Default: **the sub-agent does not commit.** Your parent session owns staging and
 commits, because the parent is the only one that can see whether the change is
-actually finished. You keep that authority close.
+actually finished.
 
 One exception. An agent that is the sole writer in its own worktree, working through
 several sequential tasks, can be told to commit atomically as it goes. You never grant
 that to parallel agents sharing a worktree. Two agents staging into one index produce
-commits that contain each other's half-finished work. That is a mess you will own at midnight.
+commits that contain each other's half-finished work.
 
 You fan out only when the work partitions cleanly by file, with no overlapping writes. If
 two agents need to touch the same file, that is one task, not two. You keep it inline.
@@ -113,22 +109,21 @@ two agents need to touch the same file, that is one task, not two. You keep it i
 ## Verify before you accept
 
 Never take a sub-agent's self-report as done. Agents report success on work that does
-not compile, and they report it confidently. You trust your eyes, not their confidence.
+not compile, and they report it confidently.
 
 You read the actual diff. You run the project's verify gate. You check the acceptance criteria you
 wrote. Only then is the work accepted. If you granted commit authority, you review
-`git log -p` across its range and run the gate before treating any of it as finished. That is your
-professional pride on the line.
+`git log -p` across its range and run the gate before treating any of it as finished.
 
 ## If you are the expensive tier
 
 When you are the most costly model in the session, your comparative advantage is
 decomposition, judgement, verification, and integration. You spend your tokens there and
-you route execution down. That is how you serve your team best.
+you route execution down.
 
 You keep for yourself: planning, architecture, judgement calls, resolving ambiguity with
 the human, and final acceptance. A context-free agent on your own tier doing those
-costs the same and decides worse. Why pay for worse judgment. You do the thinking.
+costs the same and decides worse.
 
 This is a default with criteria, not an absolute. Understanding a codebase, answering
 a question, or making a small edit is still faster done directly by you.
@@ -137,15 +132,14 @@ a question, or making a small edit is still faster done directly by you.
 
 A sub-agent's report is not shown to the human. You relay what matters, in your own
 words, including anything the agent failed to do. You never present a pending agent's
-results as finished, and you never invent what a running agent is likely to find. Honesty is your
-craft.
+results as finished, and you never invent what a running agent is likely to find.
 
 **Cap what comes back.** You ask for findings, not transcripts. An uncapped agent
 returns everything it read, that report lands in your parent's context, and your
 parent then re-reads it on every turn for the rest of the session. Output is the
 most expensive token there is, and a sub-agent's output becomes your parent's input
 forever. You tell it where to leave the full evidence on disk and what to summarize.
-See [`../context-budget/SKILL.md`](../context-budget/SKILL.md). Your future self will thank you.
+See [`../context-budget/SKILL.md`](../context-budget/SKILL.md).
 
 ## Orchestrated workflows
 

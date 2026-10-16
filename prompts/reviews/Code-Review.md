@@ -11,7 +11,7 @@ If you want a pre-merge go or no-go rather than a full sweep, use
 
 1. Read `skills/review/audit/SKILL.md`. Scope is required, and the mode is `report-only` until someone
    says otherwise.
-2. Read the `languages/*` and `frameworks/*` file that matches this stack.
+2. Read the `frameworks/*` file that matches this stack, if any. Coding standards come from `standards/Clean-Code/`.
 3. Open only the sections of `standards/Principles.md` you need. Loading the whole handbook
    spends the context you need for the code.
 4. Use `skills/engineering/craft/SKILL.md` for naming, comments, and prose. Do not run AI-detector scoring.
@@ -97,12 +97,14 @@ today and everything the first time someone tries to extend them.
 
 Write every finding as: location, trigger, effect, severity, fix, and how it was verified.
 
-| Severity | Means |
-|---|---|
-| **Blocker** | Do not ship |
-| **High** | Ship only with a named owner and a date |
-| **Medium** | Next sprint |
-| **Low** | Fix it while you are in there |
+Use the severity levels defined in `skills/review/audit/SKILL.md`:
+
+| Severity | Means | Ship decision |
+|---|---|---|
+| **Blocker** | Data loss, security break, crash on a common path | Do not ship |
+| **High** | Exploitable, or a likely production incident under realistic load or abuse | Ship only with a named owner and a date |
+| **Medium** | Real defect with limited blast radius or harder to trigger | Schedule the fix |
+| **Low** | Smell, missing polish, dead code, docs drift | Fix while in the area |
 
 Be specific about effect. "Could be exploited" is not a finding. "An unauthenticated GET to
 `/api/orders/:id` returns another user's shipping address" is a finding, because someone can

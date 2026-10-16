@@ -1,8 +1,9 @@
 # React / Tailwind Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. You respect what is there.
+> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read the project's `AGENTS.md`. Coding standards come from `../standards/Clean-Code/`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. Prefer extending an existing repo over scaffolding a parallel tree.
 
-These are your framework patterns for building web applications. You use them alongside `../languages/TypeScript.md` and `../standards/Principles.md`. Your language rules come first. These rules build on them. You honor the base before you add the frame.
+Framework patterns for web applications built with React, TypeScript, and Tailwind CSS 4. The
+Clean-Code lessons define the coding standard; this file covers what React and Tailwind change.
 
 ---
 
@@ -14,34 +15,46 @@ project/
 │   ├── components/     # UI components
 │   ├── hooks/          # React hooks
 │   ├── context/        # Context providers
-│   ├── lib/            # Business logic
-│   ├── api/            # HTTP clients
-│   └── utils/          # Helpers
+│   ├── lib/            # Business logic, framework-free
+│   ├── api/            # HTTP clients, one module per external service
+│   └── index.css       # Tailwind entry: @import "tailwindcss";
 ├── public/             # Static assets
 ├── tests/
 ├── package.json
 ├── tsconfig.json
-└── tailwind.config.js
+└── vite.config.ts
 ```
+
+There is no `utils/` folder. A helper belongs to the module whose knowledge it encodes
+(Clean-Code 14).
 
 ---
 
 ## Principles
 
-**Component composition over inheritance**
-You build complex UIs from simple components. You use small pieces. You put them together with care. Why inherit trouble you can compose away?
+**TypeScript in strict mode**
+`"strict": true` in `tsconfig.json`, no `any`, and every prop and state shape typed
+(Clean-Code 25).
+
+**Composition over inheritance**
+Build complex UIs from small components.
 
 **Single responsibility**
-Your component does one thing well. It has one reason to change. That is how you stay honest. That is how your team trusts your file.
+Each component does one thing and has one reason to change. Split when UI, data fetching, and
+business rules share one file (Clean-Code `solid/01`).
 
 **Props, not global state**
-You pass data explicitly where you can. What your component needs, you hand it. You hide nothing.
-
-**Tailwind for styles**
-You use utility classes, not custom CSS. You stay with the system. It keeps you consistent. Consistency is kindness to your teammate.
+Pass data explicitly where you can, so a component's dependencies are visible at the call site.
 
 **Context sparingly**
-You use it only for truly global state (auth, theme). You ask if it is truly global. Most state is not. You do not make global what you can pass plainly.
+Use context only for truly app-wide state such as auth or theme. Most state is not global.
+
+**Tailwind for styles**
+Use utility classes rather than custom CSS. Repeated class groups become components.
+
+**Business logic outside components**
+Rules and calculations live in `lib/` as plain functions that can be tested without React.
+Components and hooks call them (Clean-Code `classes/04`).
 
 ---
 
@@ -52,19 +65,19 @@ You use it only for truly global state (auth, theme). You ask if it is truly glo
 **Button.tsx**
 ```typescript
 interface ButtonProps {
-  text: string;
+  label: string;
   onClick: () => void;
   disabled?: boolean;
 }
 
-export function Button({ text, onClick, disabled = false }: ButtonProps) {
+export function Button({ label, onClick, disabled = false }: ButtonProps) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
     >
-      {text}
+      {label}
     </button>
   );
 }
@@ -78,29 +91,23 @@ import { useState } from 'react';
 
 export function Counter() {
   const [count, setCount] = useState(0);
-  
+
   function increment() {
-    setCount(count + 1);
+    setCount(previous => previous + 1);
   }
-  
+
   function reset() {
     setCount(0);
   }
-  
+
   return (
     <div className="p-4 border rounded">
       <p className="text-lg font-medium">Count: {count}</p>
       <div className="flex gap-2 mt-2">
-        <button
-          onClick={increment}
-          className="px-3 py-1 bg-green-600 text-white rounded"
-        >
+        <button onClick={increment} className="px-3 py-1 bg-green-600 text-white rounded">
           Increment
         </button>
-        <button
-          onClick={reset}
-          className="px-3 py-1 bg-gray-600 text-white rounded"
-        >
+        <button onClick={reset} className="px-3 py-1 bg-gray-600 text-white rounded">
           Reset
         </button>
       </div>
@@ -126,17 +133,13 @@ interface UserListProps {
 
 export function UserList({ users, onSelect }: UserListProps) {
   if (users.length === 0) {
-    return <p className="text-gray-500">No users found</p>;
+    return <p className="text-gray-500">No users yet.</p>;
   }
-  
+
   return (
     <ul className="space-y-2">
       {users.map(user => (
-        <UserItem
-          key={user.id}
-          user={user}
-          onSelect={onSelect}
-        />
+        <UserItem key={user.id} user={user} onSelect={onSelect} />
       ))}
     </ul>
   );
@@ -149,12 +152,14 @@ interface UserItemProps {
 
 function UserItem({ user, onSelect }: UserItemProps) {
   return (
-    <li
-      onClick={() => onSelect(user)}
-      className="p-3 border rounded hover:bg-gray-50 cursor-pointer"
-    >
-      <p className="font-medium">{user.name}</p>
-      <p className="text-sm text-gray-600">{user.email}</p>
+    <li>
+      <button
+        onClick={() => onSelect(user)}
+        className="w-full text-left p-3 border rounded hover:bg-gray-50"
+      >
+        <p className="font-medium">{user.name}</p>
+        <p className="text-sm text-gray-600">{user.email}</p>
+      </button>
     </li>
   );
 }
@@ -164,35 +169,39 @@ function UserItem({ user, onSelect }: UserItemProps) {
 
 ## Custom Hooks
 
+Model async state as a discriminated union of the states the UI actually renders. This is UI
+data, not an error channel, so it does not conflict with Clean-Code 03: the API client still
+throws, and the hook is the boundary that catches.
+
 **hooks/useUsers.ts**
 ```typescript
-import { useState, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { User } from '../lib/user';
 import { fetchUsers } from '../api/users';
 
+type UsersState =
+  | { status: 'loading' }
+  | { status: 'ready'; users: User[] }
+  | { status: 'failed' };
+
 export function useUsers() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  useEffect(() => {
-    loadUsers();
-  }, []);
-  
-  async function loadUsers() {
+  const [state, setState] = useState<UsersState>({ status: 'loading' });
+
+  const reload = useCallback(async () => {
+    setState({ status: 'loading' });
     try {
-      setLoading(true);
-      const data = await fetchUsers();
-      setUsers(data);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
-      setLoading(false);
+      setState({ status: 'ready', users: await fetchUsers() });
+    } catch (error) {
+      console.error('useUsers: fetchUsers failed', error);
+      setState({ status: 'failed' });
     }
-  }
-  
-  return { users, loading, error, reload: loadUsers };
+  }, []);
+
+  useEffect(() => {
+    reload();
+  }, [reload]);
+
+  return { state, reload };
 }
 ```
 
@@ -202,15 +211,15 @@ import { useState } from 'react';
 
 export function useForm<T>(initial: T) {
   const [values, setValues] = useState<T>(initial);
-  
-  function update(field: keyof T, value: T[keyof T]) {
-    setValues(prev => ({ ...prev, [field]: value }));
+
+  function update<K extends keyof T>(field: K, value: T[K]) {
+    setValues(previous => ({ ...previous, [field]: value }));
   }
-  
+
   function reset() {
     setValues(initial);
   }
-  
+
   return { values, update, reset };
 }
 ```
@@ -219,18 +228,19 @@ export function useForm<T>(initial: T) {
 
 ## Error Handling
 
-Your React code fails in two distinct ways. You handle both. You do not pretend one covers the other. A craftsman names each failure plainly:
+React code fails in two distinct ways, and each needs its own handling:
 
-- **Render errors** → an **error boundary** catches them and shows fallback UI instead
-  of unmounting your whole tree. You contain the failure.
-- **Async / event errors** (fetch, handlers) → boundaries *don't* catch these. You handle
-  them in state and you render the error inline (see `skills/engineering/errors/SKILL.md` for the message
-  rules). You own each failure where it happens.
+- **Render errors:** an **error boundary** catches them and shows fallback UI instead of
+  unmounting the whole tree.
+- **Async and event errors** (fetches, handlers): boundaries do not catch these. Catch them at
+  the hook or handler, log the technical detail, and render a user-facing state. Message copy
+  follows `skills/engineering/errors/SKILL.md` Part B: what happened, why, and what to do.
+  Never render a raw exception message.
 
 **Error boundary** (catches render-time errors):
 
 ```typescript
-import { Component, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -242,85 +252,100 @@ interface State {
 
 export class ErrorBoundary extends Component<Props, State> {
   state = { hasError: false };
-  
+
   static getDerivedStateFromError() {
     return { hasError: true };
   }
-  
-  componentDidCatch(error: Error) {
-    console.error('Error caught:', error);
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('Render error caught by ErrorBoundary:', error, info.componentStack);
   }
-  
+
   render() {
     if (this.state.hasError) {
       return (
-        <div className="p-4 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-800">Something went wrong</p>
+        <div className="p-4 bg-red-50 border border-red-200 rounded" role="alert">
+          <p className="font-medium text-red-800">This page couldn't be displayed.</p>
+          <p className="text-red-700">Part of the page failed to load. Refresh to try again.</p>
         </div>
       );
     }
-    
+
     return this.props.children;
   }
 }
 ```
 
-**Async errors** (boundaries can't catch these, keep them in state):
+**Async errors** (render the hook's state):
 
 ```typescript
 function Users() {
-  const [error, setError] = useState<string | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
+  const { state, reload } = useUsers();
 
-  useEffect(() => {
-    fetchUsers()
-      .then(setUsers)
-      .catch(() => setError('Couldn’t load users. Try again in a moment.'));
-  }, []);
-
-  if (error) {
-    return <p className="text-red-800" role="alert">{error}</p>;
+  if (state.status === 'loading') {
+    return <p className="text-gray-500">Loading users…</p>;
   }
-  return <UserList users={users} />;
+
+  if (state.status === 'failed') {
+    return (
+      <div role="alert" className="text-red-800">
+        <p>Your user list couldn't load because the server didn't respond.</p>
+        <button onClick={reload} className="underline">Try again</button>
+      </div>
+    );
+  }
+
+  return <UserList users={state.users} onSelect={openUser} />;
 }
 ```
 
 ---
 
-## TailwindCSS Patterns
+## Tailwind CSS Patterns
 
 **Component styles**
 
 ```typescript
-// Bad - inline styles
+// Bad: inline styles
 <div style={{ padding: '16px', backgroundColor: '#fff' }}>
 
-// Good - Tailwind utilities
+// Good: Tailwind utilities
 <div className="p-4 bg-white">
 ```
 
-**Conditional classes**
+**Variant classes**
+
+A `variant` prop is data that selects a look, not a flag that selects a second algorithm, so it
+does not break Clean-Code 02. Map variants through a lookup table rather than scattered
+conditionals (Clean-Code 24).
 
 ```typescript
 import clsx from 'clsx';
 
-interface ButtonProps {
-  variant: 'primary' | 'secondary';
+const VARIANT_CLASSES = {
+  primary: 'bg-blue-600 text-white',
+  secondary: 'bg-gray-200 text-gray-800',
+} as const;
+
+interface ActionButtonProps {
+  label: string;
+  variant: keyof typeof VARIANT_CLASSES;
   disabled?: boolean;
+  onClick: () => void;
 }
 
-export function Button({ variant, disabled }: ButtonProps) {
+export function ActionButton({ label, variant, disabled = false, onClick }: ActionButtonProps) {
   return (
     <button
       className={clsx(
         'px-4 py-2 rounded',
-        variant === 'primary' && 'bg-blue-600 text-white',
-        variant === 'secondary' && 'bg-gray-200 text-gray-800',
+        VARIANT_CLASSES[variant],
         disabled && 'opacity-50 cursor-not-allowed'
       )}
       disabled={disabled}
+      onClick={onClick}
     >
-      Click me
+      {label}
     </button>
   );
 }
@@ -329,31 +354,20 @@ export function Button({ variant, disabled }: ButtonProps) {
 **Reusable class groups**
 
 ```typescript
-// Bad - repeated classes
+// Bad: the same class group repeated
 <div className="p-4 bg-white border rounded shadow">
 <div className="p-4 bg-white border rounded shadow">
 
-// Good - extract to component
-function Card({ children }) {
-  return (
-    <div className="p-4 bg-white border rounded shadow">
-      {children}
-    </div>
-  );
+// Good: extract a component
+function Card({ children }: { children: ReactNode }) {
+  return <div className="p-4 bg-white border rounded shadow">{children}</div>;
 }
 ```
 
 **Responsive design**
 
 ```typescript
-<div className="
-  flex flex-col
-  md:flex-row
-  gap-4
-  p-4
-  md:p-6
-  lg:p-8
-">
+<div className="flex flex-col md:flex-row gap-4 p-4 md:p-6 lg:p-8">
   <div className="w-full md:w-1/2">Left</div>
   <div className="w-full md:w-1/2">Right</div>
 </div>
@@ -368,20 +382,22 @@ function Card({ children }) {
 ```typescript
 function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  
-  function add(text: string) {
-    setTodos([...todos, { id: Date.now(), text }]);
+
+  function addTodo(text: string) {
+    setTodos(previous => [...previous, { id: crypto.randomUUID(), text }]);
   }
-  
-  function remove(id: number) {
-    setTodos(todos.filter(t => t.id !== id));
+
+  function removeTodo(id: string) {
+    setTodos(previous => previous.filter(todo => todo.id !== id));
   }
-  
+
   return <div>{/* ... */}</div>;
 }
 ```
 
 **Context for shared state**
+
+Model "signed out" as its own state rather than a `null` user (Clean-Code 13).
 
 ```typescript
 import { createContext, useContext, useState, ReactNode } from 'react';
@@ -391,27 +407,29 @@ interface User {
   email: string;
 }
 
+type Session = { status: 'signedOut' } | { status: 'signedIn'; user: User };
+
 interface AuthContextValue {
-  user: User | null;
-  login: (user: User) => void;
-  logout: () => void;
+  session: Session;
+  signIn: (user: User) => void;
+  signOut: () => void;
 }
 
-const AuthContext = createContext<AuthContextValue | null>(null);
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  
-  function login(newUser: User) {
-    setUser(newUser);
+  const [session, setSession] = useState<Session>({ status: 'signedOut' });
+
+  function signIn(user: User) {
+    setSession({ status: 'signedIn', user });
   }
-  
-  function logout() {
-    setUser(null);
+
+  function signOut() {
+    setSession({ status: 'signedOut' });
   }
-  
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ session, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
@@ -419,7 +437,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within AuthProvider');
   }
   return context;
@@ -430,30 +448,34 @@ export function useAuth() {
 
 ## Testing
 
+Name tests for the behavior they guard (Clean-Code `unit-tests/05`).
+
 **Component tests**
 
 ```typescript
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Button } from './Button';
 
-test('renders button text', () => {
-  render(<Button text="Click me" onClick={() => {}} />);
-  expect(screen.getByText('Click me')).toBeInTheDocument();
+test('shows its label', () => {
+  render(<Button label="Save" onClick={() => {}} />);
+  expect(screen.getByText('Save')).toBeInTheDocument();
 });
 
-test('calls onClick when clicked', () => {
-  const onClick = jest.fn();
-  render(<Button text="Click" onClick={onClick} />);
-  
-  fireEvent.click(screen.getByText('Click'));
+test('calls onClick once per click', () => {
+  const onClick = vi.fn();
+  render(<Button label="Save" onClick={onClick} />);
+
+  fireEvent.click(screen.getByText('Save'));
+
   expect(onClick).toHaveBeenCalledTimes(1);
 });
 
-test('disabled button does not trigger onClick', () => {
-  const onClick = jest.fn();
-  render(<Button text="Click" onClick={onClick} disabled />);
-  
-  fireEvent.click(screen.getByText('Click'));
+test('ignores clicks while disabled', () => {
+  const onClick = vi.fn();
+  render(<Button label="Save" onClick={onClick} disabled />);
+
+  fireEvent.click(screen.getByText('Save'));
+
   expect(onClick).not.toHaveBeenCalled();
 });
 ```
@@ -462,16 +484,16 @@ test('disabled button does not trigger onClick', () => {
 
 ```typescript
 import { renderHook, act } from '@testing-library/react';
-import { useCounter } from './useCounter';
+import { useForm } from './useForm';
 
-test('increments counter', () => {
-  const { result } = renderHook(() => useCounter());
-  
+test('updates one field without touching the others', () => {
+  const { result } = renderHook(() => useForm({ name: '', email: 'a@b.c' }));
+
   act(() => {
-    result.current.increment();
+    result.current.update('name', 'Ada');
   });
-  
-  expect(result.current.count).toBe(1);
+
+  expect(result.current.values).toEqual({ name: 'Ada', email: 'a@b.c' });
 });
 ```
 
@@ -479,54 +501,69 @@ test('increments counter', () => {
 
 ## Configuration
 
-**tailwind.config.js**
-```javascript
-export default {
-  content: ['./src/**/*.{ts,tsx}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-};
+Tailwind CSS 4 is configured through its Vite plugin and a CSS import; there is no
+`tailwind.config.js` by default. Theme customization goes in CSS with `@theme`.
+
+**vite.config.ts**
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+});
 ```
+
+**src/index.css**
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #2563eb;
+}
+```
+
+Environment values are read through `import.meta.env` in one config module and imported from
+there. Commit a `.env.example` with placeholder values; never commit `.env`.
 
 ---
 
 ## Summary
 
-You build small, focused components. Small stays readable for you.
-You use Tailwind utilities, not custom CSS. You stay with the system.
-You keep reusable logic in custom hooks. Your logic has a home.
-You use context sparingly, only for global state. Most state is not global.
-You test your components and hooks. You prove they work.
-You use error boundaries for graceful failure. You fail with manners.
+- Small, focused components; business logic in `lib/`.
+- Strict TypeScript with no `any`.
+- Tailwind utilities instead of custom CSS.
+- Reusable logic in custom hooks; async state as a discriminated union.
+- Context only for app-wide state.
+- Error boundaries for render errors, hook-level boundaries for async errors, and user-facing
+  copy that says what, why, and what to do.
+- Components and hooks covered by behavior-named tests.
 
 ---
 
 ## Project Prompt
 
-You build a React and Tailwind frontend against the structure and rules above. Where they
-disagree with your defaults, this file wins. You obey it.
-
-You read `../languages/TypeScript.md` and `../standards/Principles.md` alongside this file before you start. You know your standards before you cut.
+Build a React and Tailwind frontend against the structure and rules above. This file decides
+framework structure and idiom; coding standards come from `../standards/Clean-Code/`, which
+wins on any conflict. Open the sections of `../standards/Principles.md` the task needs.
 
 **Styling**
-- Tailwind CSS 4.0 only, no custom CSS unless necessary. Your restraint keeps you consistent
-- Utility-first approach. You use the system
-- Mobile-first responsive design. You build small screens first
-- Consistent spacing scale. You keep the same rhythm everywhere
+- Tailwind CSS 4 only; custom CSS only where utilities cannot express it
+- Utility-first, mobile-first responsive design
+- One consistent spacing scale
 
 **Components**
-- Composition over inheritance. You build up from small parts
-- Props for data flow, context only for global state. You pass it down plainly
-- Your components stay focused. You split when a file mixes unrelated concerns
-- Error boundaries for graceful failure. You fail with manners
+- Composition over inheritance
+- Props for data flow; context only for app-wide state
+- Split a component when it mixes unrelated concerns
+- Error boundaries for render failures
 
 **Performance**
-- You memoize expensive calculations. You do not pay twice
-- You lazy load routes and components. You load what you need
-- You virtualize long lists. You respect your users machine
-- You debounce event handlers. You slow down and stay correct
+- Memoize expensive calculations when profiling shows a cost
+- Lazy-load routes and heavy components
+- Virtualize long lists
+- Debounce high-frequency event handlers
 
 ### Setup
 
@@ -534,36 +571,38 @@ You read `../languages/TypeScript.md` and `../standards/Principles.md` alongside
 npm create vite@latest project-name -- --template react-ts
 cd project-name
 npm install
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
+npm install tailwindcss @tailwindcss/vite
 ```
+
+Then add the Tailwind plugin to `vite.config.ts` and `@import "tailwindcss";` to
+`src/index.css` as shown in Configuration.
 
 ### Deliverables
 
-1. You deliver a complete project following architecture structure above. You leave no missing pieces
-2. You deliver type-safe React components. You let the compiler guard you
-3. You deliver custom hooks for reusable logic. Your logic has a home
-4. You deliver context providers for state. Only where state is truly shared
-5. You deliver Tailwind styling throughout. No stray CSS
-6. You deliver routing with React Router. One way to move
-7. You deliver form handling with validation. You never trust input
-8. You deliver error boundaries. You fail with manners
-9. You deliver a README with setup instructions. The next person thanks you
-10. You deliver a basic test suite. You prove your work
+1. A complete project following the structure above
+2. Type-safe React components
+3. Custom hooks for reusable logic
+4. Context providers only where state is truly shared
+5. Tailwind styling throughout
+6. Routing with React Router
+7. Form handling with validation
+8. Error boundaries
+9. A README with setup instructions
+10. A test suite covering components and hooks
 
 ### Validation Checklist
 
-- [ ] You verify commands from project AGENTS.md / README run (or you list honest manual checks)
-- [ ] You commit no secrets. Your env examples use placeholders only
-- [ ] Your components stay focused. You split when UI, data fetching, and business rules share one file without need
-- [ ] You use no `any` types. You type what you mean
-- [ ] You type all props and state. You leave nothing vague
-- [ ] You use no inline styles (use Tailwind). You stay with the system
-- [ ] You keep custom hooks for logic. Your logic has a home
-- [ ] You implement error boundaries. You fail with manners
-- [ ] You handle loading states. You show your user where you stand
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] TypeScript compiles with no errors. Clean means clean
+- [ ] Verify commands from the project's AGENTS.md or README run (or honest manual checks are listed)
+- [ ] No secrets committed; env examples use placeholders only
+- [ ] Components split when UI, data fetching, and business rules share one file without need
+- [ ] No `any` types
+- [ ] All props and state typed
+- [ ] No inline styles
+- [ ] Reusable logic lives in custom hooks or `lib/`
+- [ ] Error boundaries implemented; async failures render a what / why / action message
+- [ ] Loading states handled
+- [ ] Names match the domain and local convention (Clean-Code 06)
+- [ ] TypeScript compiles with no errors
 
 ### Pre-Delivery
 

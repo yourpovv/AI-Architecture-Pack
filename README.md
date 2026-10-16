@@ -2,9 +2,9 @@
 
 # Architecture Pack
 
-**Engineering standards, agent skills, and task prompts for you. You do the building with AI.**
+**Engineering standards, agent skills, and task prompts for building software with AI agents.**
 
-It stays portable. It stays stack-agnostic. It stays project-neutral. Why does that matter for you? You should not relearn good code for each repo. Take only what your code needs. Drop it into any repo you own.
+Portable, stack-agnostic, and project-neutral. Copy the parts a repo needs into that repo.
 
 <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-2f363d?style=flat-square"></a>
 <img alt="Stack agnostic" src="https://img.shields.io/badge/scope-stack--agnostic-2f363d?style=flat-square">
@@ -17,39 +17,37 @@ It stays portable. It stays stack-agnostic. It stays project-neutral. Why does t
 
 ## TL;DR
 
-1. You copy [`standards/Clean-Code/`](standards/Clean-Code/README.md) and one
-   [`languages/*`](languages/README.md) file into your `docs/`. Take only what you need for your code.
-2. You write a short `AGENTS.md` at the repo root pointing at them. List what the agent may
-   edit and how you will check its work. Be explicit. Your team will thank you.
-3. Tell your agent to **load one file at a time**. Never hand it the whole folder. Discipline here saves your context for your code.
+1. Copy [`standards/Clean-Code/`](standards/Clean-Code/README.md) into the repo's `docs/`, plus
+   a [`frameworks/*`](frameworks/README.md) file if one applies.
+2. Write a short `AGENTS.md` at the repo root that points at them, lists what the agent may
+   edit, and names the commands that verify its work.
+3. Tell the agent to load one file at a time, never the whole folder.
 
-Then you install the audit harness for your code. You give every review an explicit scope. You keep it
-`report-only` until you say otherwise. That way your agent reports. It does not rewrite behind your back:
+Then install the audit harness so every review has an explicit scope and stays `report-only`
+until you switch it to `fix`:
 
 ```bash
 cp -r skills/review/audit .claude/skills/
 ```
 
-[Project templates](#project-templates) gives you the exact file list per stack. Read on. You will see why each file earns its place in your code.
+[Project templates](#project-templates) lists the files to copy for each kind of project.
 
 ---
 
 ## Why this exists
 
-Listen. Two things go wrong when you build software with an agent. Do you recognize them in your own work?
+Agent-built code fails in two common ways.
 
-**It has no standard to code against.** Every file invents its own conventions. By week
-two your project has stopped being one codebase. Nothing looks broken, so nothing
-gets fixed. Your code turns unmaintainable. You cannot point at why. That is how craftsmanship dies.
+**There is no standard to code against.** Each file invents its own conventions, and after a
+couple of weeks the project stops reading like one codebase. Nothing is visibly broken, so
+nothing gets fixed.
 
-**It gets handed everything at once.** The whole repo. Every doc you own. Plus a
-20-page style guide. The instructions that matter end up buried. Your context
-window has no room left for your code. How can your agent do good work then?
+**The agent gets everything at once.** The whole repo, every doc, and a 20-page style guide
+crowd the context window, and the instructions that matter get buried.
 
-This pack fixes both for you. You split your standards one rule per file. Your agent opens the
-single lesson your task needs instead of swallowing the folder. You give every review prompt its
-own scope and mode. So an audit cannot quietly turn into a rewrite. Nothing here is
-tied to one project. You use the same pieces in every repo you own.
+The pack splits the standards into one rule per file, so the agent opens only the lesson the
+task needs. Every review prompt carries its own scope and mode, so an audit cannot quietly
+turn into a rewrite. Nothing is tied to one project.
 
 ---
 
@@ -57,52 +55,52 @@ tied to one project. You use the same pieces in every repo you own.
 
 <table>
 <thead>
-<tr><th align="left">Layer</th><th align="left">What it gives you</th><th align="left">When to load it</th></tr>
+<tr><th align="left">Layer</th><th align="left">Contents</th><th align="left">When to load it</th></tr>
 </thead>
 <tbody>
 <tr>
   <td><a href="standards/README.md"><b><code>standards/</code></b></a></td>
-  <td>60 clean-code lessons for you. One rule per file. Plus a universal handbook on SOLID, architecture, testing, and security for your code</td>
-  <td>You load it in every serious project you own</td>
+  <td>60 language-agnostic clean-code lessons, one rule per file, plus a handbook on SOLID, architecture, testing, concurrency, and security that agrees with them</td>
+  <td>Every serious project</td>
 </tr>
 <tr>
   <td><a href="skills/README.md"><b><code>skills/</code></b></a></td>
-  <td>Guidance that fires on its own for you. You get audit harness, error handling, comment discipline, prose rules, sub-agent routing, <code>.claude/</code> setup for your code</td>
-  <td>You install once for your team. Then you leave it alone.</td>
-</tr>
-<tr>
-  <td><a href="languages/README.md"><b><code>languages/</code></b></a></td>
-  <td>Structure, idioms, and testing for you. Plus a ready-to-paste project prompt for TypeScript, Node/Bun, Go, Python, C++, and Luau</td>
-  <td>You pick exactly one for your project. That is enough.</td>
+  <td>Guidance that triggers on its own: audit harness, error handling, comment discipline, prose rules, sub-agent routing, <code>.claude/</code> setup</td>
+  <td>Install once</td>
 </tr>
 <tr>
   <td><a href="frameworks/README.md"><b><code>frameworks/</code></b></a></td>
-  <td>Framework conventions for you, on top of your language: React + Tailwind, Tauri, Electron, Valkyrie</td>
-  <td>You load it only when one applies to your code</td>
+  <td>Framework conventions: React + Tailwind, Tauri, Electron, Valkyrie, Dear ImGui</td>
+  <td>Only when one applies</td>
 </tr>
 <tr>
   <td><a href="prompts/README.md"><b><code>prompts/</code></b></a></td>
-  <td>Paste-in tasks for you. You get reviews and audits, greenfield scaffolds, and workflow rules that stop your agent from guessing</td>
-  <td>You load one per task you run. No more.</td>
+  <td>Paste-in tasks: reviews and audits, greenfield scaffolds, and workflow rules that stop the agent from guessing</td>
+  <td>One per task</td>
 </tr>
 <tr>
   <td><a href="design/README.md"><b><code>design/</code></b></a></td>
-  <td>Aesthetic systems for you. Plus vetted sources for components, icons, illustrations, and 3D assets</td>
-  <td>You opt in only if your code needs it. Do you need it? Then take it.</td>
+  <td>Opt-in aesthetic systems, plus vetted sources for components, icons, illustrations, and 3D assets</td>
+  <td>Only for UI work that wants them</td>
 </tr>
 <tr>
   <td><a href="STACK.md"><b><code>STACK.md</code></b></a></td>
-  <td>A worked walkthrough for you to choose your stack, plus the services and AI tooling worth reaching for</td>
-  <td>You read it when you start something new. Not after.</td>
+  <td>A walkthrough for choosing a stack, plus default services and AI tooling</td>
+  <td>When starting something new</td>
 </tr>
 </tbody>
 </table>
+
+The lessons are written in language-neutral pseudocode. Each one says to translate the
+examples into the repo's language, and
+[`skills/engineering/errors/SKILL.md`](skills/engineering/errors/SKILL.md) maps the error rules
+onto languages without exceptions.
 
 ---
 
 ## Quick start
 
-### 1. Copy what the project actually needs
+### 1. Copy what the project needs
 
 ```
 your-project/
@@ -111,16 +109,15 @@ your-project/
     ├── standards/
     │   ├── Clean-Code/              <- the mandatory 60
     │   └── Principles.md
-    ├── languages/TypeScript.md      <- exactly one
     └── frameworks/Tauri.md          <- optional
 ```
 
-Keep the same relative layout in your code. Your cross-references still resolve then. Why fight broken links?
+Keep the same relative layout so cross-references still resolve.
 
 ### 2. Write a short `AGENTS.md` at the repo root
 
-This is the step people skip. Do not skip it. It decides whether any of the rest works for you and your team.
-It is the only file allowed to know about *your* project. Keep it that way.
+This step decides whether the rest works. `AGENTS.md` is the only file that knows about your
+project.
 
 ```markdown
 ## Coding standards
@@ -139,19 +136,19 @@ bun test
 bun run typecheck
 ```
 
-### 3. Say the rules once, at the start
+### 3. State the rules once, at the start
 
-> Read `AGENTS.md` first for your code. Your coding standards live in `docs/standards/Clean-Code/`. You load only
-> the lesson file that matches your task. For any review, you read `docs/skills/review/audit/SKILL.md` and you set
-> scope and mode (`report-only` by default). You load one language or framework file, and one
-> prompt. You do not load the whole `Clean-Code/` folder or all of `Principles.md` unless you are
-> auditing against the full map for your team.
+> Read `AGENTS.md` first. Coding standards live in `docs/standards/Clean-Code/`; load only the
+> lesson file that matches the task. For any review, read `docs/skills/review/audit/SKILL.md`
+> and set scope and mode (`report-only` by default). Load at most one framework file and one
+> prompt. Do not load the whole `Clean-Code/` folder or all of `Principles.md` unless auditing
+> against the full map.
 
 ---
 
 ## Project templates
 
-Each row is a complete setup for you and your code. You copy the files. Then you paste the prompt for your task.
+Each row is a complete setup. Copy the files, then paste the prompt for the task.
 
 <table>
 <thead>
@@ -160,57 +157,53 @@ Each row is a complete setup for you and your code. You copy the files. Then you
 <tbody>
 <tr>
   <td><b>Desktop app</b><br><sub>Tauri</sub></td>
-  <td><code>standards/Clean-Code/</code><br><code>languages/TypeScript.md</code><br><code>frameworks/Tauri.md</code></td>
-  <td><code>prompts/reviews/Tauri-QC.md</code> before you ship</td>
+  <td><code>standards/Clean-Code/</code><br><code>frameworks/Tauri.md</code></td>
+  <td><code>prompts/reviews/Tauri-QC.md</code> before shipping</td>
 </tr>
 <tr>
   <td><b>Desktop app</b><br><sub>Electron or Valkyrie</sub></td>
-  <td><code>standards/Clean-Code/</code><br><code>languages/TypeScript.md</code><br><code>frameworks/Electron.md</code></td>
+  <td><code>standards/Clean-Code/</code><br><code>frameworks/Electron.md</code> or <code>frameworks/Valkyrie.md</code></td>
+  <td><code>prompts/reviews/Code-Review.md</code></td>
+</tr>
+<tr>
+  <td><b>Native tool UI</b><br><sub>Dear ImGui</sub></td>
+  <td><code>standards/Clean-Code/</code><br><code>frameworks/Dear-ImGui.md</code></td>
   <td><code>prompts/reviews/Code-Review.md</code></td>
 </tr>
 <tr>
   <td><b>Website or web app</b></td>
-  <td><code>standards/Clean-Code/</code><br><code>languages/TypeScript.md</code><br><code>frameworks/React-Tailwind.md</code><br><code>skills/web/web-seo/SKILL.md</code></td>
+  <td><code>standards/Clean-Code/</code><br><code>frameworks/React-Tailwind.md</code><br><code>skills/web/web-seo/SKILL.md</code></td>
   <td><code>prompts/scaffolds/Website.md</code><br><code>prompts/scaffolds/Website-Design.md</code></td>
 </tr>
 <tr>
   <td><b>Discord bot</b></td>
-  <td><code>standards/Clean-Code/</code><br><code>languages/TypeScript.md</code></td>
+  <td><code>standards/Clean-Code/</code></td>
   <td><code>prompts/scaffolds/Discord-Bot.md</code></td>
 </tr>
 <tr>
   <td><b>Backend service</b></td>
-  <td><code>standards/Clean-Code/</code><br><code>languages/Go.md</code> or <code>Bun-Node.md</code></td>
+  <td><code>standards/Clean-Code/</code><br><code>standards/Principles.md</code></td>
   <td><code>prompts/reviews/Performance-Scalability-Review.md</code></td>
 </tr>
 <tr>
-  <td><b>Roblox game</b></td>
-  <td><code>standards/Clean-Code/</code><br><code>languages/Luau.md</code></td>
-  <td><code>prompts/reviews/Code-Review.md</code></td>
-</tr>
-<tr>
-  <td><b>CLI or library</b></td>
-  <td><code>standards/Clean-Code/</code><br>one <code>languages/*</code> file</td>
+  <td><b>Game, CLI, or library</b></td>
+  <td><code>standards/Clean-Code/</code></td>
   <td><code>prompts/reviews/PR-Review.md</code></td>
 </tr>
 </tbody>
 </table>
 
-Every one of them starts with `standards/Clean-Code/`. That is deliberate for your code. Your language changes per project. Your framework changes per project. Your definition of good code does not. Hold that line in your code.
+Every template starts with `standards/Clean-Code/` because the definition of good code
+outlives any particular language or framework.
 
 ---
 
-## The rule that makes this work
+## Load one file at a time
 
-**You load one file at a time.**
-
-A pack like this is worth nothing if your agent reads all of it. Context you spend on 60 lessons
-you are not applying is context you cannot spend on your code. Give a model sixty rules
-at once and it follows none of them well. Have you seen that in your own team?
-
-So every file here is built for you to open alone. Your standards stay one rule per file. Your
-language guides open with an `Agent load` line naming which sections you read first. Your
-prompts stay self-contained tasks. Respect that shape in your code.
+A model given sixty rules at once follows none of them well, and every lesson it reads but
+does not apply is context it cannot spend on the code. So every file here is built to be
+opened alone: one rule per standards file, an `Agent load` line at the top of each framework
+guide naming the sections to read first, and self-contained prompts.
 
 <details>
 <summary><b>Default load, and what to add on demand</b></summary>
@@ -219,43 +212,43 @@ prompts stay self-contained tasks. Respect that shape in your code.
 
 **Default load**
 
-1. Your project `AGENTS.md` for your code. You start here every time.
-2. Your relevant README or tracker for your code.
-3. Your `skills/review/audit/SKILL.md` when you review, audit, or ship your code.
-4. You load **One** language or framework file for your code.
-5. You load **One** prompt matching your task.
+1. The project's `AGENTS.md`.
+2. The relevant README or tracker.
+3. `skills/review/audit/SKILL.md` when reviewing, auditing, or shipping.
+4. At most one framework file.
+5. One prompt matching the task.
 
 **On demand**
 
 | Doc | When |
 |---|---|
-| `standards/Clean-Code/NN-*.md` | Your primary craft standards. You load one lesson by topic for your code |
-| `standards/Clean-Code/README.md` | The full map for you, when you audit against every rule in your code |
-| `standards/Principles.md` | SOLID, testing, security, and concurrency for your code. Craft defers to Clean-Code for you |
-| `skills/engineering/errors/SKILL.md` | Failure handling and user-facing error copy for your code. You own the failure paths |
-| `skills/engineering/uncle-bob/SKILL.md` | Structure, seams, and professionalism for your code. You keep it clean |
-| `skills/engineering/craft/SKILL.md` | Naming, comments, and structure for your code. You make it readable |
-| `skills/engineering/necessary-comments/SKILL.md` | You decide whether your comment earns its keep in your code |
-| `skills/writing/create-readme/SKILL.md` | You write a README from your real tree. No guessing |
-| `skills/writing/prose/SKILL.md` | Any README, doc, PR body, or commit message for you. The prose rules the rest of the pack defers to for your code |
-| `skills/web/web-seo/SKILL.md` | You ship your public site with care |
-| `skills/agent/sub-agents/SKILL.md` | You delegate your work and you pick model tiers with care |
-| `skills/agent/context-budget/SKILL.md` | Your session feels expensive for you, or your usage limits keep getting hit |
-| `skills/agent/commits/SKILL.md` | Your agent is about to commit for you, or your session has piled up changes |
-| `skills/agent/claude-folder/SKILL.md` | You set up your `.claude/`, or your hook will not fire for you |
-| `prompts/workflow/Before-Implementing.md` | Your agent is about to build on a guess in your code |
-| `prompts/reviews/PR-Review.md` | Your pre-merge go or no-go for your code |
-| `prompts/reviews/Docs-Review.md` | Your docs have drifted from your code, or they read like nobody proofread them |
-| `design/apple-design/SKILL.md` | Your explicit Apple aesthetic request for your code |
-| `STACK.md` | You have chosen no stack yet for your code |
+| `standards/Clean-Code/NN-*.md` | The primary craft standard. Load one lesson by topic |
+| `standards/Clean-Code/README.md` | The full map, for audits against every rule |
+| `standards/Principles.md` | SOLID, architecture, testing, concurrency, security. One section at a time |
+| `skills/engineering/errors/SKILL.md` | Failure handling and user-facing error copy |
+| `skills/engineering/uncle-bob/SKILL.md` | Structure, seams, and professional scope calls |
+| `skills/engineering/craft/SKILL.md` | Naming, comments, and structure judged for readability |
+| `skills/engineering/necessary-comments/SKILL.md` | Whether a comment earns its place |
+| `skills/writing/create-readme/SKILL.md` | A README written from the real tree |
+| `skills/writing/prose/SKILL.md` | Any README, doc, PR body, or commit message |
+| `skills/web/web-seo/SKILL.md` | Shipping a public site |
+| `skills/agent/sub-agents/SKILL.md` | Delegating work and choosing model tiers |
+| `skills/agent/context-budget/SKILL.md` | Sessions that feel expensive or keep hitting limits |
+| `skills/agent/commits/SKILL.md` | The agent is about to commit, or changes have piled up |
+| `skills/agent/claude-folder/SKILL.md` | Setting up `.claude/`, or a hook that will not fire |
+| `prompts/workflow/Before-Implementing.md` | The agent is about to build on a guess |
+| `prompts/reviews/PR-Review.md` | A pre-merge go/no-go |
+| `prompts/reviews/Docs-Review.md` | Docs have drifted from the code or read badly |
+| `design/apple-design/SKILL.md` | An explicit request for the Apple aesthetic |
+| `STACK.md` | No stack chosen yet |
 
 **Never default-load**
 
-- You never load the entire `standards/Clean-Code/` folder in your code
-- You never load all of `standards/Principles.md` by default
-- You never load the entire `prompts/` tree at once
-- You never load `STACK.md` on your project that already chose its stack
-- You never load `design/apple-design/SKILL.md` for your non-Apple UI
+- The entire `standards/Clean-Code/` folder
+- All of `standards/Principles.md`
+- The entire `prompts/` tree
+- `STACK.md` in a project that already chose its stack
+- `design/apple-design/SKILL.md` for non-Apple UI
 
 </details>
 
@@ -264,12 +257,14 @@ prompts stay self-contained tasks. Respect that shape in your code.
 
 <br>
 
-1. Your project **`AGENTS.md`**, and only for an exception it names explicitly
-2. **`standards/Clean-Code/`**, your craft source of truth
-3. **`skills/engineering/uncle-bob/SKILL.md`**, your methodology
-4. Your other `skills/*` and **`standards/Principles.md`**
-Your agent hits contradictory advice. It needs a rule to follow in your code. Otherwise it invents a
-preference. You get a different answer every session. Which answer do you trust then?
+1. The project's **`AGENTS.md`**, only for an exception it names explicitly
+2. **`standards/Clean-Code/`**, the craft source of truth
+3. **`skills/engineering/uncle-bob/SKILL.md`**, the methodology
+4. Other `skills/*` and **`standards/Principles.md`**
+5. **`frameworks/*`**, for framework syntax and project layout only
+
+Without a fixed order, an agent facing contradictory advice invents a preference and gives a
+different answer every session.
 
 </details>
 
@@ -277,36 +272,35 @@ preference. You get a different answer every session. Which answer do you trust 
 
 ## Prompts vs skills
 
-You have two ways to deliver guidance in your code. You decide which one fits your task. The difference is who decides when it fires for you.
+The difference is who decides when the guidance applies.
 
 |  | `prompts/` | `skills/` and `design/` |
 |---|---|---|
-| **How you use it** | You paste into chat, deliberately for your task | You install once. It triggers itself for you |
-| **Frontmatter** | Optional for you | Your `name` plus a `description` full of trigger phrases for your code |
-| **Best for** | One-off tasks with a clear start and end for you | Standing rules for you that apply without you remembering |
+| **How it is used** | Pasted into chat for a specific task | Installed once; the agent loads it when the task matches |
+| **Frontmatter** | Optional | `name` plus a `description` full of trigger phrases |
+| **Best for** | One-off tasks with a clear start and end | Standing rules that should apply without anyone remembering them |
 
-Every review and audit prompt obeys [`skills/review/audit/SKILL.md`](skills/review/audit/SKILL.md) for you. It demands explicit scope from you. It stays
-`report-only` by default. No silent full-repo rewrite in your code. You verify with commands discovered from
-your project, never invented. That keeps you honest.
+Every review and audit prompt obeys [`skills/review/audit/SKILL.md`](skills/review/audit/SKILL.md):
+explicit scope, `report-only` by default, and verification with commands taken from the
+project, never invented.
 
 ### Installing the skills
 
-Every skill is already a folder holding a `SKILL.md` for you, named the way Claude Code expects.
-You copy the folder and you are done in your code:
+Every skill is a folder holding a `SKILL.md`, named the way Claude Code expects. Copy the
+folder:
 
 ```bash
 cp -r skills/review/audit .claude/skills/
 ```
 
-You use `~/.claude/skills/` to install for every project on the machine. The category folders
-(`agent/`, `engineering/`, `review/`, `web/`, `writing/`) exist for you to browse this repo.
-Claude Code reads a flat skills directory, so you copy the individual skill folders rather than
-the category for your code. You find the full list and the trigger for each skill in
-[`skills/README.md`](skills/README.md).
+Use `~/.claude/skills/` to install for every project on the machine. The category folders
+(`agent/`, `engineering/`, `review/`, `web/`, `writing/`) exist for browsing this repo. Claude
+Code reads a flat skills directory, so copy the individual skill folders, not the category. The
+full list with triggers is in [`skills/README.md`](skills/README.md).
 
-Harness details move between releases. [`code.claude.com/docs`](https://code.claude.com/docs)
-stays the authority on exact paths, settings keys, and hook events for you. This pack tells you what to
-put in them for your code.
+Harness details change between releases. [`code.claude.com/docs`](https://code.claude.com/docs)
+is the authority on exact paths, settings keys, and hook events. This pack covers what to put
+in them.
 
 ---
 
@@ -359,23 +353,16 @@ Architecture/
 │   ├── impeccable/SKILL.md         vendored, see design/README.md
 │   ├── design-taste-frontend/SKILL.md
 │   ├── redesign-existing-projects/SKILL.md
-│   └── image-to-code/SKILL.md
+│   ├── image-to-code/SKILL.md
+│   └── font-pairing/SKILL.md
 │
-├── languages/                      pick ONE per project
-│   ├── README.md
-│   ├── TypeScript.md
-│   ├── Bun-Node.md
-│   ├── Go.md
-│   ├── Python.md
-│   ├── Cpp.md
-│   └── Luau.md
-│
-├── frameworks/                     pair with a language
+├── frameworks/                     optional, one per project
 │   ├── README.md
 │   ├── React-Tailwind.md
 │   ├── Tauri.md
 │   ├── Electron.md
-│   └── Valkyrie.md
+│   ├── Valkyrie.md
+│   └── Dear-ImGui.md
 │
 └── prompts/                        PASTE-IN, never auto-loaded
     ├── README.md
@@ -388,6 +375,7 @@ Architecture/
     │   ├── Error-Handling-And-Observability.md
     │   ├── Performance-Scalability-Review.md
     │   ├── Docs-Review.md
+    │   ├── Spacing-Audit.md
     │   └── Tauri-QC.md
     └── scaffolds/                  greenfield builds
         ├── Discord-Bot.md
@@ -396,8 +384,8 @@ Architecture/
         └── Readme-Voice.md
 ```
 
-`prompts/domains/` is a documented extension point for you rather than a shipped folder. You create
-`prompts/domains/<your-stack>/` when you need threat models that only apply to one platform in your code.
+`prompts/domains/` is a documented extension point, not a shipped folder. Create
+`prompts/domains/<your-stack>/` for threat models that apply to one platform only.
 
 </details>
 
@@ -406,50 +394,49 @@ Architecture/
 
 <br>
 
-**Stop your agent building on a guess in your code**
+**Stop the agent building on a guess**
 
 ```
 Read prompts/workflow/Before-Implementing.md.
 Then: <what you want built>.
 ```
 
-**Run a production review on your code**
+**Run a production review**
 
 ```
 Read skills/review/audit/SKILL.md and prompts/reviews/PR-Review.md.
 Scope: <paths>. Mode: report-only.
 ```
 
-**Build a website with your agent**
+**Build a website**
 
 ```
-Read prompts/scaffolds/Website.md, languages/TypeScript.md,
-and frameworks/React-Tailwind.md.
+Read prompts/scaffolds/Website.md and frameworks/React-Tailwind.md.
 Build only the pages we discussed.
 ```
 
-**Build a Discord bot with your agent**
+**Build a Discord bot**
 
 ```
-Read prompts/scaffolds/Discord-Bot.md and languages/TypeScript.md.
+Read prompts/scaffolds/Discord-Bot.md.
 Build a bot that posts daily standup reminders.
 ```
 
-**Write a README from the real tree in your code**
+**Write a README from the real tree**
 
 ```
 Read skills/writing/create-readme/SKILL.md, and prompts/scaffolds/Readme-Voice.md for voice.
 Write README.md from the actual repo. No guessing.
 ```
 
-**Run a docs pass on your code**
+**Run a docs pass**
 
 ```
 Read skills/review/audit/SKILL.md and prompts/reviews/Docs-Review.md.
 Scope: README.md and docs/**. Mode: report-only.
 ```
 
-**Run a craft pass on your code**
+**Run a craft pass**
 
 ```
 Read skills/engineering/craft/SKILL.md and skills/engineering/uncle-bob/SKILL.md.
@@ -462,45 +449,41 @@ Review naming, comments, and structure for maintainability.
 
 ## Extending the pack
 
-Every folder has its own README with an "adding" section covering the required shape for you.
-Short version for your code:
+Every folder's README has an "Adding" section with the required shape. In short:
 
 | Adding a | Start from | Then |
 |---|---|---|
-| **Skill** | The frontmatter in `skills/engineering/errors/SKILL.md` | You write the `description` for the matcher, using phrases people actually type in your code |
-| **Language** | The closest `languages/*` file | You keep the section order and the `Agent load` blockquote for your code |
-| **Framework** | The closest `frameworks/*` file | You say which language file it assumes, and you cover only what the framework changes in your code |
-| **Review prompt** | The harness block in any `prompts/reviews/*` file | You default to `report-only`, and you always require a scope for your code |
-| **Scaffold prompt** | Any `prompts/scaffolds/*` file | You extend an existing repo, and you implement only what was asked for your code |
-| **Domain pack** | A new `prompts/domains/<name>/` folder | Every file opens with the Audit harness block for your code |
+| **Skill** | The frontmatter in `skills/engineering/errors/SKILL.md` | Write the `description` for the matcher, using phrases people actually type |
+| **Framework** | The closest `frameworks/*` file | Cover only what the framework changes; keep the `Agent load` blockquote |
+| **Review prompt** | The harness block in any `prompts/reviews/*` file | Default to `report-only` and always require a scope |
+| **Scaffold prompt** | Any `prompts/scaffolds/*` file | Prefer extending an existing repo, and implement only what was asked |
+| **Domain pack** | A new `prompts/domains/<name>/` folder | Open every file with the audit harness block |
 
-Whatever you add to your code, list it in that folder's README. An unlisted file is a file nobody loads. Why write what no one can find?
+List anything you add in that folder's README. An unlisted file never gets loaded.
 
 ---
 
 ## House rules
 
-These rules keep the pack clean for you. They stop it rotting into a junk drawer in your code.
-
-- **This is not a project.** No product code, no runtime configs, no secrets, no session
-  notes, no `AGENTS.md` for you. Those belong in the repo they describe. Respect that boundary in your code.
-- **One file per concept for you.** You cross-reference instead of duplicating. Two copies of a rule
-  become two different rules in your code.
-- **Universal files stay universal for you.** No product paths, no toolchains that only exist on
-  one machine in your code.
-- **Domain packs describe a genre of work for you**, never one live server or one client in your code.
-- **Scaffolds and reviews stay separate for you.** "Build a bot" and "audit this tree" are not the
-  same file in your code.
-- **Update in place in your code.** No orphaned renames, no `-v2` files.
-- **Delete when in doubt in your code.**
+- **The pack is not a project.** No product code, runtime configs, secrets, session notes, or
+  `AGENTS.md`. Those belong in the repo they describe.
+- **One file per concept.** Cross-reference instead of duplicating; two copies of a rule
+  become two different rules.
+- **Universal files stay universal.** No product paths and no toolchains that exist on one
+  machine only.
+- **Domain packs describe a genre of work,** never one live server or one client.
+- **Scaffolds and reviews stay separate.** "Build a bot" and "audit this tree" are different
+  files.
+- **Update in place.** No orphaned renames and no `-v2` files.
+- **When a file is in doubt, delete it.**
 
 ---
 
 <div align="center">
 <sub>
 
-MIT licensed for you. Your clean-code standards are derived from Robert C. Martin's (Uncle Bob's) work,
-rewritten as engineering rules with examples and review checklists for your code.
+MIT licensed. The clean-code standards are derived from Robert C. Martin's work, rewritten as
+engineering rules with examples and review checklists.
 
 </sub>
 </div>

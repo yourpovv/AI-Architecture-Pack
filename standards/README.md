@@ -1,29 +1,30 @@
 # standards/ index
 
-This is your universal layer. It names no framework. It names no vendor. It names none of your projects.
-That silence is deliberate. You can use every file here in every repo you own. That sameness keeps your work honest. Why does that matter. Because your standards should not shift when you change folders.
+The universal layer. No file here names a framework, a vendor, a language, or a specific
+project, so every file applies to every repo.
 
 | Path | What it is | How to load it |
 |---|---|---|
-| **[Clean-Code/](./Clean-Code/README.md)** | 60 lesson standards (41 flat + 19 grouped), one rule per file. This is your mandatory craft baseline. You answer to it every day | Open the one lesson file your task needs. Keep the rest closed. Your attention belongs on your code, not on browsing rules |
-| **[Principles.md](./Principles.md)** | SOLID, Clean Architecture, testing, concurrency, security, and the philosophy that holds them together. You read it when you must shape your design | Load one section at a time. It runs long on purpose. Read it all at once and you burn the budget you need for your code |
+| **[Clean-Code/](./Clean-Code/README.md)** | 60 lesson standards (41 flat + 19 grouped), one rule per file. The mandatory craft baseline | Open the one lesson file the task needs. Never load the whole folder |
+| **[Principles.md](./Principles.md)** | SOLID, Clean Architecture, testing, concurrency, security, performance, and team practice. Agrees with every lesson and links the lesson for each craft rule | Open one section at a time. The file is long on purpose |
 
-## Which one answers your question
+## Which one answers the question
 
 | Question | Go to |
 |---|---|
-| Is this name any good? Should this be a comment? Is this function doing too much? | `Clean-Code/` |
-| Should this be an interface? How do I test this? Is this dependency pointing the right way? | `Principles.md` |
+| Is this name any good? Should this be a comment? Is this function doing too much? How should this fail? | `Clean-Code/` |
+| Should this be an interface? Which way should this dependency point? How do I make this concurrent? What should I log? | `Principles.md` |
 
-Craft lives in `Clean-Code/`. Architecture and testing live in `Principles.md`. Where
-the two overlap, `Clean-Code/` wins. You fix `Principles.md` to match it. You never bend the rule to fit the handbook.
+Craft lives in `Clean-Code/`. Architecture, concurrency, security, and operations live in
+`Principles.md`. Where they overlap, `Principles.md` summarizes the lesson and links it. If a
+summary drifts, fix `Principles.md` to match the lesson.
 
 ## Authority order
 
-1. Project **`AGENTS.md`**. It wins only when it names an explicit exception for you
+1. The project's **`AGENTS.md`**, only for an exception it names explicitly
 2. **`Clean-Code/`**
 3. **`../skills/engineering/uncle-bob/SKILL.md`**
 4. Other `../skills/*` and **`Principles.md`**
 
-That order exists for a reason. When two rules disagree, you obey the higher one.
-You do not invent your own order. That discipline is what protects your team. Can your team trust you if you pick and choose. No.
+When two rules disagree, follow the higher one. Without a fixed order, an agent picks a
+different winner every session.

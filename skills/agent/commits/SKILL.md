@@ -12,77 +12,71 @@ description: >
 
 # Commits
 
-Listen. Your agent can produce a week of your changes in an hour. Without a commit policy you end up
-with one enormous uncommitted diff that nobody on your team can review, bisect, or roll back. Then
-your only way out is to read all of it at once. Do you want that job at midnight. You do not.
-
-Your fix is boring and it works. You commit each task as it finishes. Your history stays honest.
+An agent can produce a week of changes in an hour. Without a commit policy, the session ends
+with one enormous uncommitted diff that nobody can review, bisect, or roll back except by
+reading all of it at once. The fix is to commit each task as it finishes.
 
 ## The rule
 
-**One commit per completed task, made as soon as your task is done.** You do not batch at
-the end of your session. You do not hold until your human asks. Small commits protect your team.
+**One commit per completed task, made as soon as the task is done.** Do not batch at the end
+of the session, and do not wait for the human to ask.
 
-You give your agent standing authorization for this in your `CLAUDE.md`. Approval per commit
-defeats your point, because the cost of your policy is entirely in the interruptions. You pay it
-once up front and then you move.
+Give the agent standing authorization for this in `CLAUDE.md`. Asking for approval on every
+commit defeats the purpose, because the whole cost of the policy is the interruptions.
 
 ## Staging
 
-**You stage the files your task touched.** `git add <paths>`, never `git add .`.
+**Stage the files the task touched:** `git add <paths>`, never `git add .`.
 
-Your agent sessions leave debris for you: scratch files, a log your agent wrote to think, a config it
-edited while diagnosing something unrelated. `git add .` sweeps all of it into a commit
-that claims to be one change. Naming paths is also your last check on scope. A task
-that touches files you did not expect is a task that did something you did not expect. Professionals
-check before they commit.
+Agent sessions leave debris: scratch files, a log written while thinking, a config edited
+while diagnosing something unrelated. `git add .` sweeps all of it into a commit that claims
+to be one change. Naming paths is also the last scope check: a task that touched files you did
+not expect did something you did not expect.
 
 ## Messages
 
 ```
-<type>: <what changed>
+<type>: <imperative summary of what changed>
 ```
 
 | Type | For |
 |---|---|
-| `feat` | New behavior your user can observe |
-| `fix` | Behavior you corrected that was wrong |
-| `refactor` | Same behavior, structure you changed |
-| `docs` | Documentation only you touched |
-| `test` | Tests only you touched |
-| `chore` | Tooling, deps, config, housekeeping you did |
-| `style` | Formatting with no logic change from you |
+| `feat` | New behavior a user can observe |
+| `fix` | Corrected behavior that was wrong |
+| `refactor` | Same behavior, different structure |
+| `docs` | Documentation only |
+| `test` | Tests only |
+| `chore` | Tooling, dependencies, config, housekeeping |
+| `style` | Formatting with no logic change |
 
-`feat: add user auth endpoint`. `fix: resolve null check in parser`.
+Examples: `feat: add user auth endpoint`, `fix: handle empty input in parser`.
 
-You describe what changed, not what you did. Ask yourself this. Would you accept
-"Update files" and "address feedback" as commit messages. You should not. They are the absence of one.
-Your teammate needs the why in one line.
+Describe what changed, not what you did. "Update files" and "address feedback" are not commit
+messages. Keep the subject under 72 characters, and put the why in the body when it is not
+obvious from the subject.
 
 ## Pushing
 
-**You never push automatically.** Your commits stay local until your human asks for them. That is discipline.
+**Never push automatically.** Commits stay local until the human asks.
 
-Your local commits are cheap to amend, reorder, or drop. A pushed commit is a fact other
-people build on, and undoing it is their problem as much as yours. That decision belongs
-to the person who knows what else is in flight. You ask. You do not assume.
+Local commits are cheap to amend, reorder, or drop. A pushed commit is something other people
+build on, and undoing it becomes their problem too. That decision belongs to the person who
+knows what else is in flight.
 
 ## Splitting
 
-If your task touched several concerns, you make several commits in sequence rather than one
-that needs a paragraph to explain. Your test is simple. Can you describe your change in
-one line without using "and". If you cannot, it is more than one commit. Keep each one clean.
+If a task touched several concerns, make several commits in sequence. The test: if you cannot
+describe the change in one line without "and", it is more than one commit.
 
 ## Who commits
 
-Your session that owns the work owns your commits. See
-[`sub-agents`](../sub-agents/SKILL.md): by default your sub-agent does not commit, because your
-parent is the only one that can see whether your change is really finished. You never grant
-commit authority to parallel agents sharing a worktree. That is how you avoid mixed up commits.
+The session that owns the work owns the commits. By default a sub-agent does not commit,
+because only the parent can see whether the change is really finished (see
+[`sub-agents`](../sub-agents/SKILL.md)). Never grant commit authority to parallel agents sharing
+a worktree.
 
-You verify before every commit. You read the diff you are about to stage and run your project's
-verify gate. A clean commit history full of broken commits is worse than no history for you,
-because it looks trustworthy. Do not ship lies in neat boxes.
+Verify before every commit: read the diff you are about to stage and run the project's verify
+gate. A tidy history of broken commits is worse than no history, because it looks trustworthy.
 
 ---
 
@@ -92,10 +86,10 @@ because it looks trustworthy. Do not ship lies in neat boxes.
 ## Commits
 
 Commit after each completed task, immediately. Do not batch tasks into one commit.
-This is standing authorization, do not ask per commit.
+This is standing authorization; do not ask per commit.
 
 - Stage only that task's files: `git add <paths>`, never `git add .`
-- Message format: `<type>: <what changed>`
+- Message format: `<type>: <imperative summary>`
 - Types: feat, fix, refactor, docs, test, chore, style
 - Never push. Commits stay local until I ask
 - If a task touched several concerns, split it into sequential commits

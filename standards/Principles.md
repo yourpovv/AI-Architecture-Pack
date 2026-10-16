@@ -1,734 +1,771 @@
 # Universal Engineering Principles
 
-> This is your handbook for any stack. It covers my Clean Code, the SOLID principles,
-> Clean Architecture, DRY/KISS/YAGNI, testing, concurrency, security, and the habits
-> that separate code you sign with pride from code you regret. You can carry it into any project you own. You will need it there.
+> A stack-neutral handbook covering SOLID, Clean Architecture, YAGNI and KISS, testing,
+> concurrency, security, performance, and team habits. It sits under the
+> [`Clean-Code/`](./Clean-Code/README.md) lessons and agrees with every one of them.
 
-You keep your rule short when the point is plain. You write longer when your reader needs the nuance.
-When two principles fight, **clarity wins**. You pick the reading your teammate will grasp on first pass. What good is a rule your reader cannot use.
+## Relationship to the Clean-Code lessons
 
-### Mandatory lesson standards (authoritative for craft)
+The 60 lessons in [`Clean-Code/`](./Clean-Code/README.md) are the mandatory coding standard.
+This handbook adds the topics the lessons do not cover (architecture, concurrency, security,
+operations, team practice) and summarizes the ones they do.
 
-**Your day-to-day coding standards live in** [`Clean-Code/`](./Clean-Code/README.md). That is **60 detailed
-Uncle Bob / clean-code lessons** (side effects, naming, errors, comments, DRY, Demeter, CQS, …). You answer to them every day you write code. They are not advice. They are your standard.
+- Where a section here touches naming, functions, comments, errors, null, objects, classes,
+  boundaries, or tests, it links the lesson that defines the rule. The lesson is the
+  authority. This file only summarizes it.
+- If a summary here ever drifts from its lesson, fix this file to match the lesson.
+- The skills under `../skills/` (`errors`, `necessary-comments`, `craft`, `uncle-bob`) are
+  subordinate in the same way.
 
-- For naming, functions, comments, null, exceptions, structure: open the matching
-  `Clean-Code/` lesson file for your task (flat `NN-*.md` or one from the grouped folders). **That file wins** over anything below in this handbook. You obey it. No debate.
-- This `Principles.md` handbook covers **SOLID, architecture, testing, security,
-  concurrency**, and philosophy. Where a section here restates your craft rules, it is a
-  **summary only**. If the wording drifts, you fix this file toward `Clean-Code/`, not the reverse. You never bend `Clean-Code/` to fit this handbook. The rule outranks the summary. Always.
-- Your skills (`Errors.md`, `NecessaryComments.md`, `Craft.md`) are subordinate the same way. You hold them below your craft rules. They do not overrule your lessons.
+## Agent load policy
 
----
+This is a reference handbook, not default context.
 
-## Agent load policy (read this first)
+- Do not load the whole file. Open the one section the task needs.
+- For day-to-day work, the project `AGENTS.md`, one `Clean-Code/` lesson,
+  `../skills/review/audit/SKILL.md`, and `../skills/engineering/errors/SKILL.md` come first.
+- Examples use Java-like or web-flavored pseudocode. Translate them into the language of the
+  repo you are in. The rule holds when the syntax changes.
+- Project facts (owned code, secrets, verify commands) never live here. They belong in the
+  project's own `AGENTS.md` and README.
 
-This file is a **reference handbook**, not your default agent context. You leave it on your shelf until you need it. Why carry the whole book when you need one page.
-
-- **Do not** load the whole document into your session by default. It runs long on purpose. You would burn attention you need for your code.
-- **Do** open the **one section** that matches your task (names, functions, errors, SOLID, testing, security, etc.). You move faster when you read only what your task demands.
-- Trust your project `AGENTS.md`, `standards/Clean-Code/` (one lesson), `skills/review/audit/SKILL.md`, and `skills/engineering/errors/SKILL.md` first for your day-to-day work. You trust them first because they speak to your repo.
-- The examples below use Java-like or web-flavored snippets as illustrations only. They are not your required stack. You map the rule onto the language in your current repo. The rule holds even when your syntax changes.
-- Your project facts (owned code, secrets, verify commands) never live here. They live in your project's tracked agent contract and README. You keep this handbook free of your private details. That separation keeps you honest.
-
-### Section map (jump, do not stream all)
+### Section map
 
 | Topic | Section |
 |---|---|
-| Philosophy, YAGNI, KISS | 0 |
-| Naming | 1 |
+| Philosophy, YAGNI, KISS, Boy Scout rule | 0 |
+| Names | 1 |
 | Functions | 2 |
 | Comments | 3 |
-| Formatting / objects | 4-5 |
-| Error handling (deep) | 6 (also `skills/engineering/errors/SKILL.md`) |
-| SOLID / architecture | 7-8 |
-| DRY / boundaries | 9-10 |
-| Git / review / refactor | 11-13 |
+| Formatting and file structure | 4 |
+| Error handling | 5 (also `../skills/engineering/errors/SKILL.md`) |
+| Objects, data, boundaries | 6 |
+| Classes, modules, SOLID, DRY | 7 |
+| Architecture | 8 |
+| Testing | 9 |
+| Concurrency | 10 |
+| Git, code review, refactoring | 11 to 13 |
 | Observability | 14 |
-| Testing | search this file for the testing part your task needs |
-| Security / concurrency | search this file for your task. Pair it with `prompts/reviews/` or `prompts/domains/*` |
+| Security | 15 |
+| Performance | 16 |
+| Documentation | 17 |
+| Simple design, smells, culture, quick reference | 18 to 21 |
 
 ---
 
-## 0. Philosophy (set the tone)
+## 0. Philosophy
 
-- **Write your code for the human reading it, not the machine executing it.** Your compiler
-  does not care about your names. It does not care about your whitespace. It does not care about your function length. You will care
-  at 2 AM on a production incident. Your reader pays for every shortcut you take. Who do you write for. The man who comes after you.
-- **Leave the campground cleaner than you found it.** (The Boy Scout Rule.) Every commit you make
-  is your chance to leave the code a little better than you found it. That is how a craftsman works.
-- **You Aren't Gonna Need It (YAGNI).** Do not build for imagined requirements. Build
-  for the requirement in front of you. Make it easy to change when the next one shows up. Can you predict the future. No. So keep your code ready to move.
-- **Keep It Simple, Stupid (KISS).** Complexity is not an achievement. The hard part
-  of your job is finding the simplest thing that works. Simple takes discipline.
-- **Make it work, make it right, make it fast, in that order.** Early speed tricks
-  tax your clarity. You measure first. Then you optimize what the numbers point to.
-- **Prefer boring.** Fancy tricks and clever abstractions turn into
-  liabilities in your code. Boring code is predictable. It is teachable. It is debuggable. You want boring when you are tired.
-- **Disagree and commit.** Teams ship. When your convention is set, you follow it even if you
-  would have picked differently. Your pride does not outrank the team.
+- **Write for the human reading the code.** The compiler ignores names, whitespace, and
+  function length. The person debugging a production incident at 2 a.m. does not.
+- **Leave the code cleaner than you found it, within the change's budget.** Improve what you
+  touch. Do not rewrite unrelated modules in the middle of a feature; name that debt instead
+  (Clean-Code 22).
+- **YAGNI.** Build for the requirement in front of you, not an imagined one. When a real
+  requirement arrives that the code cannot absorb, reshape first, then add the feature
+  (Clean-Code `classes/05`).
+- **KISS.** The hard part of the job is finding the simplest thing that works.
+- **Make it work, make it right, make it fast, in that order.** A messy first draft is fine.
+  Shipping it is not (Clean-Code 22). Optimize only what measurement points at (section 16).
+- **Prefer boring code.** Clever abstractions become liabilities. Predictable code is easier
+  to teach and debug.
+- **Disagree and commit.** Once the team sets a convention, follow it even if you would have
+  chosen differently.
 
 ---
 
 ## 1. Names
 
-Your names are the first documentation you write. They are the cheapest. They are the most effective. Treat them that way. Would you make your reader guess. No.
+Names are the cheapest documentation in the codebase. Lessons: 04, 06, 20, 30, 36, 39,
+`classes/01`, `function-design/02`, `function-design/03`.
 
-### 1.1 Intention-revealing
+### 1.1 Reveal intent (06, 20)
 
-`daysElapsed`, not `d`. `customerAccount`, not `acc`. If you need a comment to explain
-your name, your name has failed you. Fix the name.
+`daysElapsed`, not `d`. `customerAccount`, not `acc`. If a name needs a comment, rename it.
+If you have to read the body to understand the name, the name failed.
 
-### 1.2 Avoid disinformation
+### 1.2 No disinformation (36)
 
-Never call it `accountList` unless it is a `List` in your code. You lie to your reader when you do. Do not use names that
-look alike to your reader (`XYZControllerForEfficientHandlingOfStrings` and
-`XYZControllerForEfficientStorageOfStrings`). How long before you mix them up.
+Call it `accountList` only if it is a list. Avoid names that differ by a few characters
+(`XYZControllerForEfficientHandlingOfStrings` vs `XYZControllerForEfficientStorageOfStrings`)
+and visually confusable characters. When the structure changes, rename in the same change.
 
 ### 1.3 Meaningful distinctions
 
-`a1, a2, a3` tells your reader nothing. If two things play the same role in your code, unify them.
-If they differ, you name the difference. That is your job.
+`a1, a2, a3` say nothing. If two things play the same role, unify them. If they differ, name
+the difference.
 
-### 1.4 Pronounceable and searchable
+### 1.4 No mental mapping, pronounceable, searchable (04, 30, 39)
 
-`genymdhms` fails both tests for you. `generationTimestamp` passes. A single letter is
-fine as your loop counter. Anywhere else it hides. Why make your reader decode.
+`genymdhms` fails. `generationTimestamp` passes. No private abbreviations (`tx`, `mgr`).
+Acronyms the team already says as words (URL, ID, HTTP) are fine. Magic numbers become named
+constants.
 
 ### 1.5 Conventions
 
-- **Classes and types**: nouns. `Customer`, `ParserResult`, `EmailQueue`. A class is a thing. Name the thing.
-- **Functions and methods**: verbs. `postPayment()`, `deletePage()`, `save()`. A function does work. Name the work.
-- **Booleans**: read like questions. `isActive`, `hasPermission`, `shouldRetry`. Your reader should hear the question.
-- **Constants**: `SCREAMING_SNAKE_CASE`. Magic numbers become `MAX_RETRY_COUNT`. Give the number a name your reader can trust.
+- Types: nouns (`Customer`, `EmailQueue`).
+- Functions: verbs or verb phrases (`postPayment`, `deletePage`).
+- Booleans: read as questions (`isActive`, `hasPermission`).
+- Casing follows the language and project convention. Do not import another ecosystem's style.
+- No puns, no cute names, no type encodings (`sName`, `bIsActive`). Do not prefix interfaces
+  with `I` unless the project already does.
 
-### 1.6 Scope ↔ name length
+### 1.6 Name length follows scope (30, `function-design/03`)
 
-Short scope, short name. Long scope, long name. A counter `i` in your 5-line loop is fine.
-A global named `x` is malpractice. Ask yourself this. How far must your reader carry this name.
+The rule differs for variables and functions:
 
-### 1.7 No puns, no cuteness, no encodings
+- **Variables and constants:** the wider the scope, the longer and more specific the name. A
+  loop counter `i` is fine in a three-line loop. A module-level `x` is not.
+- **Functions:** a narrow, crowded private scope needs longer, distinguishing names
+  (`importCsvRows`). A widely used public operation earns the shortest unambiguous verb
+  (`parse`, `charge`). Judge a function name against its neighbours, not an absolute length.
 
-`HolyHandGrenade` does not tell your reader what it does. Hungarian notation (`sName`, `bIsActive`)
-stayed in the 90s. Let it rest there. Do not prefix your interfaces with `I` unless your team standard
-requires it. `Account` vs `AccountImpl` is usually enough.
+### 1.7 Name the why, one level above the how (`function-design/02`)
 
-### 1.8 Rename when you learn
+Name a function after why a caller would call it, not after the comparison or loop inside it.
+`isEligibleForRefund`, not `checkDaysLessThan30`.
 
-The moment you understand a thing better than its name says, you rename it. Your modern
-editors make rename refactors safe and global. Why keep a lie in your code.
+### 1.8 An argued name means an unfinished design (`classes/01`)
+
+If a class name needs "and", or falls back to `Manager`, `Processor`, or `Handler` to cover
+two jobs, split the class until one noun phrase fits.
+
+### 1.9 Rename when you learn
+
+When you understand a thing better than its name says, rename it. Editors make the rename
+safe.
 
 ---
 
-## 2. Functions and Methods
+## 2. Functions
 
-### 2.1 Small
+Lessons: 01, 02, 15, 18, 23, 24, 26, 27, 28, 40, `classes/03`.
 
-Your function should fit on your screen without scrolling. Under 20 lines is a good target for you. Under 10 is better. Blocks inside your `if`/`for`/`while` should usually be **one line**.
-That line is a call to a well named function you trust. Small is professional.
+### 2.1 Size follows responsibility (15, 26, `classes/03`)
 
-### 2.2 Do one thing
+There is no line limit. A function is the right size when it does one thing at one level of
+abstraction and reads as a short story. Length is a prompt to look for a second job or a
+data seam, not a rule by itself.
 
-Your function does one thing if you cannot pull another function out of it with a name
-that is more than a restatement of its code. If you catch yourself saying this function does
-X, *and* then Y, it does two things. Listen. That *and* is your warning.
+When you split, split where the data stops being shared. Cutting through shared state to hit
+a line count spreads one responsibility across two owners. Do not extract without a way to
+verify behavior.
 
-### 2.3 One level of abstraction per function
+### 2.2 Do one thing (15)
 
-Mixing high level policy and low level string work in your same function is the
-most common way you will write unreadable code. Read your function top to bottom. Every
-line should sit at the same height.
+A function does one thing when you cannot extract another function from it whose name is more
+than a restatement of the code. If you could label sections inside it with comments, extract
+those sections. If describing it needs "and", it does two things.
 
-### 2.4 Few arguments
+### 2.3 One level of abstraction (27)
 
-- **0 (niladic)**, best. You ask nothing. You carry nothing.
-- **1 (monadic)**, easy. One idea in. One job done.
-- **2 (dyadic)**, ok. Two is honest work.
-- **3 (triadic)**, suspicious. You justify it.
-- **4+**, extract an object or split the function. Four means you hid a structure.
+Policy and bit-twiddling do not belong in the same function. Every line should sit at
+roughly the same altitude. Push parsing, encoding, and I/O into lower helpers.
 
-### 2.5 No flag arguments
+### 2.4 Few arguments (23, 28)
 
-`render(true)` tells your reader nothing. You split it into `renderForSuite()` and
-`renderForSingleTest()`. If your function acts one way on true and another way on false, it
-does two things (rule 2.2). Would you accept that in your own code.
+- 0 to 2 arguments: preferred.
+- 3: needs a natural, obvious order.
+- 4 or more: introduce a parameter object or options type with named fields.
+- Two arguments that form one concept (a point, a range) become one value.
 
-### 2.6 No side effects the name doesn't announce
+### 2.5 Argument roles, no flag arguments (02)
 
-`checkPassword(user, pw)` should not *also* log your user in. `getUser()` should not
-*also* change your state. If your function does X and Y, you name it X and Y, or you split it.
-Would you trust a name that hides half the work.
+Each argument is data for a question, data for a transformation, or an event to handle. A
+boolean that switches which algorithm runs (`render(user, true)`) is two functions in one:
+split it. A boolean that is itself the data (`setVisible(true)`) is fine. Prefer return
+values over output arguments.
 
-### 2.7 Command-query separation
+### 2.6 No hidden side effects (01)
 
-Authoritative detail: [`Clean-Code/40-command-query-separation.md`](./Clean-Code/40-command-query-separation.md).
+`checkPassword` must not start a session. `getUser` must not change state. When a function
+needs both an answer and an effect, split it and compose at the call site. Renaming it to
+`checkPasswordAndStartSession` is more honest but still two jobs. Split.
 
-Your function either *does* something (command) or *answers* something (query), never both.
-Your queries have no observable side effects. Your commands may return the artifact they created.
-They must not smuggle a second “did it already exist?” question. Never name your writer `get*` / `check*`. A writer that reads like a query lies to you.
+### 2.7 Command-query separation (40)
 
-### 2.8 Don't return null, don't pass null
+A function either does something or answers something, never both. Queries (`is`, `has`,
+`can`, `get`, `list`, `find`) have no observable side effects. Commands may return the
+artifact they created. They must not smuggle a second answer such as "did it already exist".
 
-Authoritative detail: [`Clean-Code/13-stop-returning-null.md`](./Clean-Code/13-stop-returning-null.md).
+### 2.8 Stepdown order (18)
 
-**Never return null** from APIs you control. You return an empty collection, a Special Case /
-Null Object, or you throw. You do not pass null. You reject it at the boundary. You do not hide your failures
-as empty success (`catch { return [] }`). That lie will cost you.
+Put the highest-level function at the top of the file and each helper below its first caller,
+so the file reads top-down.
 
-### 2.9 Prefer exceptions to return codes
+### 2.9 Bury the switch (24)
 
-Authoritative detail: [`Clean-Code/03-exceptions-over-error-codes.md`](./Clean-Code/03-exceptions-over-error-codes.md),
-[`34`](./Clean-Code/34-catch-is-not-if.md), [`37`](./Clean-Code/37-algorithm-breathes.md).
+Keep large `switch` or `if/else` chains on type out of high-level policy. Put them in one
+place at the bottom (a lookup table, a factory, polymorphism) and never copy the same switch
+into several files.
 
-Your happy path is a flat list of steps. You throw on operational failure with context. You catch at
-the boundary that can translate or report. You do not use catch as an ordinary branch.
-You do not return status code bags in languages that have exceptions. Keep the path clean.
+### 2.10 Errors and null
 
-### 2.10 Extract 'til you drop
-
-Each helper you pull out is your chance to give something a true name. Your named behaviors
-are the words your codebase speaks. Will your team thank you for that name. They will if you choose well.
+See section 5 and Clean-Code 03, 13, 34, 37.
 
 ---
 
 ## 3. Comments
 
-Authoritative detail: [`Clean-Code/`](./Clean-Code/README.md) lessons **05 to 10, 17, 19, 33, 38, 41**. Those lessons win. This part is only a reminder.
+Lessons: 05, 07, 08, 09, 10, 17, 19, 33, 38, 41. Skill: `../skills/engineering/necessary-comments/SKILL.md`.
 
-> Your comments are a last resort. You try rename and extract first. When you need one, you write why, warnings,
-> public API docs, licenses. You do not write narration. You do not build history museums. A comment must earn its place.
+The default is no comment. Before writing one, try a rename, an extracted variable, an
+extracted function, or a named constant (33).
 
-### 3.1 Good comments (rare)
+### 3.1 Comments worth keeping
 
-- **Legal.** Your copyright and license headers your policy demands (Clean-Code 07, 41). You keep them. The law is the law.
-- **Intent.** *Why* you picked this path when it is not plain to your reader (17). Tell the reason you cannot put in code.
-- **Warnings / amplification.** Your load bearing limits that a teammate might clean away by mistake (08). Warn him plainly.
-- **Public API docs.** Your exported symbols. What they take. What they return. How they fail. One example (41). No noise (19).
-- **TODO with context.** Your blocker or ticket, not `// TODO fix this` (08). Name what holds you up.
+- **Legal:** required license or copyright headers, using standard text (07, 41).
+- **Why:** the reason behind a choice the code cannot express (17).
+- **Warnings and amplification:** a load-bearing detail someone might "clean up" by mistake,
+  or a consequence such as "slow" or "not thread-safe" (08).
+- **Public API docs:** purpose, inputs, outputs, failures, and an example for exported
+  symbols (41). These are not noise (19).
+- **TODOs with a constraint:** name the external blocker or ticket, for example
+  `TODO(vendor#123): remove when upstream fixes X` (08, 10).
 
-### 3.2 Bad comments (common)
+### 3.2 Comments to remove
 
-- **Redundant**, `// increment i` before your `i++`. Your code already says it. Do not repeat it.
-- **Misleading**, your code and comment disagree because you changed one and forgot the other. A lie is worse than silence.
-- **Mandated**, a comment you demand on every getter fills your code with noise. Noise hides signal.
-- **Journal**, "Changed Sep 3, then again Sep 4". That is what your version control is for. Let git keep the date.
-- **Attributions/bylines**, `// added by Steve`. Your git blame knows who wrote it. You do not need the tag.
-- **Closing-brace labels**, `} // end if`. If you need this, your block runs too long. Shorten it.
-- **Commented-out code**, you delete it. Your version control remembers it for you. Dead code rots.
-- **Non-local info**, you note on function A a rule that lives on function B. Put the note where it belongs.
-- **Noise**, `// Default constructor.` above your default constructor. It adds nothing. Cut it.
+- Redundant comments that restate the next line (19).
+- Misleading or stale comments that no longer match the code (05, 09).
+- Comments that need their own comments, or describe another module's behavior from afar (09).
+- Mumbled or essay-length comments, and HTML in source comments (10).
+- Journal entries, author bylines, and commented-out code. Git keeps history (07).
+- Closing-brace labels and section banners. Fix the structure instead (38).
+- Mandated boilerplate on every getter (19).
 
 ### 3.3 When in doubt
 
-If taking your comment out would not confuse your future reader, you take it out. If it would confuse him,
-you try a better name or a small extracted function first. Code that explains itself beats a note about unclear code.
+If removing a comment would not confuse the next reader, remove it. If it would, try a better
+name or an extraction first. When the code changes, update or delete the comment next to it
+in the same change (05).
 
 ---
 
-## 4. Formatting and Structure
+## 4. Formatting and File Structure
 
-### 4.1 Vertical density and openness
+Lessons: 11, 18, 25, 35, 38.
 
-Lines that belong together sit together in your file with no blank line between them.
-You part distinct ideas with exactly one blank line. No double blanks. Your reader sees the grouping at a glance.
+### 4.1 Vertical density (35)
 
-### 4.2 Vertical ordering (newspaper metaphor)
+Lines that belong together have no blank lines between them. One blank line separates
+distinct ideas.
 
-You write your source file like a newspaper. The headline with the module intent sits at
-the top. The ideas that matter most come next. Helpers and detail flow down.
-Your reader should be able to stop anywhere and still hold the context. Would you read a paper from the bottom up. No.
+### 4.2 Newspaper order (18)
 
-### 4.3 Declarations close to use
+The file's purpose and public entry points come first. Helpers follow, each below its first
+caller, with related helpers grouped.
 
-Your loop counter belongs at the top of your loop. Your helper belongs just above
-its first use. You do not haul things to the top of your function for looks. Near use is honest.
+### 4.3 Declarations close to use (11)
+
+Declare local variables in the smallest scope, at or just before first use. Group a type's or
+module's fields in one place (usually the top). Helper *functions* follow the stepdown rule in
+4.2, below their callers.
 
 ### 4.4 Horizontal formatting
 
-- Lines under ~100-120 columns in your code. You wrap long lines. You use a named middle step so your reader can follow.
-- One statement per line in your code. One idea per line.
-- Steady whitespace around your operators and after your commas. Steadiness builds trust.
-- You indent to show rank. You never use spacing to fake lined up columns. Faked columns rot on the next edit.
+- Keep lines within the project's configured width (commonly 100 to 120 columns). Break long
+  expressions with a named intermediate value.
+- One statement per line.
+- Consistent spacing around operators and after commas.
+- Indent to show hierarchy. Do not hand-align columns; the next edit breaks them.
 
-### 4.5 Team rules trump personal preference
+### 4.5 Tools settle style (25, 35)
 
-You pick a formatter (Prettier, gofmt, rustfmt, Black, …) and a linter (ESLint, Clippy,
-Ruff, …). You run them on commit. Your style fight is over. You get your time back for real work.
+Use the project's formatter and linter and run them automatically. Style is not a review
+topic. Turn on the strictest type checking the language supports.
 
-### 4.6 File organization
+### 4.6 File organization (38)
 
-- One public idea per file. One class. One component. One module. Your reader knows what he opened.
-- Small helpers that serve only that public idea stay in the same file. Do not scatter them.
-- Your file name matches the idea name. No guessing.
+- One public idea per file, named after that idea.
+- Small private helpers that serve only that idea stay in the same file.
+- If a file needs banner comments to be navigable, split it.
 
 ---
 
 ## 5. Error Handling
 
-### 5.1 Make errors a normal part of the design
+Lessons: 03, 12, 13, 31, 34, 37. Skill: `../skills/engineering/errors/SKILL.md`.
 
-Your errors are not the rare case. Your bugs are. You plan your error path before your happy path.
-What will you do when this fails. Answer that first.
+### 5.1 Define the failure contract first (12)
 
-### 5.2 Prefer exceptions, not return codes
+Decide what a function can fail with, and translate lower-level failures into that contract
+at the function that owns it, before writing the steps inside. Test the failure mode first
+when practical.
 
-Authoritative: [`Clean-Code/03`](./Clean-Code/03-exceptions-over-error-codes.md).
+### 5.2 Exceptions over error codes (03)
 
-Return codes force every caller you write to remember the check. Exceptions keep your steps
-readable. In languages without exceptions (e.g. Go), you use that language’s **single**
-idiomatic error channel with context. You still build no nested status pyramids. You still use no
-TypeScript/Java-style `{ ok, error }` bags when exceptions exist.
+Return codes make every caller remember a check. Exceptions keep the happy path a flat list
+of steps (37). Languages without exceptions use their one idiomatic error channel (Go's
+`error`, Rust's `Result`) with context, and still avoid nested status pyramids. Languages with
+exceptions do not use hand-rolled `{ ok, error }` result objects in domain code.
 
-### 5.3 Provide context
+### 5.3 Context in every failure (03)
 
-`throw new IOException("couldn't read")` tells your reader nothing. You include *what* you tried to do.
-You name *which* resource you touched. You list *what* inputs you used, minus secrets. Your stack trace alone is not enough.
-(Also required by Clean-Code 03.) Context is respect for the man on call.
+`throw new IOException("couldn't read")` is useless. Include the operation, the identifiers
+or inputs involved (minus secrets), and the cause. A stack trace alone is not enough.
 
-### 5.4 Wrap third-party exceptions at boundaries
+### 5.4 Wrap third-party failures (31)
 
-Authoritative: [`Clean-Code/31`](./Clean-Code/31-wrap-third-party-apis.md).
+Domain code never catches vendor exceptions. The wrapper for each external system catches
+them and rethrows your own types.
 
-Your domain code must not leak vendor exceptions. You catch at the wrapper. You turn the error
-into your domain’s own words. You throw again. Your core never learns the vendor name.
+### 5.5 Fail fast at the trust boundary (13)
 
-### 5.5 Fail fast
+Reject bad input and null where it enters the system, with a clear error. Do not let a bad
+value travel three layers before it breaks something.
 
-You catch bad state where it starts, not three layers down. You check your inputs at the door.
-You never let a bad value drift through your system. Would you let rot spread. No.
+### 5.6 Catch is not if; never swallow (34)
 
-### 5.6 Don't swallow exceptions
+- An empty catch is always wrong.
+- A catch that turns failure into fake success (`return []`, default data, "ok") is always
+  wrong.
+- Best-effort work logs the failure with context and a one-line why-comment, or rethrows.
+- Expected alternate paths (not found, empty, already done) are modeled in normal flow with
+  defaults, Special Case objects, or explicit branches, not with throw and catch.
 
-Authoritative: [`Clean-Code/34`](./Clean-Code/34-catch-is-not-if.md).
+### 5.7 One failure mechanism, mapped once at the edge (03)
 
-Your empty `catch` is always wrong. Your catch that turns failure into fake success (`[]`,
-default “ok”) is always wrong. Your best effort work still logs with context and a short
-why. Usually you throw again after you translate. Your normal business paths use Special Case or
-defaults. They do not use try and catch for decisions.
+Use one failure mechanism end to end inside the application. Map it to HTTP status codes, exit
+codes, or UI messages once, at the outermost boundary.
 
-### 5.7 One failure mechanism in exception languages
+### 5.8 User errors and internal errors
 
-You use exceptions end to end inside your app. You map them to HTTP or status once at the edge.
-You do not mix thrown exceptions with handmade error codes in your same layer. One way. Not two.
+- **User errors** (bad input, not found, permission denied): a clear message the user can act
+  on, a 4xx-class response for APIs.
+- **Internal errors** (broken invariant, dependency outage): a short, safe message for the
+  user, a 5xx-class response, and full detail in the logs.
+- User-facing copy follows the what / why / action rules in
+  `../skills/engineering/errors/SKILL.md` Part B.
 
-### 5.8 Treat internal errors and user errors differently
+### 5.9 No null; Special Case for normal absence (13)
 
-- **User errors** (bad input, not-found, permission denied) → you return a clear message, 4xx-class. Your user can act on it.
-- **Internal errors** (broken invariant, network flake) → you return a short safe message to the user, 5xx-class,
-  full detail in your logs. User-facing copy: `skills/engineering/errors/SKILL.md` Part B (subordinate to craft rules above). Craft rules still win.
-
-### 5.9 Special-Case / Null-Object pattern
-
-Authoritative: [`Clean-Code/13`](./Clean-Code/13-stop-returning-null.md), [`34`](./Clean-Code/34-catch-is-not-if.md).
-
-Instead of null and guards all through your code, you return a Special Case object with the same
-interface, or an empty collection or zero. You throw when missing data means true failure. Your caller stays clean.
+- Collections: return empty, never null.
+- Numeric absence: the identity value (0) or a no-op.
+- Missing optional collaborator: a Special Case or Null Object with the same interface.
+- Lookups that may legitimately miss: a typed optional (`Optional`, `Option`, `T | undefined`)
+  only when the type system forces every caller to handle it.
+- Missing required data: throw with context.
+- Never pass null into your own functions.
 
 ---
 
 ## 6. Objects, Data, and Boundaries
 
-### 6.1 Tell, don't ask
+Lessons: 16, 21, 29, 31, 32, `boundaries/01`, `boundaries/02`, `function-design/01`.
 
-Do not pull a field out and do the math outside in your code. You tell the object to do the work.
-`bill.calculateTotal()` > `calculateTotal(bill.lineItems)`. Would you rather read the aim or the math. The aim wins.
+### 6.1 Not everything is an object (16)
 
-### 6.2 Law of Demeter
+Use a plain function or module for stateless transforms. Use a class when it hides state and
+offers behavior over time. Do not build hierarchies for one use site.
 
-A method `f` of class `C` should call only methods of:
-- `C` itself,
-- objects `C` creates,
-- objects passed as arguments,
-- objects held in `C`'s fields.
+### 6.2 Tell, don't ask (21)
 
-Not: `a.getB().getC().doSomething()` (a "train wreck" in your code). If you feel the pull, you give the whole
-chain to one method on the object that owns the facts. That owner does the work.
+Ask the object for the outcome instead of pulling its fields out and computing outside:
+`bill.total()` rather than summing `bill.lineItems` in the caller. Do not add getters just so
+other modules can re-implement the object's rules.
 
-### 6.3 Data objects vs behavior objects
+### 6.3 Law of Demeter (32)
 
-Authoritative: [`Clean-Code/29`](./Clean-Code/29-objects-vs-data-structures.md), [`21`](./Clean-Code/21-expose-behavior-not-data.md).
+A method `f` of class `C` calls methods only on `C` itself, objects `C` creates, objects
+passed to `f`, and objects held in `C`'s fields. Not `a.getB().getC().doSomething()`. Ask a
+direct collaborator for the outcome you need. Do not "fix" a chain by wrapping it in a
+`getBCPath()` method that still encodes it.
 
-- **Data objects (structs, DTOs)**. You expose fields. **No business behavior**. This is right
-  and planned at your boundaries (API responses, DB rows). Do **not** “fix” your DTO by
-  stuffing domain rules into it. A DTO carries. It does not decide.
-- **Behavior objects**. You hide data. You show operations. Your domain rules live here. This is where your craft shows.
-- **Hybrids** (public getters/setters for everything *and* business methods) lose both
-  strengths for you. You split them. Pick a side.
-- **Anemic domain types** (should own rules but only carry fields) are a smell in your code. You move
-  behavior into your domain objects and services, not into DTOs. Behavior belongs with its data.
+### 6.4 Objects or data structures, not hybrids (29)
 
-### 6.4 Encapsulate at boundaries, not inside
+- **Data structures and DTOs** expose fields and contain no business logic. They are correct
+  at boundaries (API payloads, database rows).
+- **Objects** hide data and expose meaningful operations. Domain rules live here.
+- **Hybrids** (public fields or getters for everything plus business methods) lose the
+  benefits of both. Split them.
+- **Active records** handle persistence navigation only. Pricing and rules live in domain
+  objects or services.
 
-Inside your system you pass rich objects freely. At your edge (HTTP,
-DB, file), you turn them into plain data objects. You never let JSON or ORM entities wander into your
-domain. Your domain stays clean.
+### 6.5 Translate at the border (32, `boundaries/02`)
 
-### 6.5 Boundaries around third-party code
+Inside the system, pass domain types. At the edge (HTTP, database, files, engine events),
+convert to and from plain data. Raw JSON and ORM entities do not travel into the domain.
 
-You wrap each outside library in a thin adapter you own. You earn three things:
-- A single place to swap the library. One edit. Not fifty.
-- A single place to hold its quirks. You learn them once.
-- A smaller face for you to learn and test. Small is kind to your reader.
+### 6.6 Wrap third-party code (31, `boundaries/01`, `boundaries/02`)
 
-### 6.6 Learning tests
+Call each external system through one adapter you own, with an interface designed from your
+callers' needs rather than the vendor's docs. You get one place to swap the vendor, one place
+for its quirks, retries, timeouts, and error mapping, and a small surface to fake in tests.
+Build against a fake until the real system exists.
 
-Before you lean on outside code, you write tests that *prove what you believe*
-about it. When the library ships a new version, those tests tell you if your belief still holds.
-Cheap cover for you. Would you trust a stranger without a test. No.
+### 6.7 Learning tests
 
----
+Before depending on external code, write tests that prove what you believe about it. When the
+library updates, those tests tell you whether your assumptions still hold.
 
-## 7. Classes and Modules
+### 6.8 Public is a promise (`function-design/01`)
 
-### 7.1 Single Responsibility Principle (SRP)
-
-> A class should have one reason to change.
-
-If your `Report` formats *and* saves *and* schedules, three owners
-will pull it three ways. You split it. How many reasons would force you to touch this class. Count them.
-
-### 7.2 Classes should be small
-
-You measure by jobs, not by lines. A 500-line class with one job is
-fine. A 50-line class with three jobs is not. Size lies. Duty tells the truth.
-
-### 7.3 Cohesion
-
-A class holds together when its fields and methods serve one idea. When fields
-break into groups used by different methods, you watch two classes fight for one name. Split them.
-
-### 7.4 Organize for change
-
-You wall off the parts that will likely change. The parts that will *not* change
-live in steady walls that all else leans on. Change has a place. Steadiness has a place.
-
-### 7.5 Open/Closed Principle (OCP)
-
-> Modules should be open for extension, closed for modification.
-
-You add new behavior by *writing new code*, not by editing code that works.
-Plugin walls, strategy objects, and polymorphism live for this. Would you risk old paths to add a new one. No.
-
-### 7.6 Liskov Substitution Principle (LSP)
-
-> A subtype must be usable anywhere its supertype is used.
-
-If `Square extends Rectangle` but `setWidth` on a Square quietly changes height too,
-you broke LSP. Inheritance is a promise. Your child must stand in for its parent.
-
-### 7.7 Interface Segregation Principle (ISP)
-
-> Clients shouldn't depend on methods they don't use.
-
-A fat face forces callers and builders to learn things they never use.
-Cut it into small faces, each for one role. Your caller thanks you.
-
-### 7.8 Dependency Inversion Principle (DIP)
-
-> Depend on abstractions, not concretions. High-level policy should not depend on
-> low-level detail. Both should depend on abstractions.
-
-Your domain layer holds `PaymentGateway` (an interface). Your infrastructure layer
-holds `StripeGateway`. Nothing in the domain imports Stripe. Your policy never learns vendor names.
-
-### 7.9 Composition over inheritance
-
-Inheritance ties files tight and is hard to undo.
-Holding a helper inside (composition) gives you the same reuse with looser ties. Use inheritance only for true "is-a" ties with
-real swap in behavior. When in doubt, you hold. You do not extend.
-
-### 7.10 Don't Repeat Yourself (DRY)
-
-Two copies of one rule is debt. Three is a bug on its way. But two
-things that *look* the same today yet mean different things are not
-copies. They may grow apart later. Rule of three. You pull it out after the
-third sighting if you are unsure. Patience here is discipline.
+Public members are the stable "what" that callers may depend on. Private members are the
+volatile "how". Do not make a helper public for one caller's convenience; add a dedicated
+public operation instead.
 
 ---
 
-## 8. Architecture, the big picture
+## 7. Classes, Modules, and SOLID
+
+Lessons: `solid/01`, `solid/02`, `classes/01` to `classes/06`, 14.
+
+### 7.1 Single Responsibility Principle (`solid/01`, `solid/02`)
+
+A class has one job, and every method serves that job. A "reason to change" is an **actor**:
+a group of people who can demand a change. If tax rules (finance) and email templates
+(marketing) live in one class, a change for one actor risks breaking the other. Split them.
+Code owned by the same actor stays together even when it covers several operations.
+
+### 7.2 Size by responsibility, not lines (`classes/01`, `classes/03`)
+
+A long class with one job is acceptable. A short class with three jobs is not. Signs of an
+unfinished split: a name you have to argue about, methods that cluster around separate groups
+of fields, or a name that needs "and".
+
+### 7.3 Cohesion and hidden classes (`classes/03`)
+
+A class is cohesive when its methods use most of its fields. When fields fall into groups used
+by different methods, there are hidden classes inside. Extract by shared data, and leave the
+original as a thin coordinator.
+
+### 7.4 Feature envy (`classes/02`)
+
+A method that mostly reads another object's data belongs on that object. Move it, then have
+callers use the behavior (`invoice.totalDue()`).
+
+### 7.5 Policy and detail (`classes/04`)
+
+A module either declares the workflow and delegates every step, or implements one step's
+detail. When a file changes for both policy and detail reasons, move the detail out.
+
+### 7.6 Open/Closed Principle (`classes/06`)
+
+Add new behavior with new code (a new strategy, handler, or subclass) rather than by editing
+working code. When a real requirement does not fit, apply 7.9 first.
+
+### 7.7 Liskov Substitution Principle
+
+A subtype must work anywhere its supertype works. If `Square extends Rectangle` and `setWidth`
+on a square silently changes its height, the hierarchy is wrong.
+
+### 7.8 Interface Segregation Principle
+
+Clients should not depend on methods they do not use. Split wide interfaces into small,
+role-specific ones.
+
+### 7.9 Prefactoring: refactor for real requirements (`classes/05`)
+
+Leave working code alone until a real requirement arrives. If the requirement fits, extend
+directly with a minimal diff. If it does not, make a behavior-preserving refactor first,
+verify that nothing changed, then add the feature. No speculative generalization.
+
+### 7.10 Do not over-engineer (`classes/06`)
+
+Split a class only when the split pays for itself through an isolated test, removed
+duplication, a findable name, or an extension point for new behavior. If none applies, keep
+the code together. Every class is a cost.
+
+### 7.11 Dependency Inversion Principle
+
+High-level policy and low-level detail both depend on abstractions. The domain owns a
+`PaymentGateway` interface. The infrastructure layer implements `StripeGateway`. Nothing in
+the domain imports the vendor.
+
+### 7.12 Composition over inheritance
+
+Inheritance couples tightly and is hard to undo. Composition gives the same reuse with looser
+coupling. Use inheritance only for a true "is-a" relationship with substitutable behavior.
+
+### 7.13 DRY: one home for each piece of knowledge (14)
+
+Each piece of knowledge (a rule, a limit, a URL, a timeout, a validation) has one
+authoritative home. As soon as you would have to change the same knowledge in two places,
+extract it. DRY is about knowledge, not text: two pieces of code that look alike but change
+for different reasons (different actors, see 7.1) are not duplicates, and merging them
+creates a wrong abstraction.
+
+---
+
+## 8. Architecture
 
 ### 8.1 Separate construction from use
 
-Code that *joins* things (dependency injection root, main, composition
-root) stays apart from code that *does* the work. Your business rules never call `new` on their helpers. Would you mix the wiring with the work. No.
+Wiring code (`main`, the composition root, dependency injection setup) stays apart from code
+that does the work. Business rules do not construct their own infrastructure.
 
-### 8.2 Clean Architecture / Hexagonal / Ports & Adapters
+### 8.2 Clean Architecture, Hexagonal, Ports and Adapters
 
 Layers from innermost to outermost:
 
-1. **Entities**, enterprise-wide business rules. No framework imports. Your core truths live here.
-2. **Use cases**, application-specific business rules. They lead entities. They hold your app story.
-3. **Interface adapters**, controllers, gateways, presenters. They carry words between
-  use cases and frameworks. Nothing more.
-4. **Frameworks and drivers**, web framework, DB, UI, devices. Tools at the edge.
+1. **Entities:** enterprise-wide business rules. No framework imports.
+2. **Use cases:** application-specific rules that orchestrate entities.
+3. **Interface adapters:** controllers, gateways, presenters that translate between use cases
+   and frameworks.
+4. **Frameworks and drivers:** web framework, database, UI, devices, game engine.
 
-**The Dependency Rule**: source code dependencies point *inward only*. Entities know
-nothing of use cases. Use cases know nothing of the web. Nothing imports
-the framework upward. Inward. Always inward.
+**The Dependency Rule:** source code dependencies point inward only. Entities know nothing of
+use cases. Use cases know nothing of the web or the engine. To audit a codebase, find the
+innermost policy and check whether its imports are policy or infrastructure. Look at
+dependency direction, not folder names.
 
-### 8.3 Package cohesion (Robert Martin)
+### 8.3 Package cohesion
 
-- **REP**, Reuse/Release Equivalence: the unit of reuse is the unit of release. You ship what you reuse.
-- **CCP**, Common Closure: you pack things that change for the same reason. One reason. One pack.
-- **CRP**, Common Reuse: you pack things that get used together. You never force users
-  to drag in things they do not need. Needless weight is a tax.
+- **REP (Reuse/Release Equivalence):** the unit of reuse is the unit of release.
+- **CCP (Common Closure):** group things that change for the same reason.
+- **CRP (Common Reuse):** group things that are used together. Do not force users to depend on
+  things they do not need.
 
 ### 8.4 Package coupling
 
-- **ADP**, Acyclic Dependencies: no loops in your pack graph. A needs
-  B needs A means you cannot touch one without the other. Loops lock you.
-- **SDP**, Stable Dependencies: you lean toward steadiness. You depend where things move least.
-- **SAP**, Stable Abstractions: steady packs stay abstract. Shaky ones
-  may stay concrete. Steadiness earns abstraction.
+- **ADP (Acyclic Dependencies):** no cycles in the package graph.
+- **SDP (Stable Dependencies):** depend in the direction of stability.
+- **SAP (Stable Abstractions):** stable packages are abstract; volatile packages can be
+  concrete.
 
-### 8.5 Draw the architecture before you write it
+### 8.5 Sketch before building
 
-Draw your walls on a board first. Show where calls enter, where data rests, where
-outside help gets called, where your domain lives. If you cannot draw it, you
-have not planned it. Would you build a house without a sketch. No.
+Before writing a non-trivial system, sketch where requests enter, where data lives, which
+external systems are called, and where the domain sits. If you cannot sketch it, the design is
+not ready.
 
 ### 8.6 Defer decisions
 
-Good walls let you hold off tool picks like framework, DB, UI. The longer you
-keep them out of your core, the more paths you keep. A sound wall
-lets you trade MySQL for Postgres, React for Vue, REST for gRPC, with *minimal*
-domain code change. That freedom is the payoff.
+Good boundaries let you postpone the choice of framework, database, or UI. The less they leak
+into the core, the cheaper it is to change them later.
 
 ---
 
 ## 9. Testing
 
-### 9.1 TDD's three laws
+Lessons: `unit-tests/01` to `unit-tests/06`.
 
-1. Don't write production code except to make a failing test pass.
-2. Don't write more of a test than is sufficient to fail.
-3. Don't write more production code than is sufficient to pass the current failing test.
+### 9.1 The three laws of TDD (`unit-tests/01`)
 
-Hold these three and you will write code that can be tested. That habit is the side gain. Discipline first. Testability follows.
+1. Write no production code except to make a failing test pass.
+2. Write no more of a test than is enough to fail (a compile failure counts).
+3. Write no more production code than is enough to pass the current failing test.
 
-### 9.2 F.I.R.S.T tests
+Do not add branches, options, or generality that no failing test asked for. If the project has
+no test runner, say so and state how the change was verified.
 
-- **Fast**, tests you skip help no one. Slow tests die. Keep them quick.
-- **Independent**, tests stand alone. No test leans on the run before it.
-- **Repeatable**, same answer on any box, offline, any day. No weather in your tests.
-- **Self-Validating**, green or red, no log reading by hand. The test speaks plain.
-- **Timely**, written with the code, not weeks after. Late tests rot.
+### 9.2 F.I.R.S.T. (`unit-tests/06`)
 
-### 9.3 One logical assertion per test
+- **Fast:** milliseconds per unit test. Put network, disk, and sleeps behind fakes.
+- **Independent:** each test builds its own world. No test depends on another's run.
+- **Repeatable:** same result on any machine, offline, at any time, in any locale.
+- **Self-validating:** pass or fail by assertion, never by reading logs.
+- **Timely:** written just before the code that makes it pass.
 
-You may keep several `assert` calls when they prove the *same* idea. The moment
-you check a *second* idea, you cut a second test. One idea. One test.
+### 9.3 One concept per test (`unit-tests/05`)
 
-### 9.4 Build a testing DSL
+Name each test for the behavior it guards, not for the function under test. Several assertions
+are fine when they prove one concept. A second concept gets a second test.
 
-Your tests should read like promises. If you repeat setup, you pull out
-helpers like `given.user.admin.withPlan("premium")`. Tests are code. They earn
-the same care you give production.
+### 9.4 Build, act, assert (`unit-tests/04`)
 
-### 9.5 Test at the right level
+State facts about the world in the setup, perform exactly one action, and assert one claim.
+Move shared setup into builders or factories (`given.user.admin.withPlan("premium")`) so each
+test reads as a short story.
 
-- **Unit**, one function or class, no outside talk. Hundreds of these, each a few milliseconds. Your backbone.
-- **Integration**, several parts together, real helpers (DB, file, local process).
-  Dozens of these. Enough to prove the joints hold.
-- **E2E / Acceptance**, full road, true user walk. A handful of these. Few, because they cost.
+### 9.5 Tests are production code (`unit-tests/02`)
 
-The **testing pyramid**: many unit, fewer integration, very few E2E. Wide at the base. Narrow at the top.
+Apply the same naming, extraction, and DRY standards to tests. A skipped or ignored test is not
+a permanent resident: fix it or delete it deliberately. A test that cannot explain its own
+failure is broken.
 
-### 9.6 Clean tests
+### 9.6 Tests make change safe (`unit-tests/03`)
 
-Tests you cannot read stay broken. You treat them like shipping code. Small.
-Clear names. One care at a time. One shaky test kills faith in *all* tests. Would you trust a scale that lies sometimes. No.
+Before refactoring or optimizing code you are afraid of, pin its current behavior with
+characterization tests, then change it. Untested code gets tests, then cleanup, in that order.
 
-### 9.7 Test behavior, not implementation
+### 9.7 Test behavior, not implementation (`unit-tests/03`)
 
-A test that snaps when you rename a private helper tests the wrong thing.
-You test what the caller sees. Inputs. Outputs. Side moves. Not how you got there. Behavior holds. Shape may move.
+Assert what callers can observe: inputs, outputs, and side effects. A test that breaks when a
+private helper is renamed is testing the wrong thing.
 
-### 9.8 Property-based testing where it fits
+### 9.8 Test at the right level
 
-For code with wide open inputs (parsers, encoders, math), you state *rules that always hold*
-(round-trip, commutativity, invariants) rather than a few picked cases. Rules prove more than cases.
+- **Unit:** one function or class, no real I/O. Many of these, each fast.
+- **Integration:** several parts with real dependencies (database, file system, local
+  process). Enough to prove the joints hold.
+- **End-to-end:** a full user path. A few, because they are slow and brittle.
+
+### 9.9 Property-based tests where they fit
+
+For code with wide input spaces (parsers, encoders, math), state properties that always hold
+(round-trip, invariants) instead of only hand-picked cases.
 
 ---
 
 ## 10. Concurrency
 
-### 10.1 Default to not concurrent
+### 10.1 Default to sequential
 
-Running side by side costs you in head pain. You pay it only when you need speed,
-quick answers, or true parallel work you cannot get alone. Simple first. Threads later.
+Concurrency costs reasoning effort. Use it only when you need throughput, responsiveness, or
+real parallelism.
 
 ### 10.2 Keep concurrent code behind a small API
 
-The hard parts live in one small room. All above that door you think in straight lines. Small door. Safe house.
+Concentrate the hard parts in one small module so the rest of the code can stay sequential.
 
-### 10.3 Don't share mutable state across threads
+### 10.3 Do not share mutable state
 
-Pick one path for your code:
-- **Immutable data**, it cannot rot under you. No writes. No races.
-- **Message passing**, each thread owns its land. Threads talk by queue. No shared yard.
-- **Explicit synchronization**, locks, mutexes, atomics. This path demands care and
-  hard testing. You earn every line.
+In order of preference:
 
-In that order of taste. Top first. Bottom last.
+1. **Immutable data:** nothing to race on.
+2. **Message passing:** each thread or task owns its data and communicates through queues or
+   channels.
+3. **Explicit synchronization:** locks, mutexes, atomics. Requires care and stress testing.
 
-### 10.4 Know your runtime's concurrency model
+### 10.4 Know the runtime's model
 
-- JavaScript: single threaded event loop plus workers plus async. Never block the loop. The loop is your heart.
-- Java: OS threads plus Virtual Threads (Loom), `synchronized`, `java.util.concurrent`. Learn the toolbox.
-- Go: goroutines plus channels. `go vet -race` is mandatory. You run it. No skip.
-- Rust: ownership stops data races at build time. The compiler guards you.
-- Python: GIL caps true parallel work. You use processes or async. You work with the limit.
-- C/C++: you stand alone here. You use proven kits (TBB, Boost). Do not hand roll your own.
+- **JavaScript:** single-threaded event loop plus workers and async I/O. Never block the loop.
+- **Java:** OS threads, virtual threads, `java.util.concurrent`.
+- **Go:** goroutines and channels. Run tests with `-race`.
+- **Rust:** ownership prevents data races at compile time.
+- **Python:** the GIL limits CPU parallelism. Use processes or async.
+- **C and C++:** use proven libraries rather than hand-rolled primitives.
+- **Luau (Roblox):** cooperative scheduling with `task.spawn` and `task.defer`. Any yield can
+  interleave other code, so re-check state after yielding.
 
 ### 10.5 Test for concurrency bugs
 
-Race tools, hard stress runs, fuzz runs, and chaos runs catch what eyes miss.
-You plan steady runs under load. Your review cannot see a race. Your rig can.
+Use race detectors, stress tests, and fuzzing. Code review alone rarely finds races.
 
-### 10.6 Lock scope ≪ function scope
+### 10.6 Hold locks briefly
 
-You take the lock late. You free it early. You never hold a lock across a network call, disk work,
-or a call you do not own. Short hold. Clean release. That is discipline.
+Acquire late, release early. Never hold a lock across network calls, disk I/O, or calls into
+code you do not own.
 
 ---
 
-## 11. Version Control (Git) Hygiene
+## 11. Version Control
 
 ### 11.1 Small, focused commits
 
-Each commit holds one clear change. A fix and a feature never share a bed.
-A cleanup and a behavior shift never share a commit. One thought. One commit. Your history reads clean.
+One logical change per commit. Keep fixes, features, and refactors in separate commits.
 
-### 11.2 Meaningful commit messages
+### 11.2 Commit messages
 
-- **Subject line** (≤72 chars): plain command mood, "Fix login redirect", not
-  "Fixed" or "Fixes". You command. You do not report past deeds.
-- **Body**: *why*, not *what* (the diff shows what). Link tickets. Your future reader needs the reason.
-- Think of **Conventional Commits** (`feat:`, `fix:`, `refactor:`, …) for notes
-  and semantic release. Shared words help machines and men.
+- Subject line of 72 characters or fewer: `<type>: <imperative summary>`, for example
+  `fix: stop login redirect loop`. Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`,
+  `style` (see `../skills/agent/commits/SKILL.md`).
+- Body: why the change was made, not what the diff already shows. Link the ticket.
 
-### 11.3 Branching
+### 11.3 Short-lived branches
 
-You keep branches short lived. You pull and fold often. A branch left open for two weeks turns into
-a merge fight. Would you let two weeks of work drift apart. No.
+Merge or rebase often. A branch left open for weeks turns into a painful merge.
 
 ### 11.4 Never rewrite published history
 
-You may mend and squash *before* you push. Once a branch is shared, rewriting it
-wrongs your team. Force push to `main` is a fireable offense. You do not touch shared time.
+Amend and squash before pushing. Once a branch is shared, do not rewrite it. Never force-push
+to `main`.
 
 ### 11.5 Review before merging
 
-Even when you wrote it. `main` is holy. PRs and MRs force a pause and a read. No straight push. No hurry past review.
+Every change to `main` goes through review, including your own.
 
 ### 11.6 Tag releases
 
-`v1.2.3` tags make turn backs easy. You add release notes. Semantic Versioning holds:
-MAJOR breaks, MINOR adds backward-compatibly, PATCH fixes. Numbers with meaning.
+Tag releases (`v1.2.3`) with release notes, following Semantic Versioning: MAJOR for breaking
+changes, MINOR for backward-compatible additions, PATCH for fixes.
 
 ---
 
 ## 12. Code Review
 
-### 12.1 Review for intent, then for correctness, then for style
+The harness for every review is `../skills/review/audit/SKILL.md`.
 
-A reviewer who starts with nits missed the point. You start here. *Does this fix the
-right need in the right way.* Style can wait. Aim comes first.
+### 12.1 Order: intent, correctness, then style
+
+First ask whether the change solves the right problem in the right way. Style comes last, and
+the formatter should already have settled it.
 
 ### 12.2 Critique the code, not the author
 
-"This function holds three jobs", good. "You always bloat", bad. You hit the code. You never hit the man.
+"This function has three jobs" is useful. "You always write bloated code" is not.
 
 ### 12.3 Explain why
 
-"This reads odd" with no link teaches nothing. "We pick X because Y, see ADR-7"
-teaches. You show your reason. You leave a trail.
+Link the reason: a lesson number, an ADR, a measurement. "This reads oddly" teaches nothing.
 
-### 12.4 Approve or block, don't drown in suggestions
+### 12.4 Decide
 
-A review with 40 nits and no call will not land. Either it ships
-or it holds. You say which. Plain and kind.
+End with a clear approve or block. Forty suggestions with no verdict do not help anyone ship.
 
-### 12.5 Authors: make your reviewer's job easy
+### 12.5 Authors make review easy
 
-- PR words: what, why, how, how tried. Your reviewer should not guess.
-- Small PRs (<400 lines) earn true reads. 2000-line PRs earn nods. Size decides care.
-- You answer each note (even with "done" or "hold, because …"). No silent skip.
+- The PR description covers what, why, how, and how it was tested.
+- Keep PRs small (under about 400 changed lines). Large PRs get skimmed.
+- Respond to every comment, even with "done" or "not now, because ...".
 
 ---
 
 ## 13. Refactoring
 
-### 13.1 Refactor in its own commit
+### 13.1 Refactor in its own commit (`classes/05`)
 
-You never mix cleanup with new behavior. Mixed work blinds review. You ship the cleanup
-alone. You prove with tests that nothing moved. Then you add the new path. Clean steps.
+Never mix cleanup with new behavior. Commit the behavior-preserving refactor, verify nothing
+changed, then add the feature.
 
 ### 13.2 The Mikado Method
 
-When the rework is too large to see through, you start at the aim. You note what blocks you.
-You step back. You clear the blocks first. You loop. Small bites beat one blind leap.
+For a change too large to see through: try the goal, note what blocks it, revert, fix the
+blockers first, and repeat.
 
 ### 13.3 Seams
 
-Old code opens for tests only at seams you can feed a fake through. You build seams (faces,
-feed points, small param packs) at the edges, and the tangle turns
-testable bit by bit. Patience wins here.
+Legacy code becomes testable at seams where you can substitute a fake: interfaces, injected
+parameters, small parameter objects. Add seams at the edges and work inward.
 
-### 13.4 Catalog of refactorings (Fowler)
+### 13.4 Named refactorings
 
-Learn these moves and speak them by name. Shared names make your team fast:
-- Extract Method / Inline Method
-- Extract Class / Inline Class
-- Rename Variable / Method / Class
-- Introduce Parameter Object
-- Replace Conditional with Polymorphism
-- Replace Temp with Query
-- Move Method / Move Field
+Use Fowler's names so the team shares a vocabulary: Extract Method, Inline Method, Extract
+Class, Inline Class, Rename, Introduce Parameter Object, Replace Conditional with
+Polymorphism, Replace Temp with Query, Move Method, Move Field.
 
-Named moves turn into team speech. When you say the name, your teammate sees the change.
+### 13.5 Do not refactor broken code
 
-### 13.5 Don't refactor broken code
-
-Green tests first. Cleanup second. Else you will never know which move broke the build. Would you rework blind. No.
+Get to green first. Otherwise you cannot tell whether a refactoring step broke something.
 
 ---
 
-## 14. Observability and Operability
+## 14. Observability
 
-### 14.1 Logs, metrics, traces, the three pillars
+### 14.1 Logs, metrics, traces
 
-- **Logs**: what happened. Structured (JSON, not `printf`), with correlation IDs. You can read them by machine. You owe that to the man on call.
-- **Metrics**: how much, how often. Histograms for latency, counters for events. Numbers tell the load. You watch them.
-- **Traces**: how a request flows across services. OpenTelemetry if you can. You follow the path end to end.
+- **Logs:** what happened. Structured (for example JSON), with correlation IDs.
+- **Metrics:** how much and how often. Histograms for latency, counters for events.
+- **Traces:** how a request flows across services. OpenTelemetry where available.
 
 ### 14.2 Log at boundaries
 
-You log entry, exit, and failure of every external call (DB, HTTP, queue). Never inside hot
-loops. Hot loops drown you in noise. Log at the doors.
+Log entry, exit, and failure of external calls (database, HTTP, queues). Do not log inside hot
+loops.
 
 ### 14.3 Useful log lines
 
-Include: timestamp, level, correlation/request id, user id (hashed if sensitive),
-what was attempted, result. Never: secrets, PII beyond what you need, whole request
-bodies. What would you want leaked about you. Nothing. Log like a pro.
+Include timestamp, level, correlation or request ID, user ID (hashed if sensitive), the
+operation attempted, and the result. Never log secrets, unnecessary PII, or full request
+bodies.
 
-### 14.4 Alerts that page are promises
+### 14.4 Every page is a promise
 
-Each bell that wakes a man must call for real work. If the answer to "what do I do" is
-"nothing, it cries wolf", you kill the bell or mend the trip. False alarms burn trust.
+An alert that wakes someone must require action. If the honest response is "nothing", fix or
+remove the alert.
 
-### 14.5 Graceful degradation
+### 14.5 Degrade visibly, never silently (13, 34)
 
-When a helper fails, you *bend* instead of falling flat. Cache. Default.
-Hold for later. Full falls are seldom a must. Would you shut the shop because one shelf broke. No.
+When a dependency fails, keep the rest of the system working, but make the failure visible:
+log it with context, show the user an honest state ("showing results from 5 minutes ago",
+"saving is unavailable, retrying"), and stop writes that could corrupt data. Never substitute
+default or empty data that looks like a real result, and never persist a fallback over real
+data.
 
-### 14.6 Know your SLIs / SLOs
+### 14.6 SLIs and SLOs
 
-Service Level Indicators (what you measure) and Objectives (your targets) turn
-steadiness into true engineering work, not a wish. Numbers keep you honest. Watch them.
+Define Service Level Indicators (what you measure) and Objectives (the targets) so reliability
+is a number, not a feeling.
 
 ---
 
@@ -736,41 +773,39 @@ steadiness into true engineering work, not a wish. Numbers keep you honest. Watc
 
 ### 15.1 Validate at trust boundaries
 
-Each scrap that steps into your house (HTTP, CLI, file, queue) stays suspect till proven
-clean. Parse, do not just check. You turn raw input into a typed, constrained domain
-value as early as possible. Then you trust it internally. Early shape keeps you safe.
+Treat everything that enters the system (HTTP, CLI arguments, files, queues, client-to-server
+remotes) as hostile until validated. Parse, don't just check: convert raw input into a typed,
+constrained domain value as early as possible, then trust it inside. Client-side checks are
+never the only validation.
 
-### 15.2 Principle of Least Privilege
+### 15.2 Least privilege
 
-Each worker, each service name, each user gets the least rights to do the
-job, and no more. Closed by default. Would you hand keys to rooms a man never enters. No.
+Every process, service account, and user gets the minimum rights needed. Default to deny.
 
 ### 15.3 Never log secrets
 
-API keys, tokens, passwords, session IDs, full credit cards. Never in logs.
-Even in dev logs, because dev logs turn into prod logs one day. A leak is a leak.
+API keys, tokens, passwords, session IDs, and card numbers never go into logs, including
+development logs.
 
 ### 15.4 Defense in depth
 
-Each layer thinks the one before it fell. WAF → auth → input validation → DB
-parameterization → row-level security. One fall must not sink you. Layers save you.
+Assume each layer can fail: edge filtering, authentication, authorization, input validation,
+parameterized queries, row-level security.
 
 ### 15.5 Cryptography
 
-- **Do not build your own.** You use `libsodium`, `OpenSSL`, your platform KMS. Home locks fail.
-- **You treat passwords right:** Argon2id/bcrypt/scrypt, never MD5/SHA1/SHA256. Old hashes betray you.
-- **Rotate secrets** and hold a plan for "what if this leaks today". Leaks happen. Plans save you.
+- Never implement your own. Use libsodium, OpenSSL, or the platform KMS.
+- Hash passwords with Argon2id, bcrypt, or scrypt. Never MD5, SHA-1, or plain SHA-256.
+- Rotate secrets and have a plan for "this secret leaked today".
 
 ### 15.6 Supply chain
 
-You commit your lockfiles (`package-lock.json`, `Cargo.lock`, `poetry.lock`). You scan
-your helpers (Snyk, Dependabot, `npm audit`). You pick small, tried kits over shiny
-ones with 3 keepers. Would you bet your shop on strangers. No.
+Commit lockfiles. Scan dependencies (Dependabot, `npm audit`, Snyk). Prefer small,
+well-maintained packages over popular ones with a single maintainer.
 
-### 15.7 OWASP Top 10, memorize the current list
+### 15.7 OWASP Top 10
 
-The most hit weak spots on the web, revised every few years. As of the
-2021 edition. Learn them cold:
+Check every web application against the current OWASP Top 10. The 2021 list:
 
 1. Broken Access Control
 2. Cryptographic Failures
@@ -783,8 +818,8 @@ The most hit weak spots on the web, revised every few years. As of the
 9. Security Logging and Monitoring Failures
 10. Server-Side Request Forgery (SSRF)
 
-You check each web app against these. Re-check [owasp.org](https://owasp.org/Top10/)
-each project, the list moves and shifts names as new hits rise. Stay current.
+The list changes every few years. Check [owasp.org/Top10](https://owasp.org/Top10/) at the
+start of each project.
 
 ---
 
@@ -792,197 +827,195 @@ each project, the list moves and shifts names as new hits rise. Stay current.
 
 ### 16.1 Measure before optimizing
 
-You profile. You bench. Without numbers you will tune the wrong spot 90% of the time. Guessing is not work. Measuring is work.
+Profile and benchmark first. Without numbers, optimization usually targets the wrong place.
 
-### 16.2 Big-O first, micro-optimizations last
+### 16.2 Algorithms first, micro-optimizations last
 
-An `O(n²)` loop in Python costs more than `O(n log n)` in JavaScript. You fix the
-plan before you shave the steps. Big O first. Small trims last.
+An O(n²) loop costs more than any language difference. Fix the algorithm before shaving
+constant factors.
 
-### 16.3 Latency vs throughput
+### 16.3 Latency and throughput are different goals
 
-Two different fights. Code that faces users fights for
-the tail (p99). Code that grinds batches fights for the mean. Know which fight you fight.
+User-facing code optimizes tail latency (p99). Batch code optimizes throughput.
 
-### 16.4 Caching is a promise, not a shortcut
+### 16.4 A cache is a promise
 
-Each cache you add brings a staleness debt. You state how old may pass,
-you clear right, and you know the road when the cache dies. Can you live with old answers. Decide up front.
+Every cache brings a staleness contract. Decide how stale is acceptable, how invalidation
+works, and what happens when the cache is down.
 
 ### 16.5 Avoid premature distribution
 
-One tuned box beats a loose crowd. You grow up before you grow out,
-unless true load demands more. Spread systems breed fresh fail ways. Do you need that pain now. Often no.
+Scale up before scaling out. Distributed systems bring new failure modes; adopt them only when
+load requires it.
 
 ---
 
 ## 17. Documentation
 
-### 17.1 Code-adjacent > code-distant
+Lesson: 41. Prose rules: `../skills/writing/prose/SKILL.md`.
 
-- **README.md**: how to run, how to test, the one page a new hand needs to join. Write it for him.
-- **CONTRIBUTING.md**: your ways, your review path, your release steps. No guessing.
-- **ADR (Architecture Decision Records)**: one short note per weighty call
-  (context → decision → consequences). They grow old *with* your code. They tell why.
+### 17.1 Keep docs next to the code
 
-### 17.2 Docstrings on public APIs
+- **README.md:** how to run and test the project; the page a new teammate needs.
+- **CONTRIBUTING.md:** conventions, review process, release steps.
+- **ADRs (Architecture Decision Records):** one short record per significant decision
+  (context, decision, consequences).
 
-Each open face you ship tells what it does, what it takes, what it gives back, what
-it throws, with a sample when the use is not plain. Your IDE shows this at the call. Write for that moment.
+### 17.2 Document public APIs (41)
 
-### 17.3 Examples > prose
+Every exported function or module states what it does, its inputs and outputs, how it fails,
+and an example when usage is not obvious. Internal helpers rely on clear code instead.
 
-One live 10-line run beats three long talks.
-Show. Then tell.
+### 17.3 Examples over prose
 
-### 17.4 Don't document what the code already says
+A ten-line runnable example beats three paragraphs of description.
 
-"Increments the counter" over `counter++` is noise. "Capped at 100/min to
-spare the billing API downstream" is news. One wastes eyes. One saves calls.
+### 17.4 Do not document what the code already says (19)
 
-### 17.5 Diagrams for architecture, not for getters
+"Increments the counter" above `counter++` is noise. "Capped at 100/min to protect the billing
+API" is information.
 
-You draw flows for calls. You draw boxes for services.
-You keep them in your repo (Mermaid, PlantUML) so they live with versions and all can find them. Drawn truth beats stray talk.
+### 17.5 Diagrams for architecture
+
+Draw request flows and service boundaries, not getters. Keep diagrams in the repo as text
+(Mermaid, PlantUML) so they are versioned with the code.
 
 ---
 
 ## 18. The Four Rules of Simple Design (Kent Beck)
 
-In this order, no skip:
+In priority order:
 
-1. **Passes all tests**, your acts are right.
-2. **Reveals intent**, each name and each shape tells your reader its aim.
-3. **No duplication**, one idea, one home.
-4. **Fewest elements**, the smallest count of classes, methods, modules that
-  still hold the first three.
+1. **Passes all the tests.**
+2. **Reveals intent:** names and structure say what the code is for.
+3. **No duplication:** each piece of knowledge has one home (Clean-Code 14).
+4. **Fewest elements:** the smallest number of classes, functions, and modules that still
+   satisfies the first three (Clean-Code `classes/06`).
 
-When you clean, you honor this order. You never cut shapes at the cost
-of clear aim. Clarity outranks brevity.
+Never trade away intent to reduce element count.
 
 ---
 
-## 19. Code Smells, A Checklist
-
-When you or your tired self at 3 AM mutters "this feels off", you will find it is one of these. Learn the smells. Trust your nose.
+## 19. Code Smells Checklist
 
 ### Names
 
-- **Vague** (`data`, `info`, `handler`, `manager`), what data. Whose handler. Vague steals time from your reader.
-- **Lies** (`list` that isn't a list, `validate` that mutates), the name lies to you. Lies breed bugs. Tell truth.
-- **Inconsistent** (`fetchUser` / `getAccount` / `retrieveOrder`, pick one verb). One job. One verb. No drift.
+- **Vague:** `data`, `info`, `handler`, `manager`, `util` (20).
+- **Lying:** a `list` that is a map, a `validate` that mutates (01, 36).
+- **Inconsistent:** `fetchUser`, `getAccount`, `retrieveOrder` in one codebase. Pick one verb.
 
 ### Functions
 
-- **Long**, runs past your screen. Long hides jobs.
-- **Too many arguments**, 4+. Four means a missing object.
-- **Flag arguments**, a true false switch that picks behavior. Split it.
-- **Side effects**, does what the name never said. Names must tell truth.
-- **Deep nesting**, three+ levels of `if`/`for`. Pull out.
-- **Dead parameter**, never used. Cut it.
+- **Doing more than one thing**, or mixing abstraction levels (15, 27).
+- **Four or more arguments** (23).
+- **Flag arguments** that select behavior (02).
+- **Hidden side effects** or mixed command and query (01, 40).
+- **Deep nesting:** three or more levels of `if` or `for`. Extract or return early.
+- **Unused parameters.** Remove them.
 
 ### Classes
 
-- **God class**, knows too much, does too much. One class plays the whole team.
-- **Feature envy**, a method that uses another class's fields more than its own. Homesick code. Move it home.
-- **Hybrid / anemic domain**, getters everywhere *plus* rules, or domain type with only fields when it should own behavior (DTOs at boundaries are fine. See 29). Pick a side.
-- **Shotgun surgery**, one change needs 10 files. Weak hold. Pull together what moves together.
+- **God class:** knows and does too much (`solid/01`).
+- **Feature envy:** uses another class's data more than its own (`classes/02`).
+- **Hybrid object / anemic domain type:** public data plus business logic, or a domain type
+  with only fields that should own its rules. DTOs at boundaries are fine (29).
+- **Shotgun surgery:** one change touches ten files. Group what changes together.
 
 ### Comments
 
-- **Redundant**, says again what the code says. Twice is once too many.
-- **Commented-out code**, dead lines. Cut them.
-- **TODO with no owner or date**, no name, no time. Dates push work.
+- **Redundant** or stale (05, 19).
+- **Commented-out code** (07).
+- **TODO without a named blocker or ticket** (08).
 
 ### Control flow
 
-- **Duplicated logic in branches**, same lines twice. Pull out. Twice is debt.
-- **Switch on type**, your code asks what it is. Give that choice a home with many shapes.
-- **Magic numbers / strings**, bare values. Give them names your reader trusts.
-- **`null` in public APIs**, you return Optional or Special Case. Never bare null.
+- **Duplicated logic** in branches or files (14).
+- **Switch on type** repeated across files (24).
+- **Magic numbers and strings** (30).
+- **Null returned from APIs you own** (13).
+- **Catch used as an if, or empty catch** (34).
 
 ### Coupling
 
-- **Train wrecks** (`a.b().c().d()`), you break Demeter. Long chains snap. Shorten them.
-- **Global mutable state**, hidden ties all over. No man sees the full pull. Kill it where you can.
-- **Cyclic dependencies** between packages and modules, round trips. Cut the loop.
+- **Train wrecks:** `a.b().c().d()` (32).
+- **Global mutable state.**
+- **Cyclic dependencies** between modules or packages.
+- **Vendor SDK imported outside its wrapper** (31).
 
 ### Testing
 
-- **No tests**, you fly blind. Blind flies crash. Write one.
-- **Tests that never fail**, empty claims. They prove nothing. Fix the claim.
-- **Flaky tests**, you kill or mend today, you never "skip". Skips lie. Trust dies.
-- **Tests coupled to implementation**, they snap on rename. Test acts. Not walls.
+- **No tests** for code that is changing.
+- **Tests that cannot fail.**
+- **Flaky or skipped tests.** Fix or delete them (`unit-tests/02`).
+- **Tests coupled to implementation details** (`unit-tests/03`).
 
 ---
 
-## 20. Cultural Rules
+## 20. Team Practices
 
-### 20.1 Disagreement is a conversation, not a war
+### 20.1 Disagreement is a conversation
 
-Two good builders will differ. That is health. You use facts, small trials, ADRs to
-meet. When talk stalls, one named decider calls it. Then all commit. Would you stall a team for pride. No.
+Resolve design disagreements with evidence, small experiments, and ADRs. When discussion
+stalls, a named decision-maker decides and everyone commits.
 
 ### 20.2 Blameless retrospectives
 
-"How did our build let this pass" beats "who broke this" each time.
-Men ship slips. Builds let them through. Fix the build.
+Ask "how did our process let this through", not "who broke this". Fix the process.
 
-### 20.3 Teach as you go
+### 20.3 Teach in review
 
-One note that shows the whole crew a rule with a link beats ten notes that
-mend one line. You teach when you review. Teaching scales.
+A review comment that links the underlying rule teaches the whole team.
 
-### 20.4 Estimates are wrong
+### 20.4 Estimates are ranges
 
-You treat guesses as spans, not vows. The bigger the job, the wider the span. You cut work
-till the span fits your sprint. Small is honest.
+Treat estimates as ranges, not promises. The bigger the work, the wider the range. Split work
+until the range is acceptable.
 
-### 20.5 Respect the on-call
+### 20.5 Respect on-call
 
-You do not push wild work on Friday. You do not push what you have not tried. You do not
-push at 4:50 PM. Your on call mate has a home too.
+Do not deploy risky or untested changes late on a Friday or at the end of the day.
 
 ### 20.6 Rest
 
-Weary hands plant bugs. Sleep is output. The lone hero who works each weekend burns
-out, and your crew pays his debt. Rest is craft too.
+Tired engineers write bugs. Sustainable pace is part of the craft.
 
 ---
 
-## 21. Quick Reference (the fridge magnet)
+## 21. Quick Reference
 
-| When you… | Ask yourself… |
+| When you... | Ask |
 |---|---|
-| Name a thing | Would a new teammate grasp it with no context. |
-| Write a function | Can you say what it does in one short line with no and. |
-| Add a comment | Could you fix the code so this comment was not needed. |
-| Copy-paste | Is the third time here. Extract. |
-| Reach for inheritance | Would composition do. |
-| Catch an exception | What will you do about it. |
-| Return null | What Special Case could you return instead. |
-| Share mutable state | Can you use a message or an immutable copy. |
-| Add a parameter | Does this function now do two things. |
-| Open a giant PR | Can you split this into a refactor + a behavior change. |
-| Log something | Does this have a correlation ID. Is any of it a secret. |
-| Deploy | Is it Friday 4:50 PM. Think twice. |
+| Name a thing | Would a new teammate understand it with no context? (06) |
+| Write a function | Can you describe it in one line without "and"? (15) |
+| Add a comment | Could a rename or extraction make it unnecessary? (33) |
+| Copy and paste | Is this the same knowledge in a second place? Extract it now. (14) |
+| Reach for inheritance | Would composition do? |
+| Catch an exception | Are you translating, recovering, or reporting? Never just hiding it. (34) |
+| Return null | Would an empty value, a Special Case, or a throw be clearer? (13) |
+| Share mutable state | Could you pass a message or an immutable copy? |
+| Add a parameter | Is the function now doing two things? (02, 23) |
+| Split a class | Which payoff does it buy: test, dedup, name, or extension? (`classes/06`) |
+| Open a large PR | Can it be split into a refactor and a behavior change? |
+| Log something | Does it have a correlation ID? Is any of it secret? |
+| Deploy | Is it late on a Friday? |
 
 ---
 
-## 22. Further Reading (one-line each)
+## 22. Further Reading
 
-- **Clean Code**, Robert C. Martin. The source text for most of this handbook. You read it first. You mark it up.
-- **Clean Architecture**, Robert C. Martin. Dependency rule + SOLID at the system level. Walls that hold at scale.
-- **The Pragmatic Programmer**, Hunt & Thomas. DRY, orthogonality, tracer bullets. Old advice that still pays.
-- **Refactoring**, Martin Fowler. Named refactorings as a vocabulary. You speak them daily.
-- **Working Effectively with Legacy Code**, Michael Feathers. Seams. How to test untested code. Your way into old tangles.
-- **Domain-Driven Design**, Eric Evans. Bounded contexts, ubiquitous language. One tongue for the team.
-- **A Philosophy of Software Design**, John Ousterhout. Deep modules, complexity. How you fight tangle with depth.
-- **Designing Data-Intensive Applications**, Martin Kleppmann. How distributed systems really work. No myths. Only tradeoffs.
-- **Accelerate**, Forsgren et al. The metrics that predict elite engineering teams. You track what counts.
-- **The Mythical Man-Month**, Fred Brooks. Still true 50 years later. Men and months do not trade even.
+- **Clean Code**, Robert C. Martin. The source for most of the Clean-Code lessons.
+- **Clean Architecture**, Robert C. Martin. The Dependency Rule and SOLID at system scale.
+- **The Pragmatic Programmer**, Hunt and Thomas. DRY, orthogonality, tracer bullets.
+- **Refactoring**, Martin Fowler. The catalog of named refactorings.
+- **Working Effectively with Legacy Code**, Michael Feathers. Seams and testing untested code.
+- **Domain-Driven Design**, Eric Evans. Bounded contexts and ubiquitous language.
+- **A Philosophy of Software Design**, John Ousterhout. Deep modules and managing complexity.
+- **Designing Data-Intensive Applications**, Martin Kleppmann. How distributed data systems
+  behave in practice.
+- **Accelerate**, Forsgren, Humble, and Kim. Metrics that predict high-performing teams.
+- **The Mythical Man-Month**, Fred Brooks. Why adding people to a late project makes it later.
 
 ---
 
-*This paper is a guide, not a law. When clarity fights a rule, clarity
-wins. When speed fights a rule, you ask if the rule still earns its place for your work. Rules are tools. Your judgment is the craft. Use them like a craftsman.*
+The Clean-Code lessons are mandatory. This handbook is guidance around them: when one of its
+non-craft rules does not fit a situation, say which rule you are setting aside and why.

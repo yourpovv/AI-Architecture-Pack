@@ -5,7 +5,7 @@ Paste-in task prompts. Not installable skills (see `../skills/`).
 | Folder | Role | Pair with |
 |---|---|---|
 | **`reviews/`** | Audits, security, performance, production go/no-go, Tauri QC, documentation | Always `../skills/review/audit/SKILL.md` first |
-| **`scaffolds/`** | Greenfield product builds + README voice templates | Matching `../languages/*` / `../frameworks/*` |
+| **`scaffolds/`** | Greenfield product builds + README voice templates | `../standards/Clean-Code/` and the matching `../frameworks/*` file |
 | **`domains/`** | Extension point. Add `domains/<your-stack>/` for threat models that only apply to one platform. Do not mirror generic Security/Error/Perf files that already live in `reviews/`. | Always `../skills/review/audit/SKILL.md` first |
 | **`workflow/`** | How the agent should behave before and during a task, independent of stack | Any prompt above |
 

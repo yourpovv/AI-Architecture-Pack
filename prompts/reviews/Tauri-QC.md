@@ -18,7 +18,7 @@ You are auditing a Tauri desktop app for usability issues and bugs.
 
 ## Output format
 
-A table: Persona | Issue | Severity (low/med/high or harness blocker/high/medium/low) | Status | File/line reference | Notes
+A table: Persona | Issue | Severity (blocker/high/medium/low, as defined in the harness) | Status | File/line reference | Notes
 
 End with harness report shape: coverage list, exclusions, go/no-go for shipping the scoped surface.
 

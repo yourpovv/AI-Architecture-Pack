@@ -11,13 +11,9 @@ Build a Discord bot. Keep command handling, business logic, and the Discord clie
 
 ## Language selection
 
-Choose language and load the matching file (section-load: structure, errors, project prompt):
+Use the language the repo already uses. For greenfield, pick Bun/Node.js (discord.js), Python (discord.py), or Go (discordgo) and follow that ecosystem's conventional layout and tooling.
 
-- **Bun/Node.js** → `languages/Bun-Node.md`
-- **Python** → `languages/Python.md`
-- **Go** → `languages/Go.md`
-
-Also open relevant sections of `standards/Principles.md` and `skills/engineering/errors/SKILL.md` if failure handling is in scope. Craft: `skills/engineering/craft/SKILL.md`.
+Coding standards come from `standards/Clean-Code/` (load the lesson the task needs). Also open relevant sections of `standards/Principles.md`, and `skills/engineering/errors/SKILL.md` when failure handling is in scope. Craft: `skills/engineering/craft/SKILL.md`.
 
 ---
 
@@ -31,11 +27,11 @@ Also open relevant sections of `standards/Principles.md` and `skills/engineering
 
 ## Architecture (when scaffolding or reviewing)
 
-- Follow structure from the language architecture file
-- Command handler pattern (no giant if/else chains)
+- Follow the language's conventional project layout
+- Command handler pattern: a registry of handlers, not a giant if/else chain (Clean-Code 24)
 - Event-driven registration
 - Service layer for business logic
-- Data access behind a thin boundary
+- Data access and the Discord client behind thin wrappers (Clean-Code 31)
 
 **Typical layout (adapt to language):**
 ```
@@ -98,14 +94,14 @@ DATABASE_URL=
 
 When the human asked for a full bot scaffold:
 
-1. Modular structure per language file
+1. Modular structure following the language's conventions
 2. Command registration system
 3. Commands the human specified (if none, ask; do not invent a full mod suite)
 4. Event handlers needed for those features
 5. Permission checks where actions are privileged
 6. Cooldowns on expensive commands
 7. Config via env
-8. Error logging with context
+8. Errors logged with context; users get a what / why / action reply, never a stack trace
 9. README with setup
 
 ---
@@ -116,5 +112,5 @@ When the human asked for a full bot scaffold:
 - [ ] Permission checks on privileged paths
 - [ ] Rate limiting where abuse is realistic
 - [ ] Token only in environment
-- [ ] Names and structure match language file + Craft
+- [ ] Names and structure follow Clean-Code and `skills/engineering/craft/SKILL.md`
 - [ ] Verify commands from project AGENTS.md / README (or listed manual checks)

@@ -43,12 +43,12 @@ language. Prefer exceptions wherever the language has them (Clean Code default).
 
 ---
 
-## Part A, Error handling in code (Clean Code, ch. 7)
+## Part A: Error handling in code (Clean Code, ch. 7)
 
 Robert C. Martin's rule of thumb: **error handling is a separate concern.** You
 should be able to read the main logic without it being shredded by failure
 checks, and you should be able to read the failure handling on its own. The
-principles below all serve that goal, clean *and* robust, not one at the cost of
+principles below all serve that goal: clean *and* robust, not one at the cost of
 the other.
 
 ### A1. Use exceptions, not return codes
@@ -138,7 +138,7 @@ public class LocalPort { // wrapper
 }
 ```
 
-### A6. Define the normal flow, the Special Case pattern
+### A6. Define the normal flow: the Special Case pattern
 
 Canonical: Clean-Code **34** + **13**.
 
@@ -210,7 +210,7 @@ has no exceptions:
 
 ---
 
-## Part B, Error messages to users (the three laws)
+## Part B: Error messages to users (the three laws)
 
 Once the code has caught the failure cleanly, a human still has to read about it.
 **Never show them the exception.** Translate it.
@@ -219,9 +219,9 @@ Once the code has caught the failure cleanly, a human still has to read about it
 
 A good user-facing error does exactly three things, in order:
 
-1. **What happened**, the fact, plainly, no jargon.
-2. **Why it happened**, a cause the user can understand.
-3. **Clear action**, the single next step.
+1. **What happened:** the fact, plainly, with no jargon.
+2. **Why it happened:** a cause the user can understand.
+3. **Clear action:** the single next step.
 
 - "Something went wrong." → **0 / 3**
 - "Something went wrong. Please try again." → **1 / 3** (action only)
@@ -235,7 +235,7 @@ WHY: "[The reason, in terms the user can understand or control]."
 ACTION: "[Do X] to [outcome]."
 ```
 
-The **subject is always the user's thing**, *their* photo, *their* message, never
+The **subject is always the user's thing** (*their* photo, *their* message), never
 "the system." "The request could not be completed" hides the subject; "Your
 message didn't send" names it.
 
@@ -244,33 +244,33 @@ message didn't send" names it.
 | ✗ Wrong | ✓ Right |
 | --- | --- |
 | `Error 403` | "You don't have permission to view this file. Ask the owner to share it with your account, then try again." |
-| `Upload failed.` | "Your photo couldn't upload because it's 48 MB, the limit is 25 MB. Compress it or choose a smaller file." |
+| `Upload failed.` | "Your photo couldn't upload because it's 48 MB and the limit is 25 MB. Compress it or choose a smaller file." |
 | `Network error.` | "Your message couldn't send because the connection dropped. Reconnect, then tap Retry." |
 | `Invalid input.` | "Your password is too short. Passwords need at least 8 characters. Add more, then try again." |
-| `NullPointerException` | "Couldn't load your profile because the data was incomplete. Refresh the page, if it persists, contact support with code PROFILE_NULL." |
+| `NullPointerException` | "Couldn't load your profile because the data was incomplete. Refresh the page. If it persists, contact support with code PROFILE_NULL." |
 
 ### B4. Copy rules
 
-- **What**, plain past tense: "Sign-in failed," not "Authentication failure."
-- **Why**, actionable: "The server is temporarily unavailable," not "Server returned 503." If the cause is unknown, say so honestly.
-- **Action**, one imperative phrase: "Try again in a few minutes." If two are needed, one primary button + one escape-hatch link.
+- **What:** plain past tense. "Sign-in failed," not "Authentication failure."
+- **Why:** actionable. "The server is temporarily unavailable," not "Server returned 503." If the cause is unknown, say so honestly.
+- **Action:** one imperative phrase. "Try again in a few minutes." If two are needed, one primary button + one escape-hatch link.
 - **Avoid:** "Oops"/"Whoops" (trivializing), "Sorry" as a substitute for an action, "Unexpected error" (filler), error codes in the main sentence (append `code: …` for support), exclamation marks, and passive voice.
 
-### B5. Severity levels, pick the least intrusive surface that works
+### B5. Severity levels: pick the least intrusive surface that works
 
-- **Inline validation**, next to the field, on blur; never blocks. `role="alert"`, `aria-live="polite"`, `aria-invalid` on the input.
-- **Toast / banner**, transient, auto-dismiss; for recoverable errors. Offer the action (Retry) before it disappears. `role="alert"`.
-- **Alert / confirm dialog**, blocks because a decision is required. Two buttons max; safe action is the default. `role="alertdialog"` + `aria-modal="true"`; move focus in.
-- **Full-screen / empty state**, a whole view failed. Icon + what + why + one action, plus an escape hatch. **Never a dead end.** `role="status"`.
-- **Non-UI**, CLI: one line of what/why/fix, exit non-zero. API: stable `code` + human `message` + `resolution`, no stack traces leaked. Logs/exceptions: see Part A, context is the what/why for the next developer.
+- **Inline validation:** next to the field, on blur; never blocks. `role="alert"`, `aria-live="polite"`, `aria-invalid` on the input.
+- **Toast / banner:** transient, auto-dismiss; for recoverable errors. Offer the action (Retry) before it disappears. `role="alert"`.
+- **Alert / confirm dialog:** blocks because a decision is required. Two buttons max; safe action is the default. `role="alertdialog"` + `aria-modal="true"`; move focus in.
+- **Full-screen / empty state:** a whole view failed. Icon + what + why + one action, plus an escape hatch. **Never a dead end.** `role="status"`.
+- **Non-UI:** CLI: one line of what/why/fix, exit non-zero. API: stable `code` + human `message` + `resolution`, no stack traces leaked. Logs/exceptions: see Part A; context is the what/why for the next developer.
 
-### B6. Accessibility, non-negotiable
+### B6. Accessibility is non-negotiable
 
 Errors must be perceivable **without color.** Pair the danger color with an icon
 *and* text, wire up the ARIA role + live region for the level, and move focus to
 the error (or the offending control). Red borders alone fail.
 
-### B7. Visual treatment, adapt, don't prescribe
+### B7. Visual treatment: adapt, don't prescribe
 
 This skill doesn't own your aesthetic. Use *your* design system's danger color,
 type scale, elevation, and motion, and respect `prefers-reduced-motion`. With no
@@ -279,18 +279,18 @@ action. In dark mode, confirm the red still reads.
 
 ### Part B checklist
 
-- [ ] Title says **what**, plain language, no code or system term.
-- [ ] Body says **why**, a cause the user can act on.
+- [ ] Title says **what** in plain language, with no code or system term.
+- [ ] Body says **why**: a cause the user can act on.
 - [ ] Exactly one **clear action** that resolves or escapes the error.
 - [ ] Subject is the **user's** thing, never "the system."
 - [ ] Free of "Oops", "Sorry", "Unexpected", passive voice, exclamation marks.
-- [ ] Severity level fits, inline / toast / dialog / full-screen / non-UI.
+- [ ] Severity level fits: inline / toast / dialog / full-screen / non-UI.
 - [ ] Perceivable **without color**; correct ARIA role + live region; focus handled.
-- [ ] A **way out** exists, no dead ends. Internal codes kept out of the body copy.
+- [ ] A **way out** exists; no dead ends. Internal codes kept out of the body copy.
 
 ---
 
-## The bridge, one failure, both jobs
+## The bridge: one failure, both jobs
 
 The same failure flows through both parts. Keep the developer's truth and the
 user's message separate:
@@ -300,7 +300,7 @@ catch (StorageException e) {
   log.error("persist order {} failed: pool exhausted", orderId, e); // Part A: full context, for devs/logs
   showError( // Part B: translated, for the user
   "Your order couldn't be placed because our system is busy. " +
-  "Wait a moment and try again, you weren't charged.");
+  "Wait a moment and try again. You weren't charged.");
 }
 ```
 

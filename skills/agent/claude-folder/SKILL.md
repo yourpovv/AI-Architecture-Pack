@@ -12,87 +12,78 @@ description: >
 
 # The .claude/ Folder
 
-Listen. Here is what each part does for you, what you actually create, and the traps that waste your
-afternoon. Harness details change between releases, so you treat this file as your map. You treat
-the official docs as your authority on exact key names. That is the tradeoff you accept.
+What each part does, what to actually create, and the traps that waste an afternoon. Harness
+details change between releases, so treat this file as a map and the official docs as the
+authority on exact key names.
 
 **Reference:** [code.claude.com/docs](https://code.claude.com/docs), or `/help` in the tool.
 
 ## The two-file core
 
-Most projects you touch need exactly two files. Everything else is optional for you. Keep it that way
-until you feel real pain.
+Most projects need exactly two files. Everything else is optional until a real need appears.
 
 | File | Tracked? | Role |
 |---|---|---|
-| `CLAUDE.md` | Yes | Project instructions every agent you run loads. Your rules live here |
-| `CLAUDE.local.md` | No | Personal overrides for your machine. You gitignore it |
+| `CLAUDE.md` | Yes | Project instructions every session loads |
+| `CLAUDE.local.md` | No | Personal overrides for one machine. Gitignore it |
 
-**You keep `CLAUDE.md` short.** Somewhere under 200 lines is a good ceiling for you. It loads
-into every single session you run, so every line you add is rent you pay forever. You push depth
-into linked files and reference them by path. Your agent will open what it needs. Short files respect
-your team.
+**Keep `CLAUDE.md` short.** Under about 200 lines is a good ceiling. It loads into every
+session, so every line is paid for on every call. Push depth into linked files and reference
+them by path; the agent opens them when needed.
 
-`CLAUDE.md` is only part of that rent you pay. Every installed skill's description, every
-MCP server's tool schemas, and every hook's output ride along in your same
-always-loaded block, billed on every call whether they fire or not.
-[`../context-budget/SKILL.md`](../context-budget/SKILL.md) covers your whole floor
-and how you measure it.
+`CLAUDE.md` is only part of that always-loaded cost. Every installed skill's description, every
+MCP server's tool schemas, and every hook's output ride in the same block, billed on every call
+whether they fire or not. [`../context-budget/SKILL.md`](../context-budget/SKILL.md) covers the
+whole floor and how to measure it.
 
-A common and good split for you: `AGENTS.md` at the root as the portable contract that any
-harness reads, and `CLAUDE.md` for the parts specific to this tool. You cross-reference
-rather than duplicating. If your two files drift, your agents get mixed orders.
+A common split: `AGENTS.md` at the root as the portable contract any harness reads, and
+`CLAUDE.md` for the parts specific to Claude Code. Cross-reference rather than duplicate; if
+the two drift, agents get conflicting orders.
 
 ## Directories under .claude/
 
 | Path | What it is |
 |---|---|
-| `skills/` | Model-invokable. One folder per skill containing `SKILL.md`. Your Claude chooses them by matching your task against the `description`, so descriptions decide whether they fire |
-| `agents/` | Sub-agent definitions, one markdown file each. Each runs in its own context window. You read `Sub-Agents.md` before wiring these up |
-| `commands/` | Slash commands, one markdown file each. You invoke them, not your model. **Not legacy**, despite what some guides claim |
-| `hooks/` | Where you keep hook scripts. Living here does **not** make them run for you (see below) |
-| `rules/` | Additional rule files for you. Can be scoped to a glob so they load only for matching paths. **An unscoped rule file loads in every session you run** |
-| `output-styles/` | Alternate response shapes, opt-in for you |
-| `settings.json` | Tracked, shared config: permissions, env, model, statusline, and your hook registry |
-| `settings.local.json` | Your machine only. You gitignore it |
+| `skills/` | Model-invoked. One folder per skill containing `SKILL.md`. Claude matches the task against each `description`, so descriptions decide whether a skill fires |
+| `agents/` | Sub-agent definitions, one markdown file each. Each runs in its own context window. Read [`../sub-agents/SKILL.md`](../sub-agents/SKILL.md) before wiring these up |
+| `commands/` | Slash commands, one markdown file each. The user invokes them, not the model. Not legacy, despite what some guides claim |
+| `hooks/` | A conventional place for hook scripts. Living here does **not** make them run (see below) |
+| `rules/` | Additional rule files. Can be scoped to a glob so they load only for matching paths. **An unscoped rule file loads in every session** |
+| `output-styles/` | Alternate response shapes, opt-in |
+| `settings.json` | Tracked, shared config: permissions, env, model, statusline, and the hook registry |
+| `settings.local.json` | One machine only. Gitignore it |
 
-At your repo root, `.mcp.json` declares MCP servers. Root only for you.
+`.mcp.json` at the repo root declares MCP servers. It belongs at the root only.
 
 ## The hook trap
 
-**Dropping a script into your `.claude/hooks/` does nothing.** Your hooks fire only when
-you register them in `settings.json` under the `hooks` key with an event and a matcher.
-The directory is a convention for where you keep your scripts, not a trigger.
+**A script in `.claude/hooks/` does nothing by itself.** Hooks fire only when registered in
+`settings.json` under the `hooks` key with an event and a matcher. The directory is a
+convention for storage, not a trigger. When a hook is not firing, check registration before
+debugging the script.
 
-If your hook is not firing, you check registration before you debug your script. Registration is
-the usual culprit. Do you want to waste an hour on code that never ran. Check first.
+Hooks are the only mechanism that *enforces* anything. A rule in `CLAUDE.md` is advisory and
+holds only while the agent remembers it. A hook runs regardless. Put taste and context in
+`CLAUDE.md`, and put the one or two rules you cannot afford to have broken into a hook.
 
-Hooks are the only mechanism that *enforces* anything for you. A rule you write in
-`CLAUDE.md` is advisory. It holds while your agent remembers it. A hook is
-mechanical and runs regardless. So you put taste and context in `CLAUDE.md`. You put
-the one or two rules you actually cannot afford to have violated into a hook. That is professional
-judgment.
-
-Worth a hook for you: blocking edits that reintroduce a banned pattern, formatting on
-write, refusing destructive shell commands, notifying you when your long run ends. You pick the
-ones that protect your team.
+Good hook candidates: blocking edits that reintroduce a banned pattern, formatting on write,
+refusing destructive shell commands, and a notification when a long run ends.
 
 ## Gitignore
 
-You ignore `.claude/settings.local.json` **in your repo's own `.gitignore`**, not just
-your global one. A global ignore protects the machine it is on and nobody else on your team.
-You check with `git check-ignore -v <path>`. It prints which ignore file matched, so
-you can see whether your protection travels with your repo. Your teammates depend on that.
+Ignore `.claude/settings.local.json` in the repo's own `.gitignore`, not only a global one. A
+global ignore protects one machine and nobody else on the team. Check with
+`git check-ignore -v <path>`, which prints the ignore file that matched, so you can see whether
+the protection travels with the repo.
 
 ## Minimum viable setup
 
-For a new project, you work in order. You start small and you earn each new file:
+For a new project, in order:
 
-1. `CLAUDE.md` with your project's rules. Short.
-2. `.gitignore` entry for `.claude/settings.local.json`.
-3. `.claude/settings.json` only once you have a permission or hook worth sharing.
+1. `CLAUDE.md` with the project's rules. Short.
+2. A `.gitignore` entry for `.claude/settings.local.json`.
+3. `.claude/settings.json`, only once there is a permission or hook worth sharing.
 
-You stop there. You add `skills/`, `agents/`, `commands/`, or `output-styles/` when a real
-need appears, not because the directory exists. Empty scaffolding is a cost with
-no return for you, and a folder full of half-written skills makes your agent worse at
-picking the right one. Discipline is leaving things out until you need them.
+Stop there. Add `skills/`, `agents/`, `commands/`, or `output-styles/` when a real need
+appears. Empty scaffolding costs something and returns nothing, and a folder of half-written
+skills makes the agent worse at picking the right one.

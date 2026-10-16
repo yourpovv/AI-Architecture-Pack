@@ -1,8 +1,9 @@
 # Electron Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair this with the matching `languages/*` file and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. You respect what is there.
+> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read the project's `AGENTS.md`. Coding standards come from `../standards/Clean-Code/`. For reviews use `skills/review/audit/SKILL.md`; for craft use `skills/engineering/craft/SKILL.md`. Prefer extending an existing repo over scaffolding a parallel tree.
 
-You keep a clean structure for your Electron desktop app. Clean means you can find things. Clean means your teammate can find them too. You owe each other that.
+Structure for an Electron desktop app. Main-process examples are CommonJS; renderer examples
+are ES modules, because the renderer runs without Node integration.
 
 ---
 
@@ -32,19 +33,23 @@ project/
 ## Principles
 
 **Separate processes**
-Your main process owns the system. Your renderer owns the UI. You never mix the two. You ask where each line belongs. You put it there. Why blur a line that protects you?
+The main process owns the system (files, OS, network). The renderer owns the UI. Never mix
+the two.
 
 **Explicit IPC**
-You talk through namespaced channels. You never expose Node.js to your renderer. That boundary is your protection. You keep it solid.
+Processes talk through namespaced channels (`domain:action`). Node.js is never exposed to the
+renderer. The main process validates every IPC payload, because the renderer is an untrusted
+boundary.
 
 **Single responsibility**
-Your module does one thing. It has one reason to change. That is how you stay honest. That is how your teammate trusts your code.
+Each module does one thing and has one reason to change (Clean-Code `solid/01`).
 
 **No globals**
-You pass dependencies explicitly. You keep no hidden globals. What your module needs, you hand it. No hiding.
+Pass dependencies explicitly. A module's needs should be visible in its imports and
+parameters.
 
 **Clean up resources**
-You remove listeners. You close files on exit. A craftsman leaves nothing running behind him. You leave the machine as you found it.
+Remove listeners and close files and connections on exit.
 
 ---
 
@@ -55,6 +60,7 @@ You remove listeners. You close files on exit. A craftsman leaves nothing runnin
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const storage = require('./storage');
+const { requireItem, requireId } = require('./validation');
 
 let window;
 
@@ -72,14 +78,14 @@ function createWindow() {
   });
 
   window.loadFile('src/ui/index.html');
-  
+
   window.on('closed', () => {
     window = null;
   });
 }
 
 app.whenReady().then(() => {
-  storage.init();
+  storage.init(path.join(app.getPath('userData'), 'data.json'));
   createWindow();
 });
 
@@ -96,58 +102,63 @@ ipcMain.on('window:maximize', () => {
 });
 ipcMain.on('window:close', () => window?.close());
 
-ipcMain.handle('storage:getAll', () => storage.getAll());
-ipcMain.handle('storage:save', (event, data) => storage.save(data));
-ipcMain.handle('storage:delete', (event, id) => storage.delete(id));
+ipcMain.handle('storage:list', () => storage.list());
+ipcMain.handle('storage:add', (event, item) => storage.add(requireItem(item)));
+ipcMain.handle('storage:remove', (event, id) => storage.remove(requireId(id)));
 ```
 
 ---
 
 ## Storage Layer
 
+A missing data file is the normal first run, so it starts empty. A file that exists but cannot
+be read or parsed is a failure: throw with context instead of replacing the user's data with
+an empty list (Clean-Code 34).
+
 **storage.js**
 ```javascript
 const fs = require('fs');
-const path = require('path');
 
-const DATA_PATH = path.join(app.getPath('userData'), 'data.json');
+let dataPath;
+let items = [];
 
-let data = [];
+function init(path) {
+  dataPath = path;
+  items = fs.existsSync(dataPath) ? readItems() : [];
+}
 
-function init() {
+function readItems() {
   try {
-    const file = fs.readFileSync(DATA_PATH, 'utf-8');
-    data = JSON.parse(file);
-  } catch {
-    data = [];
-    save();
+    return JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+  } catch (cause) {
+    throw new Error(`storage.init: could not read ${dataPath}`, { cause });
   }
 }
 
-function getAll() {
-  return data;
+function list() {
+  return [...items];
 }
 
-function save(item) {
-  data.push(item);
+function add(item) {
+  items.push(item);
   write();
   return item;
 }
 
-function deleteById(id) {
-  data = data.filter(item => item.id !== id);
+function remove(id) {
+  items = items.filter(item => item.id !== id);
   write();
 }
 
 function write() {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2));
+  fs.writeFileSync(dataPath, JSON.stringify(items, null, 2));
 }
 
 function close() {
   write();
 }
 
-module.exports = { init, getAll, save, delete: deleteById, close };
+module.exports = { init, list, add, remove, close };
 ```
 
 ---
@@ -164,11 +175,11 @@ contextBridge.exposeInMainWorld('api', {
     maximize: () => ipcRenderer.send('window:maximize'),
     close: () => ipcRenderer.send('window:close')
   },
-  
+
   storage: {
-    getAll: () => ipcRenderer.invoke('storage:getAll'),
-    save: (data) => ipcRenderer.invoke('storage:save', data),
-    delete: (id) => ipcRenderer.invoke('storage:delete', id)
+    list: () => ipcRenderer.invoke('storage:list'),
+    add: (item) => ipcRenderer.invoke('storage:add', item),
+    remove: (id) => ipcRenderer.invoke('storage:remove', id)
   }
 });
 ```
@@ -183,111 +194,95 @@ contextBridge.exposeInMainWorld('api', {
 ```javascript
 class State {
   constructor() {
-    this.data = [];
+    this.items = [];
     this.listeners = [];
   }
-  
-  set(newData) {
-    this.data = newData;
+
+  replaceAll(items) {
+    this.items = items;
     this.notify();
   }
-  
-  get() {
-    return this.data;
+
+  all() {
+    return [...this.items];
   }
-  
+
   add(item) {
-    this.data.push(item);
+    this.items.push(item);
     this.notify();
   }
-  
+
   remove(id) {
-    this.data = this.data.filter(item => item.id !== id);
+    this.items = this.items.filter(item => item.id !== id);
     this.notify();
   }
-  
+
   onChange(callback) {
     this.listeners.push(callback);
+    return () => {
+      this.listeners = this.listeners.filter(listener => listener !== callback);
+    };
   }
-  
+
   notify() {
-    this.listeners.forEach(callback => callback(this.data));
+    this.listeners.forEach(callback => callback(this.all()));
   }
 }
 
-module.exports = new State();
+export default new State();
 ```
 
 ### Feature Module
 
+Render untrusted strings with `textContent`, never by interpolating them into `innerHTML`.
+
 **modules/search.js**
 ```javascript
-const state = require('./state');
+import state from './state.js';
 
-class Search {
-  constructor() {
-    this.input = null;
-    this.results = null;
-  }
-  
-  init() {
-    this.input = document.getElementById('search');
-    this.results = document.getElementById('results');
-    
-    this.input.addEventListener('input', () => this.handleSearch());
-  }
-  
-  handleSearch() {
-    const query = this.input.value.toLowerCase();
-    const items = state.get();
-    
-    const filtered = items.filter(item =>
-      item.name.toLowerCase().includes(query)
-    );
-    
-    this.render(filtered);
-  }
-  
-  render(items) {
-    this.results.innerHTML = items
-      .map(item => `<div class="item">${item.name}</div>`)
-      .join('');
-  }
+let input;
+let results;
+
+export function initSearch() {
+  input = document.getElementById('search');
+  results = document.getElementById('results');
+  input.addEventListener('input', showMatchingItems);
 }
 
-module.exports = new Search();
+function showMatchingItems() {
+  const query = input.value.toLowerCase();
+  const matching = state.all().filter(item => item.name.toLowerCase().includes(query));
+  results.replaceChildren(...matching.map(toRow));
+}
+
+function toRow(item) {
+  const row = document.createElement('div');
+  row.className = 'item';
+  row.textContent = item.name;
+  return row;
+}
 ```
 
 ### App Entry
 
 **app.js**
 ```javascript
-const state = require('./modules/state');
-const search = require('./modules/search');
+import state from './modules/state.js';
+import { initSearch } from './modules/search.js';
+
+init();
 
 async function init() {
-  const data = await window.api.storage.getAll();
-  state.set(data);
-  
-  search.init();
+  state.replaceAll(await window.api.storage.list());
+  initSearch();
   bindWindowControls();
 }
 
 function bindWindowControls() {
-  document.getElementById('minimize').onclick = () => {
-    window.api.window.minimize();
-  };
-  
-  document.getElementById('maximize').onclick = () => {
-    window.api.window.maximize();
-  };
-  
-  document.getElementById('close').onclick = () => {
-    window.api.window.close();
-  };
+  document.getElementById('minimize').onclick = () => window.api.window.minimize();
+  document.getElementById('maximize').onclick = () => window.api.window.maximize();
+  document.getElementById('close').onclick = () => window.api.window.close();
 }
-
-init();
 ```
 
 ---
@@ -300,6 +295,7 @@ init();
 <html>
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
   <title>App</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -312,13 +308,13 @@ init();
       <button id="close">×</button>
     </div>
   </div>
-  
+
   <div class="content">
     <input type="text" id="search" placeholder="Search...">
     <div id="results"></div>
   </div>
-  
-  <script src="app.js"></script>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>
 ```
@@ -407,9 +403,7 @@ body {
 
 ```javascript
 // Main
-ipcMain.handle('data:fetch', async () => {
-  return await fetchData();
-});
+ipcMain.handle('data:fetch', () => fetchData());
 
 // Renderer
 const data = await window.api.data.fetch();
@@ -433,32 +427,34 @@ window.api.window.minimize();
 // Main
 mainWindow.webContents.send('data:updated', newData);
 
-// Preload
+// Preload: return an unsubscribe function so the renderer can clean up
 contextBridge.exposeInMainWorld('api', {
   onDataUpdate: (callback) => {
-    ipcRenderer.on('data:updated', (event, data) => callback(data));
+    const listener = (event, data) => callback(data);
+    ipcRenderer.on('data:updated', listener);
+    return () => ipcRenderer.removeListener('data:updated', listener);
   }
 });
 
 // Renderer
-window.api.onDataUpdate((data) => {
-  console.log('Data updated:', data);
-});
+const stopListening = window.api.onDataUpdate((data) => state.replaceAll(data));
 ```
 
 ---
 
 ## Error Handling
 
+Failures cross the IPC boundary once. The main process adds context and rethrows; the renderer
+owns the user-facing message (`skills/engineering/errors/SKILL.md`).
+
 **Main process**
 
 ```javascript
-ipcMain.handle('storage:save', async (event, data) => {
+ipcMain.handle('storage:add', (event, item) => {
   try {
-    return await storage.save(data);
-  } catch (err) {
-    console.error('Save failed:', err);
-    throw err;
+    return storage.add(requireItem(item));
+  } catch (cause) {
+    throw new Error(`storage:add failed for item ${item?.id}`, { cause });
   }
 });
 ```
@@ -466,12 +462,15 @@ ipcMain.handle('storage:save', async (event, data) => {
 **Renderer process**
 
 ```javascript
-async function saveData(data) {
+async function addItem(item) {
   try {
-    await window.api.storage.save(data);
-    showSuccess('Saved');
-  } catch (err) {
-    showError('Save failed');
+    state.add(await window.api.storage.add(item));
+  } catch (error) {
+    console.error('addItem failed:', error);
+    showError(
+      "Your item wasn't saved",
+      'The app could not write to its data file. Check that the disk has free space, then try again.'
+    );
   }
 }
 ```
@@ -480,36 +479,51 @@ async function saveData(data) {
 
 ## Testing
 
+Keep tests repeatable: point storage at a temporary file, never at the real user-data folder
+(Clean-Code `unit-tests/06`).
+
 **Main process test**
 
 ```javascript
-const { app } = require('electron');
+const os = require('os');
+const path = require('path');
+const fs = require('fs');
 const storage = require('./storage');
 
-test('saves data correctly', async () => {
-  storage.init();
-  
+function freshStorage() {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'storage-'));
+  storage.init(path.join(dir, 'data.json'));
+}
+
+test('lists an item after it is added', () => {
+  freshStorage();
   const item = { id: 1, name: 'Test' };
-  storage.save(item);
-  
-  const all = storage.getAll();
-  expect(all).toContainEqual(item);
-  
-  storage.close();
+
+  storage.add(item);
+
+  expect(storage.list()).toContainEqual(item);
+});
+
+test('refuses to start from a corrupt data file', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'storage-'));
+  const dataPath = path.join(dir, 'data.json');
+  fs.writeFileSync(dataPath, '{not json');
+
+  expect(() => storage.init(dataPath)).toThrow('could not read');
 });
 ```
 
 **Renderer test**
 
 ```javascript
-const state = require('./modules/state');
+import state from './modules/state.js';
 
-test('state updates listeners', () => {
+test('notifies listeners when items are replaced', () => {
   const callback = jest.fn();
   state.onChange(callback);
-  
-  state.set([{ id: 1 }]);
-  
+
+  state.replaceAll([{ id: 1 }]);
+
   expect(callback).toHaveBeenCalledWith([{ id: 1 }]);
 });
 ```
@@ -546,12 +560,12 @@ test('state updates listeners', () => {
 
 ## Configuration
 
-You have two kinds of config in your desktop app. You keep them apart. Mixing them will hurt you. Why pay for confusion you can avoid:
+A desktop app has two kinds of configuration. Keep them apart:
 
-- **Runtime mode**, you detect dev vs packaged with `app.isPackaged`, never `NODE_ENV`
-  guesses. You drive log verbosity, dev tools, and update channels off it. You keep one check. You keep one truth.
-- **User settings**, you persist in `app.getPath('userData')` (via `electron-store` or your
-  storage layer), never next to the binary, which may be read-only. You respect the platform.
+- **Runtime mode:** detect development vs packaged with `app.isPackaged`, never by guessing
+  from `NODE_ENV`. Drive log verbosity, dev tools, and update channels from that one check.
+- **User settings:** persist in `app.getPath('userData')` (via `electron-store` or the storage
+  layer), never next to the binary, which may be read-only.
 
 ```javascript
 // src/main/config.js
@@ -572,45 +586,44 @@ const config = {
 module.exports = { config };
 ```
 
-Your secrets (API keys, signing tokens) live in your **main** process from environment
-variables at build/run time, never bundled into the renderer, where any user can read
-them. You expose only the results over IPC. You keep the keys where your user cannot reach them.
+Secrets (API keys, signing tokens) stay in the **main** process, loaded from environment
+variables at build or run time. Never bundle them into the renderer, where any user can read
+them. Expose only results over IPC.
 
 ---
 
 ## Summary
 
-You separate your main and renderer processes strictly. You take no shortcuts.
-You use contextIsolation and you disable nodeIntegration. That setting is your lock. You keep it locked.
-You namespace your IPC channels clearly. Your name should say what it does.
-You keep your modules small and focused. Small is testable. Small is honest.
-You clean up your resources on exit. You leave the machine as you found it.
-You use state management for your shared data. You keep one place for the truth.
+- Main and renderer processes are strictly separated.
+- `contextIsolation` is on and `nodeIntegration` is off.
+- IPC channels are namespaced as `domain:action`, and the main process validates every payload.
+- Modules are small and focused.
+- Resources are cleaned up on exit.
+- Shared renderer data lives in one state module.
 
 ---
 
 ## Project Prompt
 
-You build an Electron desktop app against the structure and rules above. Where they disagree
-with your defaults, this file wins. You obey it.
+Build an Electron desktop app against the structure and rules above. This file decides
+framework structure and idiom; coding standards come from `../standards/Clean-Code/`, which
+wins on any conflict. Open the sections of `../standards/Principles.md` the task needs.
 
-You read `../standards/Principles.md` alongside this file before you start. You know your standards before you cut.
-
-**Security (Non-Negotiable)**
-- contextIsolation: true
-- nodeIntegration: false
-- You validate all IPC input on main process. You trust nothing from your renderer
-- You namespace IPC channels: `domain:action`. Your name tells the story
+**Security (non-negotiable)**
+- `contextIsolation: true`
+- `nodeIntegration: false`
+- Validate all IPC input in the main process; the renderer is untrusted
+- Namespace IPC channels as `domain:action`
 
 **IPC Patterns**
-- You use invoke/handle for request-response. You ask, then you answer
-- You use send/on for fire-and-forget. You expect no reply
-- You keep clean error handling on both sides. Both ends own their failures
+- `invoke`/`handle` for request-response
+- `send`/`on` for fire-and-forget
+- The main process adds context and rethrows; the renderer shows the user-facing message
 
 **Resource Management**
-- You remove event listeners on cleanup. You leave no loose ends
-- You close database connections on exit. You close what you opened
-- You save state before exit. You do not lose your user's work
+- Remove event listeners on cleanup
+- Close database connections on exit
+- Save state before exit so the user's work survives
 
 ### Setup
 
@@ -622,38 +635,39 @@ mkdir -p src/ui/modules assets/icons dist
 
 ### Deliverables
 
-1. You deliver a complete project following architecture structure above. You leave no missing pieces
-2. You deliver a main process with system operations. It owns the system
-3. You deliver a preload bridge with secure IPC. That bridge is your boundary
-4. You deliver a renderer process with UI logic. It renders. It does not rule
-5. You deliver a storage layer for persistence. Your data survives a restart
-6. You deliver a state management system. You keep one truth for your UI
-7. You deliver custom window controls. You make them behave
-8. You deliver package.json with build config. Your build stays repeatable
-9. You deliver a README with setup instructions. The next person thanks you
+1. A complete project following the structure above
+2. A main process that owns system operations
+3. A preload bridge exposing a minimal, secure IPC API
+4. A renderer process with UI logic only
+5. A storage layer for persistence
+6. A renderer state module
+7. Custom window controls
+8. `package.json` with build config
+9. A README with setup instructions
 
 ### Validation Checklist
 
-- [ ] You verify commands from project AGENTS.md / README run (or you list honest manual checks)
-- [ ] You commit no secrets. Your env examples use placeholders only
-- [ ] Your functions stay small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] contextIsolation enabled. You leave it on
-- [ ] nodeIntegration disabled. You leave it off
-- [ ] No Node.js in renderer. Your renderer stays clean
-- [ ] All your IPC channels are namespaced. Your names tell the story
-- [ ] You validate input on main process. You trust nothing
-- [ ] You clean up event listeners. You leave no loose ends
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] You free resources properly. You close what you opened
+- [ ] Verify commands from the project's AGENTS.md or README run (or honest manual checks are listed)
+- [ ] No secrets committed; env examples use placeholders only
+- [ ] Functions do one thing at one level of abstraction (Clean-Code 15, 27)
+- [ ] `contextIsolation` enabled
+- [ ] `nodeIntegration` disabled
+- [ ] No Node.js in the renderer
+- [ ] All IPC channels namespaced
+- [ ] All IPC input validated in the main process
+- [ ] Event listeners cleaned up
+- [ ] Names match the domain and local convention (Clean-Code 06)
+- [ ] Resources closed on exit
 
 ### Security Checklist
 
-- [ ] contextIsolation enabled. You leave it on
-- [ ] nodeIntegration disabled. You leave it off
-- [ ] webSecurity enabled. You leave it on
-- [ ] No eval() or Function() in renderer. Your renderer stays clean
-- [ ] You configure CSP headers. You lock the door
-- [ ] You validate all IPC input. You trust nothing
+- [ ] `contextIsolation` enabled
+- [ ] `nodeIntegration` disabled
+- [ ] `webSecurity` enabled
+- [ ] No `eval()` or `Function()` in the renderer
+- [ ] Content Security Policy configured
+- [ ] All IPC input validated
+- [ ] Untrusted strings rendered with `textContent`, never `innerHTML`
 
 ### Pre-Delivery
 

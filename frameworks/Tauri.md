@@ -1,28 +1,33 @@
 # Tauri Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree.
+> **Agent load:** Open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. Open other sections only when the task needs them. Read the project's `AGENTS.md`. Coding standards come from `../standards/Clean-Code/`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. Prefer extending an existing repo over scaffolding a parallel tree.
 
-You keep a clean structure for cross-platform desktop apps with **Tauri v2**, a React + TypeScript
-webview frontend over a Rust backend, talking through typed IPC. You get small binaries. You get native
-OS access. You get a web UI. You layer it so your Rust core stays pure and testable and your UI stays a
-thin view. Why mix what you can keep clean?
+Structure for cross-platform desktop apps built with **Tauri v2**: a React and TypeScript
+webview frontend over a Rust backend, connected by typed IPC. The result is a small binary with
+native OS access and a web UI. The Rust core stays pure and testable, and the UI stays a thin
+view. For React conventions, also see [`React-Tailwind.md`](./React-Tailwind.md).
 
 ---
 
 ## House style vs minimal
 
-This document describes a **reference house style** used on larger Tauri apps. You get Clean Architecture layers on the Rust side. You get a React shell. You get design tokens. You get a full plugin set. You take what fits your size.
+This document describes a **reference house style** for larger Tauri apps: Clean Architecture
+layers in Rust, a React shell, design tokens, and a full plugin set. Take what fits the
+project's size.
 
-- **Greenfield small tool** (few commands, no complex domain): you use Tauri v2 + typed IPC + CSP + secrets in env only. You skip full `domain/application/infrastructure` until complexity demands it.
-- **Greenfield product / complex domain**: the layered tree below fits your needs.
-- **Existing repo**: you match what is already there. You do not re-scaffold to match this tree unless asked.
-- **Versions** in the tables are snapshots, not eternal pins. You prefer the project's lockfile over this doc when they disagree.
+- **Greenfield small tool** (few commands, no complex domain): Tauri v2, typed IPC, a CSP, and
+  secrets in env only. Skip the full `domain/application/infrastructure` split until complexity
+  demands it (Clean-Code `classes/06`).
+- **Greenfield product or complex domain:** the layered tree below.
+- **Existing repo:** match what is already there. Do not re-scaffold to match this tree unless
+  asked.
+- **Versions** in the tables are snapshots. The project's lockfile wins when they disagree.
 
 ---
 
 ## Tech Stack
 
-This is a solid default stack for your larger Tauri app. You swap pieces per project. You treat versions as guidance. Your project lockfiles win.
+A default stack for a larger Tauri app. Swap pieces per project.
 
 ### Frontend (`package.json`)
 
@@ -32,7 +37,7 @@ This is a solid default stack for your larger Tauri app. You swap pieces per pro
 | `@tauri-apps/api` | ^2 | IPC (`invoke`, events, window, app) |
 | `@tauri-apps/plugin-opener` | ^2 | open external URLs/files |
 | `framer-motion` | ^12 | dialog / toast animation |
-| `recharts` | ^3 | charts (add only if you graph data) |
+| `recharts` | ^3 | charts (only if the app graphs data) |
 | `lucide-react` | latest | icon set |
 | `clsx` | ^2 | conditional classNames |
 | `tailwindcss` + `@tailwindcss/vite` | ^4 | styling |
@@ -51,8 +56,8 @@ This is a solid default stack for your larger Tauri app. You swap pieces per pro
 | `async-trait` | async traits for ports |
 | `reqwest` (rustls, json) | outbound HTTP, **from Rust, never the webview** |
 
-You keep the crate as a `*_lib` library plus a thin `main.rs` binary. You size-optimize your
-release profile with `opt-level = "s"`, `lto = true`, `panic = "abort"`, `strip = true`. You pay for size once in config. You gain it on every ship.
+Build the crate as a `*_lib` library plus a thin `main.rs` binary. Size-optimize the release
+profile with `opt-level = "s"`, `lto = true`, `panic = "abort"`, and `strip = true`.
 
 ---
 
@@ -70,7 +75,7 @@ my-app/
 │  ├─ types.ts                 shared TS shapes mirroring Rust DTOs
 │  ├─ api/                     invoke/listen wrappers (one file per domain)
 │  ├─ hooks/                   data + UI hooks
-│  ├─ utils/                   pure helpers
+│  ├─ lib/                     pure, framework-free logic
 │  ├─ pages/                   one component per tab/route
 │  └─ components/
 │     ├─ shared/               Titlebar, Sidebar, GlassPanel, Button, Toasts, …
@@ -91,77 +96,81 @@ my-app/
       └─ commands/             thin #[command] handlers over AppState
 ```
 
-You organize both sides by **domain**, not by type, once your feature grows. You keep it flat until
-that hurts. Flat is honest until it is not.
+Once features grow, organize both sides by **domain** rather than by type. Stay flat until
+that becomes painful.
 
 ---
 
 ## Principles
 
-**The webview is a view, the Rust core is the app**
-All your real work, your I/O, your system access, your heavy compute, lives in Rust. Your frontend renders
-state and sends intent. You never put business rules in React that Rust should own. Why let your view think for your app?
+**The webview is a view; the Rust core is the app**
+All real work (I/O, system access, heavy computation) lives in Rust. The frontend renders state
+and sends intent. Business rules never live in React.
 
-**Hexagonal backend (ports & adapters)**
-`application/ports.rs` defines traits. `infrastructure/` implements them. `domain/` stays
-pure. Your dependencies point **inward** (`../standards/Principles.md` §8.2). Everything crosses
-boundaries as `Arc<dyn Trait>`. That is how your use-cases stay unit-testable with fakes.
+**Hexagonal backend (ports and adapters)**
+`application/ports.rs` defines traits, `infrastructure/` implements them, and `domain/` stays
+pure. Dependencies point inward (`../standards/Principles.md` §8.2). Collaborators cross
+boundaries as `Arc<dyn Trait>`, so use-cases are unit-testable with fakes
+(Clean-Code `boundaries/02`).
 
 **Thin commands**
-Your `#[command]` functions are glue. You parse args. You call a use-case on `AppState`. You map the error.
-You keep no logic in your command handlers.
+`#[command]` functions are glue: parse arguments, call a use-case on `AppState`, map the error.
+No logic in command handlers (Clean-Code `classes/04`).
 
 **Typed IPC contract**
-Every payload is a `Serialize` DTO in `dto.rs` with a matching TS type in `types.ts`. Your
-two files are the contract. You keep them in lockstep.
+Every payload is a `Serialize` DTO in `dto.rs` with a matching TS type in `types.ts`. The two
+files are the contract and change together.
 
 **Single source of state**
-Your backend owns the truth. Your frontend subscribes to events and keeps a local view. It never invents state your backend does not know about.
+The backend owns the truth. The frontend subscribes to events and keeps a local view, and never
+invents state the backend does not know about (Clean-Code 14).
 
 ---
 
 ## Backend (Rust, `src-tauri/src`)
 
-### Entry & wiring
+### Entry and wiring
 
-- **`main.rs`**, `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`
-  (no console window in release). You call `<name>_lib::run()`.
-- **`lib.rs`**, `run()` builds your Tauri app. It registers plugins (`opener`, `log` → stdout
-  + log dir). It constructs `AppState` in `setup`. It calls `app.manage(state)`. It registers
+- **`main.rs`:** `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]` (no
+  console window in release), then calls `<name>_lib::run()`.
+- **`lib.rs`:** `run()` builds the Tauri app. It registers plugins (`opener`, and `log` to stdout
+  and the log dir), constructs `AppState` in `setup`, calls `app.manage(state)`, and registers
   the `invoke_handler` with every command.
-- **`state.rs`**, `AppState` holds each use-case behind an `Arc`. You build it once at startup.
-  You inject it into commands via `tauri::State`.
+- **`state.rs`:** `AppState` holds each use-case behind an `Arc`. Build it once at startup and
+  inject it into commands via `tauri::State`.
 
 ### Layers
 
-- **`domain/`**, your pure, dependency-free logic and value types. No I/O, no Tauri, no
-  `async`. Your most heavily unit-tested layer.
-- **`application/`**, your use-cases that orchestrate the domain through ports. It owns
-  long-running tasks and in-memory caches.
-- **`application/ports.rs`**, your trait boundary with `trait Store`, `trait HttpClient`,
-  `trait EventSink`, etc., plus the request and response value types they exchange.
-- **`infrastructure/`**, your concrete adapters implementing the ports (a file store, an HTTP
-  client via `reqwest`, a Tauri event emitter). The only layer that knows about the
-  outside world.
-- **`commands/`**, your Tauri `#[command]` functions. Thin handlers calling `AppState`.
+- **`domain/`:** pure, dependency-free logic and value types. No I/O, no Tauri, no `async`. The
+  most heavily unit-tested layer.
+- **`application/`:** use-cases that orchestrate the domain through ports. Owns long-running
+  tasks and in-memory caches.
+- **`application/ports.rs`:** the trait boundary (`trait Store`, `trait HttpClient`,
+  `trait EventSink`, and so on), plus the value types they exchange.
+- **`infrastructure/`:** concrete adapters implementing the ports (a file store, an HTTP client
+  via `reqwest`, a Tauri event emitter). The only layer that knows about the outside world.
+- **`commands/`:** Tauri `#[command]` functions. Thin handlers calling `AppState`.
 
-### Ports & adapters example
+### Ports and adapters example
+
+`find` returns `Option` because a missing key is a normal outcome, and Rust forces every caller
+to handle it (Clean-Code 13). I/O failure is a separate `Err`.
 
 ```rust
-// application/ports.rs, the boundary
+// application/ports.rs: the boundary
 #[async_trait::async_trait]
 pub trait Store: Send + Sync {
-    async fn load(&self, key: &str) -> Result<Option<String>, AppError>;
+    async fn find(&self, key: &str) -> Result<Option<String>, AppError>;
     async fn save(&self, key: &str, value: &str) -> Result<(), AppError>;
 }
 
-// infrastructure/json_store.rs, one adapter
+// infrastructure/json_store.rs: one adapter
 pub struct JsonStore { path: PathBuf }
 
 #[async_trait::async_trait]
 impl Store for JsonStore {
     async fn save(&self, key: &str, value: &str) -> Result<(), AppError> {
-        // write to `${path}.tmp` then atomic rename, never a half-written file
+        // write to `${path}.tmp` then rename, so a crash never leaves a half-written file
         atomic_write(&self.path, key, value).await
     }
     // ...
@@ -170,16 +179,16 @@ impl Store for JsonStore {
 
 ### Async tasks
 
-Your long-running work (watchers, pollers, pipelines) runs on `tokio` tasks spawned from a
-use-case. It talks over bounded channels and pushes results to your frontend via an
-`EventSink` port. You hold a `StopToken` (an `Arc<AtomicBool>`) so your command layer can stop
-them cleanly. You start what you can stop.
+Long-running work (watchers, pollers, pipelines) runs on `tokio` tasks spawned from a use-case.
+Tasks communicate over bounded channels and push results to the frontend through an
+`EventSink` port. Each task holds a `StopToken` (an `Arc<AtomicBool>`) so the command layer can
+stop it cleanly.
 
 ---
 
 ## IPC
 
-You have two directions. Your frontend **calls** commands. Your backend **emits** events.
+There are two directions: the frontend **calls** commands, and the backend **emits** events.
 
 ### Commands (frontend → backend)
 
@@ -205,22 +214,22 @@ export function saveNote(id: string, body: string): Promise<void> {
 
 ### Events (backend → frontend)
 
-You namespace channels `domain://action`. Your backend emits via an `EventSink` adapter. Your
-frontend subscribes through a typed wrapper.
+Namespace channels as `domain://action`. The backend emits through an `EventSink` adapter, and
+the frontend subscribes through a typed wrapper.
 
 ```typescript
 // src/api/events.ts
 import { listen } from '@tauri-apps/api/event';
 import type { NoteView } from '../types';
 
-export const onNoteSaved = (cb: (note: NoteView) => void) =>
-  listen<NoteView>('notes://saved', (e) => cb(e.payload));
+export const onNoteSaved = (callback: (note: NoteView) => void) =>
+  listen<NoteView>('notes://saved', (event) => callback(event.payload));
 ```
 
 ### Shared shapes
 
-`dto.rs` (`#[derive(Serialize)]`, `#[serde(rename_all = "camelCase")]`) ↔ `types.ts`.
-They mirror each other field-for-field. You change them together.
+`dto.rs` (`#[derive(Serialize)]`, `#[serde(rename_all = "camelCase")]`) and `types.ts` mirror
+each other field for field and change together.
 
 ---
 
@@ -241,39 +250,42 @@ They mirror each other field-for-field. You change them together.
 </ErrorBoundary>
 ```
 
-Your `App.tsx` holds the active `tab` and composes the data layer once, passing it down.
-Your `Workspace` switches on a `Tab` string union, no router library for a single-window app. Keep it plain until you need more.
+`App.tsx` holds the active `tab` and composes the data layer once, passing it down.
+`Workspace` maps the `Tab` string union to a page component through a lookup table; a
+single-window app does not need a router library.
 
 ### State management
 
-You keep no Redux or Context-heavy store. You use **local hooks + module-level external stores** via
-`useSyncExternalStore` for cross-cutting state (e.g. toasts). Your top-level hook composes
-your data layer:
+No Redux or context-heavy store. Use **local hooks plus module-level external stores** via
+`useSyncExternalStore` for cross-cutting state such as toasts. A top-level hook composes the
+data layer:
 
 ```typescript
 function useApp() {
   // subscribe to backend events, keep a local view, expose actions
-  const notes = useNotes();      // listens to notes://* , exposes save/delete
+  const notes = useNotes();      // listens to notes://*, exposes save/delete
   return { notes };
 }
 ```
 
-- You keep one hook per backend domain. Each owns its events and the `invoke` calls.
-- You persist small UI preferences in `localStorage` (namespaced keys like `app.selection`).
-- Your API wrappers in `src/api/` are the only place that calls `invoke` / `listen`. You keep that door narrow.
+- One hook per backend domain. Each owns its events and its `invoke` calls.
+- Small UI preferences persist in `localStorage` under namespaced keys such as
+  `app.selection`.
+- The wrappers in `src/api/` are the only place that calls `invoke` or `listen`
+  (Clean-Code 31).
 
 ---
 
 ## Design System
 
-You use a reusable dark, glassmorphic system. Your tokens live in `index.css` (`@theme`). Your accent is
-violet by default. You swap `--color-primary` for any brand and the rest follows.
+A reusable dark, glassmorphic system. Tokens live in `index.css` under `@theme`. The accent is
+violet by default; changing `--color-primary` rebrands the rest.
 
 ### Window shell (`tauri.conf.json`)
 
-You go frameless (`decorations: false`), e.g. `1180×760`, min `960×640`, centered, resizable,
-opaque background `#080810`. Your custom `Titlebar` provides the drag region (`data-tauri-drag-region`)
-and Minimize and Close controls via `getCurrentWindow()`.
+Frameless (`decorations: false`), for example `1180×760` with a minimum of `960×640`, centered,
+resizable, with an opaque `#080810` background. A custom `Titlebar` provides the drag region
+(`data-tauri-drag-region`) and Minimize and Close controls via `getCurrentWindow()`.
 
 ### Color tokens (`index.css` `@theme`)
 
@@ -286,34 +298,35 @@ and Minimize and Close controls via `getCurrentWindow()`.
 | `--color-primary` / `-bright` | `#7c3aed` / `#8b5cf6` | accent |
 | `--color-accent-light` | `#a78bfa` | highlights, group labels |
 | `--color-danger/success/warning/info` | red/emerald/amber/blue | status |
-| `--shadow-sm/md/lg/glow` |, | elevation + accent glow |
+| `--shadow-sm/md/lg/glow` | (project-defined) | elevation + accent glow |
 
-You tint text via white opacity. Primary `~95%`. Secondary `70%`. Muted `45%`. You keep that scale honest.
+Text is tinted with white opacity: primary about 95%, secondary 70%, muted 45%.
 
 ### Typography
 
-You use a geometric sans (e.g. **Plus Jakarta Sans**, weights 300-700) as `--font-sans`. Your recurring
-label micro-style is `text-[10px] font-medium uppercase tracking-wider text-white/40`. You use it the same way every time.
+A geometric sans (for example **Plus Jakarta Sans**, weights 300-700) as `--font-sans`. The
+recurring label style is `text-[10px] font-medium uppercase tracking-wider text-white/40`,
+used consistently.
 
-### Surfaces & shape
+### Surfaces and shape
 
-You build glassmorphism from translucent fills (`bg-white/2`) and hairline borders (`border-white/5-10`) with
-`backdrop-blur-xl`. You use panels `rounded-2xl`, cards and inputs `rounded-lg` and `rounded-xl`, and
-pills `rounded-full`. Your `GlassPanel` primitive (`rounded-2xl border-white/8 bg-white/2
-backdrop-blur-xl`) is your base surface.
+Glassmorphism comes from translucent fills (`bg-white/2`) and hairline borders
+(`border-white/5-10`) with `backdrop-blur-xl`. Panels use `rounded-2xl`, cards and inputs
+`rounded-lg` or `rounded-xl`, and pills `rounded-full`. The `GlassPanel` primitive
+(`rounded-2xl border-white/8 bg-white/2 backdrop-blur-xl`) is the base surface.
 
 ### Iconography
 
-You use `lucide-react`, sized consistently (16-20px), tinted to your text opacity scale. Your window and
-installer icons live in `src-tauri/icons/`. You keep icons quiet and consistent.
+`lucide-react`, sized consistently (16-20px) and tinted to the text opacity scale. Window and
+installer icons live in `src-tauri/icons/`.
 
 ### Interaction polish (`index.css`)
 
-- You set global `user-select: none` for app feel. You re-enable on inputs, `textarea`, and
+- Global `user-select: none` for an app feel, re-enabled on inputs, `textarea`, and
   `contenteditable`.
-- You use `:focus-visible` for your accent ring (`0 0 0 2px rgba(139,92,246,0.5)`). You suppress it for mouse
-  focus.
-- You use custom thin scrollbars (white 10%, 20% on hover). You disable `img` drag.
+- `:focus-visible` draws the accent ring (`0 0 0 2px rgba(139,92,246,0.5)`); mouse focus does
+  not.
+- Thin custom scrollbars (white 10%, 20% on hover). Image dragging disabled.
 
 ### Motion
 
@@ -324,18 +337,18 @@ installer icons live in `src-tauri/icons/`. You keep icons quiet and consistent.
 | Charts | recharts | area draws over ~400ms linear |
 | Hover/nav/buttons | Tailwind | `transition-colors duration-150` |
 
-**Reduced motion is non-negotiable.** You set a global `@media (prefers-reduced-motion: reduce)`
-rule that forces near-zero durations. Any `requestAnimationFrame` canvas effect of yours must check
-`matchMedia('(prefers-reduced-motion: reduce)')` and bail. You respect your user.
+**Reduced motion is non-negotiable.** A global `@media (prefers-reduced-motion: reduce)` rule
+forces near-zero durations, and any `requestAnimationFrame` canvas effect checks
+`matchMedia('(prefers-reduced-motion: reduce)')` and skips the animation.
 
 ---
 
 ## Error Handling
 
-You work in three layers, each translating to the next (`../standards/Principles.md` §5, and `skills/engineering/errors/SKILL.md`
-for user copy). You keep each layer honest:
+Errors pass through three layers, each translating for the next (`../standards/Principles.md`
+§5, and `skills/engineering/errors/SKILL.md` for user-facing copy).
 
-**Rust, one typed error enum**
+**Rust: one typed error enum**
 
 ```rust
 #[derive(Debug, thiserror::Error)]
@@ -346,22 +359,24 @@ pub enum AppError {
 }
 ```
 
-Your domain and use-cases return `Result<T, AppError>` with context. Your commands map it at the
-boundary with `.map_err(|e| e.to_string())`. Your frontend receives a string, never a panic. A
-panic crashes your webview, so you **never `unwrap()` in a command path**.
+Domain code and use-cases return `Result<T, AppError>` with context (which operation, which id).
+Commands map it once at the boundary with `.map_err(|e| e.to_string())`, so the frontend
+receives a string rather than a panic. A panic crashes the webview, so **never `unwrap()` or
+`expect()` on a command path**.
 
-**Frontend, render vs async errors**
+**Frontend: render errors vs async errors**
 
-- **Render errors** → an `ErrorBoundary` (class component) shows fallback UI. You contain the render failure.
-- **Async / IPC errors** → boundaries do not catch these. You `try/catch` the `invoke`. You put the
-  message in state. You surface it as a toast or inline, translated for your user, not the
-  raw `AppError` string.
+- **Render errors:** an `ErrorBoundary` class component shows fallback UI.
+- **Async and IPC errors:** boundaries do not catch these. Catch the `invoke` failure, log the
+  technical detail, and show the user a translated message (what, why, action), never the raw
+  `AppError` string.
 
 ```typescript
 try {
   await saveNote(id, body);
-} catch {
-  toast('Couldn’t save your note. Try again in a moment.', 'error');
+} catch (error) {
+  console.error(`saveNote failed for note ${id}:`, error);
+  toast("Your note wasn't saved because the app couldn't write to disk. Check free space, then try again.", 'error');
 }
 ```
 
@@ -369,10 +384,10 @@ try {
 
 ## Testing
 
-**Rust, unit-test the pure layers**
+**Rust: unit-test the pure layers**
 
-Your `domain/` has no I/O, so it tests directly. Your use-cases test against **fake adapters**
-implementing the ports, with no real files, no network, and no Tauri.
+`domain/` has no I/O, so it tests directly. Use-cases test against **fake adapters** that
+implement the ports, with no real files, network, or Tauri.
 
 ```rust
 #[cfg(test)]
@@ -382,7 +397,7 @@ mod tests {
     struct FakeStore;
     #[async_trait::async_trait]
     impl Store for FakeStore {
-        async fn load(&self, _: &str) -> Result<Option<String>, AppError> { Ok(None) }
+        async fn find(&self, _: &str) -> Result<Option<String>, AppError> { Ok(None) }
         async fn save(&self, _: &str, _: &str) -> Result<(), AppError> { Ok(()) }
     }
 
@@ -394,92 +409,93 @@ mod tests {
 }
 ```
 
-You run with `cargo test`. You keep tests **fast and self-validating** (`../standards/Principles.md` §9.2). Slow tests lie to you. Fast tests tell the truth.
+Run with `cargo test`. Keep tests fast and self-validating (Clean-Code `unit-tests/06`).
 
-**Frontend, logic, not chrome**
+**Frontend: logic, not chrome**
 
-You test hooks and pure utils with Vitest. You **stub the Tauri API** so nothing hits IPC:
+Test hooks and pure `lib/` functions with Vitest, and **stub the Tauri API** so nothing hits IPC:
 
 ```typescript
 vi.mock('@tauri-apps/api/core', () => ({ invoke: vi.fn() }));
 ```
 
-You leave the thin `api/` wrappers and visual chrome to manual checks in `tauri dev`. You look at what you cannot automate.
+Check the thin `api/` wrappers and visual chrome manually in `tauri dev`.
 
 ---
 
 ## Configuration
 
-Your config splits across `tauri.conf.json`, your Rust backend, and per-user data. You keep them
-distinct. Mixing them will hurt you.
+Configuration is split across `tauri.conf.json`, the Rust backend, and per-user data. Keep the
+three distinct.
 
 ### `tauri.conf.json`
 
-- **Window**, size, min size, `decorations: false`, background color. You state it plainly.
-- **CSP**, you lock it down. You set `default-src 'self'`. You allow `data:` and `asset:` for images, your
-  font host for styles, and `connect-src 'self' ipc: http://ipc.localhost` for IPC. Your
-  webview talks **only IPC**. You make outbound HTTP from Rust (`reqwest`), which is not
-  subject to the webview CSP.
-- **Bundle**, you set a reverse-DNS `identifier` (e.g. `dev.you.app`) and targets (msi, nsis,
+- **Window:** size, minimum size, `decorations: false`, background color.
+- **CSP:** locked down. `default-src 'self'`; allow `data:` and `asset:` for images, the font
+  host for styles, and `connect-src 'self' ipc: http://ipc.localhost` for IPC. The webview talks
+  **only** IPC. Outbound HTTP goes through Rust (`reqwest`), which the webview CSP does not
+  govern.
+- **Bundle:** a reverse-DNS `identifier` (for example `dev.you.app`) and targets (msi, nsis,
   deb, appimage, dmg).
 
-### Secrets & env
+### Secrets and env
 
-Your API keys and tokens live in your **Rust** process, read from the environment at run time, **never bundled into the webview**, where any user can read them. You expose only results over
-IPC. You commit a `.env.example`. You gitignore your real `.env`.
+API keys and tokens live in the **Rust** process, read from the environment at run time, and
+are **never bundled into the webview**, where any user can read them. Expose only results over
+IPC. Commit a `.env.example` and gitignore the real `.env`.
 
 ### Per-user data
 
-You persist under `app_data_dir()` (via `tauri::Manager::path`), never next to the binary
-(which may be read-only). You write atomically (`.tmp` plus rename) and you ignore malformed files
-with a warning rather than crashing. Your small UI prefs can stay in your webview
-`localStorage`.
+Persist under `app_data_dir()` (via `tauri::Manager::path`), never next to the binary, which may
+be read-only. Write atomically (`.tmp` plus rename). A missing file is a normal first run. A file
+that exists but is malformed is a failure: keep the original (rename it to `*.corrupt`), tell
+the user what happened and what to do, and never silently replace it with defaults
+(Clean-Code 34). Small UI preferences can stay in the webview's `localStorage`.
 
 ---
 
 ## Summary
 
-- **Rust owns the app. The webview renders it.** You keep no business logic in React.
-- **Hexagonal backend**, your pure `domain/`, your use-cases and ports in `application/`, your adapters in
-  `infrastructure/`, your thin `commands/`. You inject `Arc<dyn Trait>` for testability.
-- **Typed IPC**, your `dto.rs` ↔ `types.ts`, kept in lockstep, with namespaced `domain://` events.
-- **One `AppError` enum** mapped to `String` at the command boundary. You never call `unwrap()` in a
-  command.
-- **Design system** in `@theme` tokens, dark glassmorphism, swappable accent, mandatory
-  reduced-motion support. You honor it.
-- **You lock the CSP**, you keep secrets and HTTP in Rust, you persist under `app_data_dir()` with
-  atomic writes.
+- **Rust owns the app; the webview renders it.** No business logic in React.
+- **Hexagonal backend:** pure `domain/`, use-cases and ports in `application/`, adapters in
+  `infrastructure/`, thin `commands/`, with `Arc<dyn Trait>` injection for testability.
+- **Typed IPC:** `dto.rs` and `types.ts` in lockstep, with namespaced `domain://` events.
+- **One `AppError` enum,** mapped to `String` at the command boundary. No `unwrap()` on a
+  command path.
+- **Design system** in `@theme` tokens: dark glassmorphism, swappable accent, mandatory
+  reduced-motion support.
+- **Locked CSP,** secrets and HTTP in Rust, per-user data under `app_data_dir()` with atomic
+  writes.
 
 ---
 
 ## Project Prompt
 
-You build a Tauri v2 desktop app with React and TypeScript in the webview and Rust in the backend.
-You follow the structure and rules above. Where they disagree with your defaults, this file
-wins. You obey it.
-
-You read `../standards/Principles.md` alongside this file before starting. You know your standards before you cut.
+Build a Tauri v2 desktop app with React and TypeScript in the webview and Rust in the backend,
+following the structure and rules above. This file decides framework structure and idiom;
+coding standards come from `../standards/Clean-Code/`, which wins on any conflict. Open the
+sections of `../standards/Principles.md` the task needs.
 
 **Architecture**
-- You keep a hexagonal Rust backend with pure `domain/`, use-cases and ports in `application/`, adapters in
-  `infrastructure/`, and thin `commands/`
-- Your dependencies point inward. You cross boundaries as `Arc<dyn Trait>`
-- Your webview stays a thin view. All real work lives in Rust
+- Hexagonal Rust backend: pure `domain/`, use-cases and ports in `application/`, adapters in
+  `infrastructure/`, thin `commands/`
+- Dependencies point inward; collaborators cross boundaries as `Arc<dyn Trait>`
+- The webview stays a thin view; all real work lives in Rust
 
 **IPC**
-- You keep typed DTOs in `dto.rs` mirrored by `types.ts`
-- You keep thin `#[command]` handlers with namespaced `domain://` events
-- You isolate all `invoke` and `listen` calls in `src/api/`
+- Typed DTOs in `dto.rs` mirrored by `types.ts`
+- Thin `#[command]` handlers and namespaced `domain://` events
+- All `invoke` and `listen` calls isolated in `src/api/`
 
 **Error Handling**
-- You keep one `AppError` enum (`thiserror`) mapped to `String` at the command boundary
-- You never call `unwrap()` on a command path
-- You use `ErrorBoundary` for render errors and state plus toasts for async and IPC errors
+- One `AppError` enum (`thiserror`) mapped to `String` at the command boundary
+- No `unwrap()` or `expect()` on a command path
+- `ErrorBoundary` for render errors; logged, translated toasts for async and IPC errors
 
 **Security**
-- You keep a strict CSP. Your webview talks only IPC
-- Your outbound HTTP and secrets stay in Rust, never in the webview
-- You keep per-user data under `app_data_dir()`, written atomically
+- Strict CSP; the webview talks only IPC
+- Outbound HTTP and secrets stay in Rust
+- Per-user data under `app_data_dir()`, written atomically
 
 ### Setup
 
@@ -492,31 +508,31 @@ npm run tauri dev                    # Vite (:1420) + Rust app, hot-reload
 
 ### Deliverables
 
-1. You deliver a complete project following the structure above
-2. You deliver a hexagonal Rust backend (domain, application plus ports, infrastructure, commands)
-3. You deliver `AppState` wiring adapters at startup
-4. You deliver typed IPC with `dto.rs` ↔ `types.ts` and namespaced events
-5. You deliver a React shell (Titlebar, Sidebar, Workspace) with hook-based state
-6. You deliver design-system tokens in `index.css` plus a `GlassPanel` primitive
-7. You deliver an `AppError` enum plus `ErrorBoundary` plus toast feedback
-8. You deliver a locked-down `tauri.conf.json` (window, CSP, bundle)
-9. You deliver a README with setup and build instructions
-10. You deliver Rust unit tests for domain plus use-cases and frontend hook tests
+1. A complete project following the structure above
+2. A hexagonal Rust backend (domain, application plus ports, infrastructure, commands)
+3. `AppState` wiring adapters at startup
+4. Typed IPC with `dto.rs` and `types.ts`, plus namespaced events
+5. A React shell (Titlebar, Sidebar, Workspace) with hook-based state
+6. Design-system tokens in `index.css` plus a `GlassPanel` primitive
+7. An `AppError` enum, an `ErrorBoundary`, and toast feedback
+8. A locked-down `tauri.conf.json` (window, CSP, bundle)
+9. A README with setup and build instructions
+10. Rust unit tests for domain and use-cases, and frontend hook tests
 
 ### Validation Checklist
 
-- [ ] You verify commands from project AGENTS.md / README run (or you list honest manual checks)
-- [ ] You commit no secrets. Your env examples use placeholders only
-- [ ] Your functions stay small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] You keep no business logic in the webview or in command handlers
-- [ ] You use no `unwrap()` and no `expect()` on a command path
-- [ ] Every IPC payload of yours is a typed DTO mirrored in `types.ts`
-- [ ] You lock down the CSP. You keep no secrets in the webview
-- [ ] You keep per-user data under `app_data_dir()`, written atomically
-- [ ] You respect `prefers-reduced-motion`
-- [ ] You unit-test domain plus use-cases with fake adapters
-- [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] `cargo clippy` and `tsc` stay clean
+- [ ] Verify commands from the project's AGENTS.md or README run (or honest manual checks are listed)
+- [ ] No secrets committed; env examples use placeholders only
+- [ ] Functions do one thing at one level of abstraction (Clean-Code 15, 27)
+- [ ] No business logic in the webview or in command handlers
+- [ ] No `unwrap()` or `expect()` on a command path
+- [ ] Every IPC payload is a typed DTO mirrored in `types.ts`
+- [ ] CSP locked down; no secrets in the webview
+- [ ] Per-user data under `app_data_dir()`, written atomically; malformed files never silently replaced
+- [ ] `prefers-reduced-motion` respected
+- [ ] Domain and use-cases unit-tested with fake adapters
+- [ ] Names match the domain and local convention (Clean-Code 06)
+- [ ] `cargo clippy` and `tsc` are clean
 
 ### Pre-Delivery
 
