@@ -1,14 +1,14 @@
 # Dear ImGui Architecture
 
-> **Agent load:** You open Project Structure, Principles, The Widget System, and Project Prompt / Validation first. You open other sections only when your task needs them. You pair this with [`../languages/Cpp.md`](../languages/Cpp.md) and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`.
+> **Agent load:** You open Project Structure, Principles, The Widget System, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair this with [`../languages/Cpp.md`](../languages/Cpp.md) and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`. You respect what you find.
 
-You keep a clean structure for your native desktop tool built on Dear ImGui. You use it for your profiler, your debug overlay, your asset editor, your dashboard, and your control panel where you own the whole frame loop.
+You keep a clean structure for your native desktop tool built on Dear ImGui. You use it for your profiler, your debug overlay, your asset editor, your dashboard, and your control panel where you own the whole frame loop. You own the loop. You own the result.
 
 ---
 
 ## What is Dear ImGui?
 
-Dear ImGui (`ocornut/imgui`) is an **immediate-mode GUI library**. Listen. You describe your entire UI every frame in plain C++. Your library redraws everything each tick. There is no retained widget tree. There is no layout pass. There is no message routing. Your state lives in your variables, not in your controls.
+Dear ImGui (`ocornut/imgui`) is an **immediate-mode GUI library**. Listen. You describe your entire UI every frame in plain C++. Your library redraws everything each tick. You keep no retained widget tree. You keep no layout pass. You keep no message routing. Your state lives in your variables, not in your controls. Why hand your truth to a widget?
 
 | Trait | Immediate mode (ImGui) | Retained mode (Qt, WinForms) |
 |---|---|---|
@@ -18,7 +18,7 @@ Dear ImGui (`ocornut/imgui`) is an **immediate-mode GUI library**. Listen. You d
 | Typical binary | 1-3 MB | 20+ MB |
 | Best fit | Tools, editors, overlays, telemetry | Document apps, forms |
 
-You use it when your UI is a cockpit for something else. Your render view. Your simulation. Your live data. You do not use it for your document-centric or accessibility-heavy application.
+You use it when your UI is a cockpit for something else. Your render view. Your simulation. Your live data. You do not use it for your document-centric or accessibility-heavy application. You pick the right tool. You say no to the wrong one.
 
 ---
 
@@ -44,20 +44,20 @@ my-tool/
 └── CMakeLists.txt
 ```
 
-> You vendor imgui as source, never as a package with hidden flags. The library is designed to compile into your binary exactly once. You configure it through `imconfig.h` if you need to.
+> You vendor imgui as source, never as a package with hidden flags. The library is designed to compile into your binary exactly once. You configure it through `imconfig.h` if you need to. You keep your build plain and visible.
 
 ---
 
 ## Principles
 
 **Immediate mode means your state is the truth**
-A toggle writes `state.enabled = !state.enabled`. You keep no second copy inside your control to desync. If it is not in your `app/state.h`, it does not exist for you.
+A toggle writes `state.enabled = !state.enabled`. You keep no second copy inside your control to desync. If it is not in your `app/state.h`, it does not exist for you. One truth. Your truth.
 
 **Almost none of its stock widgets are used**
-You get your look from your hand-drawn controls. You use `ImDrawList` primitives for your visuals plus one `InvisibleButton` per control for your hit-testing. Your stock `Checkbox`/`SliderFloat` appear rarely or never. They stay available for your quick internal builds. This is how you give your interface its identity instead of the default grey ImGui look.
+You get your look from your hand-drawn controls. You use `ImDrawList` primitives for your visuals plus one `InvisibleButton` per control for your hit-testing. Your stock `Checkbox` and `SliderFloat` appear rarely or never. They stay available for your quick internal builds. This is how you give your interface its identity instead of the default grey ImGui look. You do the work. You earn the look.
 
 **Every animated value goes through Motion()**
-You store per-ID exponential easing in your window's state storage. One helper drives your hover glows, your toggle knobs, your page slides, your scroll smoothing:
+You store per-ID exponential easing in your window state storage. One helper drives your hover glows, your toggle knobs, your page slides, and your scroll smoothing. You use one path for all motion:
 
 ```cpp
 static float Motion(ImGuiID id, float target, float speed = 16.f)
@@ -69,19 +69,19 @@ static float Motion(ImGuiID id, float target, float speed = 16.f)
 ```
 
 **Theme is data, not scattered literals**
-You keep your palette, your font pixel sizes, your row heights, and your card metrics as named constants in your `theme.h`. Your widget never hard-codes a color.
+You keep your palette, your font pixel sizes, your row heights, and your card metrics as named constants in your `theme.h`. Your widget never hard-codes a color. Why scatter what you can name once?
 
 **One panel per page, one card per feature group**
-Your panels compose your cards. Your cards compose your rows. Your rows bind one control to one field. You keep your layout math out of your business grouping.
+Your panels compose your cards. Your cards compose your rows. Your rows bind one control to one field. You keep your layout math out of your business grouping. Each level does its own job.
 
 **Fonts and textures embed in the binary**
-You ship TTFs as generated byte arrays merged at your atlas build (body face + icon range like Font Awesome). You load PNG assets from memory via stb_image into shader resource views. You do no runtime file hunting.
+You ship TTFs as generated byte arrays merged at your atlas build (body face plus icon range like Font Awesome). You load PNG assets from memory via stb_image into shader resource views. You do no runtime file hunting. Your binary carries what it needs.
 
 ---
 
 ## The Frame Loop
 
-You own three things in your host. Your OS window. Your GPU device + swapchain. Your tick.
+You own three things in your host. Your OS window. Your GPU device and swapchain. Your tick. You guard all three.
 
 ```cpp
 // main.cpp (Win32 + DX11 skeleton)
@@ -106,13 +106,13 @@ while (running) {
 }
 ```
 
-You set `io.IniFilename = nullptr` unless you want your library writing layout files next to your exe.
+You set `io.IniFilename = nullptr` unless you want your library writing layout files next to your exe. You decide. You do not let the library decide for you.
 
 ---
 
 ## The Widget System
 
-You give each custom widget the same contract. You reserve your hit area. You animate from your item ID. Then you draw.
+You give each custom widget the same contract. You reserve your hit area. You animate from your item ID. Then you draw. Same steps every time. That discipline keeps your kit uniform.
 
 ```cpp
 // Pill toggle: InvisibleButton for input, AddRectFilled/AddCircleFilled for art
@@ -129,7 +129,7 @@ void Toggle(ImDrawList* d, ImVec2 p, bool& val)
 }
 ```
 
-You keep your standard kit roughly one screenful each:
+You keep your standard kit roughly one screenful each. You learn the set by heart:
 
 | Widget | Input pattern | Visual |
 |---|---|---|
@@ -140,13 +140,13 @@ You keep your standard kit roughly one screenful each:
 | `KeyBind` | capture next key | chip showing current binding |
 | `ColorSwatch` | swatch opens popup | stock `ColorPicker3` inside a styled popup |
 
-You draw your rows at a fixed rhythm (e.g. 37 px) with separators between. Your pages read as tables without ever using your stock tables. Why fight the framework?
+You draw your rows at a fixed rhythm (e.g. 37 px) with separators between. Your pages read as tables without ever using your stock tables. Why fight the framework when plain rows do the job?
 
 ---
 
 ## Shell and Pages
 
-Your chrome (sidebar, toolbar, watermark/status toast) frames your content region. You animate your page switching by transforming vertices you emit this frame:
+Your chrome (sidebar, toolbar, watermark and status toast) frames your content region. You animate your page switching by transforming vertices you emit this frame:
 
 ```cpp
 // Slide + fade just the content range of the vertex buffer
@@ -156,13 +156,13 @@ const float e  = 1.f - powf(1.f - mix, 3.f);
 TransformVerts(d, first, pivot, 1.f, 9.f * (1.f - e), 0.f, e);
 ```
 
-You scroll your columns manually. Your wheel deltas accumulate a target. You ease it each tick. You wrap it in `PushClipRect` so your off-screen controls stop accepting clicks.
+You scroll your columns manually. Your wheel deltas build a target. You ease it each tick. You wrap it in `PushClipRect` so your off-screen controls stop accepting clicks. You stay in control of every pixel.
 
 ---
 
 ## Fonts
 
-You load two faces minimum. Your body + semibold. You load them at explicit pixel sizes per draw call. You merge your icon font's glyph range into your body face:
+You load two faces minimum. Your body and semibold. You load them at explicit pixel sizes per draw call. You merge your icon font glyph range into your body face:
 
 ```cpp
 io.Fonts->AddFontFromMemoryTTF(body_data, body_size, 15.f, &cfg, nullptr);
@@ -170,33 +170,33 @@ ImFontConfig icons; icons.MergeMode = true;
 io.Fonts->AddFontFromMemoryTTF(fa_data, fa_size, 14.f, &icons, icon_range);
 ```
 
-On ImGui 1.92+, you do **not** call `io.Fonts->Build()` with your modern backends. Your glyph baking stays lazy once your backend sets `ImGuiBackendFlags_RendererHasTextures`. You trip an assertion if you call it manually.
+On ImGui 1.92+, you do **not** call `io.Fonts->Build()` with your modern backends. Your glyph baking stays lazy once your backend sets `ImGuiBackendFlags_RendererHasTextures`. You trip an assertion if you call it manually. You respect the new path.
 
 ---
 
 ## Version Notes
 
-You pin an exact imgui version. The API moves. You care about two eras:
+You pin an exact imgui version. The API moves. You care about two eras. You name them plainly:
 
-- **≤ 1.91.x:** you keep a static atlas, you call `Build()` after adding fonts.
-- **1.92+:** you use dynamic fonts, per-size baking, `RendererHasTextures` backends. You never pre-build your atlas.
+- **≤ 1.91.x:** you keep a static atlas. You call `Build()` after adding fonts.
+- **1.92+:** you use dynamic fonts, per-size baking, and `RendererHasTextures` backends. You never pre-build your atlas.
 
 ---
 
 ## Testing
 
-Your immediate mode separates cleanly. Your `app/state.h` and all your logic are pure C++ you test without a window. Only your panels touch ImGui.
+Your immediate mode separates cleanly. Your `app/state.h` and all your logic are pure C++ you test without a window. Only your panels touch ImGui. That split is your friend.
 
-- You unit-test your state transforms and any serialization (settings save/load as key-value text).
-- You smoke-test your rendering by launching your exe headless-forbidden environments aside. You assert it survives N frames with `IM_ASSERT` enabled, then you screenshot for visual diffs.
+- You unit-test your state transforms and any serialization (settings save and load as key-value text).
+- You smoke-test your rendering by launching your exe with headless-forbidden environments aside. You assert it survives N frames with `IM_ASSERT` enabled. Then you screenshot for visual diffs.
 - You build CI with `/W4` and assertions on. You ship with `/O2` but you keep asserts in your nightly builds.
 
 ---
 
 ## Summary
 
-Your variables are your single source of truth. Your controls are views.
-You hand-draw your identity. Your ImDrawList art + InvisibleButton input, near-zero stock widgets.
+Your variables are your single source of truth. Your controls are views. You trust your state.
+You hand-draw your identity. Your ImDrawList art plus InvisibleButton input, near-zero stock widgets.
 One Motion() helper animates everything for you. Your theme lives in constants.
 You vendor a pinned imgui. You embed your fonts and textures.
 You test your pure state. You smoke-test your frames.
@@ -205,23 +205,23 @@ You test your pure state. You smoke-test your frames.
 
 ## Project Prompt
 
-You build a Dear ImGui desktop tool against your structure and rules above. You own your full frame loop, your hand-drawn widget kit, and your themed shell. Where your rules and your defaults disagree, this file wins for you.
+You build a Dear ImGui desktop tool against your structure and rules above. You own your full frame loop, your hand-drawn widget kit, and your themed shell. Where your rules and your defaults disagree, this file wins for you. You obey it.
 
-You read `../standards/Principles.md` alongside this file before you start.
+You read `../standards/Principles.md` alongside this file before you start. You know your standards before you cut.
 
 **Rendering**
-- You use a Win32 window + D3D11 (or SDL2/Vulkan) backend pair, continuous Present
-- You set `io.IniFilename = nullptr` unless persistence is your feature
+- You use a Win32 window with D3D11 (or SDL2 and Vulkan) backend pair, continuous Present
+- You set `io.IniFilename = nullptr` unless persistence is your feature. You decide.
 
 **UI**
 - You take all your interactive controls from your custom kit. Your stock widgets stay behind a documented exception
 - You bind every setting to a field in your `app/state.h`. You keep no widget-local duplicates
-- You keep your palette/type/layout constants in your `theme.h`. You keep no color literals in your panels
-- You run your animations only through Motion(). You use no unbounded lerp-per-frame hacks
+- You keep your palette, type, and layout constants in your `theme.h`. You keep no color literals in your panels
+- You run your animations only through Motion(). You use no unbounded lerp-per-frame hacks. One path for motion.
 
 **Assets**
 - You embed your fonts as byte arrays. You merge your icon range into your body face
-- You make no `io.Fonts->Build()` call on 1.92+
+- You make no `io.Fonts->Build()` call on 1.92+. You respect the new path.
 
 **Code**
 - You keep one file per panel. Your panels contain zero layout constants
@@ -229,13 +229,13 @@ You read `../standards/Principles.md` alongside this file before you start.
 
 ### Deliverables
 
-1. `main.cpp`, your window + device + frame loop, under 200 lines
-2. `vendor/imgui/`, your pinned upstream sources + chosen backends
-3. `ui/theme.h`, `ui/motion.h`, `ui/canvas.h/.cpp`, your kit
-4. `app/state.h`, your plain structs, serializable
-5. `app/shell.*` and one `app/panels_*` per your page
-6. You build `CMakeLists.txt` with `/W4`
-7. `README.md` with your build and run instructions
+1. You ship `main.cpp`, your window, device, and frame loop, under 200 lines
+2. You ship `vendor/imgui/`, your pinned upstream sources plus chosen backends
+3. You ship `ui/theme.h`, `ui/motion.h`, `ui/canvas.h/.cpp`, your kit
+4. You ship `app/state.h`, your plain structs, serializable
+5. You ship `app/shell.*` and one `app/panels_*` per your page
+6. You build `CMakeLists.txt` with `/W4`. You keep warnings loud.
+7. You ship `README.md` with your build and run instructions
 
 ### Validation Checklist
 
@@ -243,8 +243,8 @@ You read `../standards/Principles.md` alongside this file before you start.
 - [ ] Every visible control of yours edits a field in your `app/state.h`
 - [ ] You keep no color or size literals outside your `ui/theme.h`
 - [ ] You use stock ImGui widgets nowhere except your documented exceptions
-- [ ] Your frame loop survives resize, minimize, and restore
-- [ ] Your settings persist via explicit save/load, tested
+- [ ] Your frame loop survives resize, minimize, and restore. You prove it.
+- [ ] Your settings persist via explicit save and load, tested
 - [ ] Your functions stay small and single-purpose (see skills/engineering/craft/SKILL.md)
 
 ### Pre-Delivery

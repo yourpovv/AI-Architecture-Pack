@@ -1,8 +1,8 @@
 # Electron Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair this with the matching `languages/*` file and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. Respect what is there.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair this with the matching `languages/*` file and your project `AGENTS.md`. For reviews you use `skills/review/audit/SKILL.md`. For craft you use `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. You respect what is there.
 
-You keep a clean structure for your Electron desktop app. Clean means you can find things. Clean means your teammate can too.
+You keep a clean structure for your Electron desktop app. Clean means you can find things. Clean means your teammate can find them too. You owe each other that.
 
 ---
 
@@ -32,19 +32,19 @@ project/
 ## Principles
 
 **Separate processes**
-Your main process owns the system. Your renderer owns the UI. Never mix the two. Ask where each line belongs. Put it there.
+Your main process owns the system. Your renderer owns the UI. You never mix the two. You ask where each line belongs. You put it there. Why blur a line that protects you?
 
 **Explicit IPC**
-You talk through namespaced channels. You never expose Node.js to your renderer. That boundary is your protection.
+You talk through namespaced channels. You never expose Node.js to your renderer. That boundary is your protection. You keep it solid.
 
 **Single responsibility**
-Each module does one thing. One reason to change. That is how you stay honest.
+Your module does one thing. It has one reason to change. That is how you stay honest. That is how your teammate trusts your code.
 
 **No globals**
-You pass dependencies explicitly. No hidden globals. What a module needs, you hand it.
+You pass dependencies explicitly. You keep no hidden globals. What your module needs, you hand it. No hiding.
 
 **Clean up resources**
-You remove listeners. You close files on exit. A craftsman leaves nothing running behind him.
+You remove listeners. You close files on exit. A craftsman leaves nothing running behind him. You leave the machine as you found it.
 
 ---
 
@@ -546,12 +546,12 @@ test('state updates listeners', () => {
 
 ## Configuration
 
-You have two kinds of config in your desktop app. Keep them apart. Mixing them will hurt you:
+You have two kinds of config in your desktop app. You keep them apart. Mixing them will hurt you. Why pay for confusion you can avoid:
 
 - **Runtime mode**, you detect dev vs packaged with `app.isPackaged`, never `NODE_ENV`
-  guesses. You drive log verbosity, dev tools, and update channels off it. One check. One truth.
+  guesses. You drive log verbosity, dev tools, and update channels off it. You keep one check. You keep one truth.
 - **User settings**, you persist in `app.getPath('userData')` (via `electron-store` or your
-  storage layer), never next to the binary, which may be read-only. Respect the platform.
+  storage layer), never next to the binary, which may be read-only. You respect the platform.
 
 ```javascript
 // src/main/config.js
@@ -574,43 +574,43 @@ module.exports = { config };
 
 Your secrets (API keys, signing tokens) live in your **main** process from environment
 variables at build/run time, never bundled into the renderer, where any user can read
-them. You expose only the results over IPC.
+them. You expose only the results over IPC. You keep the keys where your user cannot reach them.
 
 ---
 
 ## Summary
 
-You separate your main and renderer processes strictly. No shortcuts.
-You use contextIsolation and you disable nodeIntegration. That setting is your lock.
-You namespace your IPC channels clearly. A name should say what it does.
+You separate your main and renderer processes strictly. You take no shortcuts.
+You use contextIsolation and you disable nodeIntegration. That setting is your lock. You keep it locked.
+You namespace your IPC channels clearly. Your name should say what it does.
 You keep your modules small and focused. Small is testable. Small is honest.
-You clean up your resources on exit. Leave the machine as you found it.
-You use state management for your shared data. One place for the truth.
+You clean up your resources on exit. You leave the machine as you found it.
+You use state management for your shared data. You keep one place for the truth.
 
 ---
 
 ## Project Prompt
 
 You build an Electron desktop app against the structure and rules above. Where they disagree
-with your defaults, this file wins. Obey it.
+with your defaults, this file wins. You obey it.
 
-You read `../standards/Principles.md` alongside this file before you start. Know your standards before you cut.
+You read `../standards/Principles.md` alongside this file before you start. You know your standards before you cut.
 
 **Security (Non-Negotiable)**
 - contextIsolation: true
 - nodeIntegration: false
-- Validate all IPC input on main process. Trust nothing from your renderer
-- Namespace IPC channels: `domain:action`. The name tells the story
+- You validate all IPC input on main process. You trust nothing from your renderer
+- You namespace IPC channels: `domain:action`. Your name tells the story
 
 **IPC Patterns**
-- Use invoke/handle for request-response. Ask, then answer
-- Use send/on for fire-and-forget. No reply expected
-- Clean error handling on both sides. Both ends own their failures
+- You use invoke/handle for request-response. You ask, then you answer
+- You use send/on for fire-and-forget. You expect no reply
+- You keep clean error handling on both sides. Both ends own their failures
 
 **Resource Management**
-- Remove event listeners on cleanup. No loose ends
-- Close database connections on exit. Close what you opened
-- Save state before exit. Do not lose your user's work
+- You remove event listeners on cleanup. You leave no loose ends
+- You close database connections on exit. You close what you opened
+- You save state before exit. You do not lose your user's work
 
 ### Setup
 
@@ -622,30 +622,29 @@ mkdir -p src/ui/modules assets/icons dist
 
 ### Deliverables
 
-1. Complete project following architecture structure above. No missing pieces
-2. Main process with system operations. It owns the system
-3. Preload bridge with secure IPC. That bridge is your boundary
-4. Renderer process with UI logic. It renders. It does not rule
-5. Storage layer for persistence. Your data survives a restart
-6. State management system. One truth for your UI
-7. Custom window controls. Make them behave
-8. package.json with build config. Your build stays repeatable
-9. README with setup instructions. The next person thanks you
+1. You deliver a complete project following architecture structure above. You leave no missing pieces
+2. You deliver a main process with system operations. It owns the system
+3. You deliver a preload bridge with secure IPC. That bridge is your boundary
+4. You deliver a renderer process with UI logic. It renders. It does not rule
+5. You deliver a storage layer for persistence. Your data survives a restart
+6. You deliver a state management system. You keep one truth for your UI
+7. You deliver custom window controls. You make them behave
+8. You deliver package.json with build config. Your build stays repeatable
+9. You deliver a README with setup instructions. The next person thanks you
 
 ### Validation Checklist
 
-- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed. Env examples use placeholders only
-
-- [ ] Functions are small and single-purpose. Extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] You verify commands from project AGENTS.md / README run (or you list honest manual checks)
+- [ ] You commit no secrets. Your env examples use placeholders only
+- [ ] Your functions stay small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
 - [ ] contextIsolation enabled. You leave it on
 - [ ] nodeIntegration disabled. You leave it off
 - [ ] No Node.js in renderer. Your renderer stays clean
-- [ ] All IPC channels namespaced. Names tell the story
-- [ ] Input validation on main process. You trust nothing
-- [ ] Event listeners cleaned up. No loose ends
+- [ ] All your IPC channels are namespaced. Your names tell the story
+- [ ] You validate input on main process. You trust nothing
+- [ ] You clean up event listeners. You leave no loose ends
 - [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
-- [ ] Resources freed properly. Close what you opened
+- [ ] You free resources properly. You close what you opened
 
 ### Security Checklist
 
@@ -653,8 +652,8 @@ mkdir -p src/ui/modules assets/icons dist
 - [ ] nodeIntegration disabled. You leave it off
 - [ ] webSecurity enabled. You leave it on
 - [ ] No eval() or Function() in renderer. Your renderer stays clean
-- [ ] CSP headers configured. Lock the door
-- [ ] All IPC input validated. You trust nothing
+- [ ] You configure CSP headers. You lock the door
+- [ ] You validate all IPC input. You trust nothing
 
 ### Pre-Delivery
 

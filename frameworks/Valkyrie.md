@@ -1,14 +1,14 @@
 # Valkyrie Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. Respect what is there.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. You respect what is there.
 
-You keep a clean structure for your lightweight desktop app with Valkyrie. Small stays readable. Small stays honest.
+You keep a clean structure for your lightweight desktop app with Valkyrie. You keep it small. Small stays readable for you. Small stays honest for your team.
 
 ---
 
 ## What is Valkyrie?
 
-Valkyrie is a CLI-driven desktop framework that uses the system WebView (webkit2gtk on Linux, Edge WebView2 on Windows) instead of bundling Chromium. Listen. You ship ~2 MB binaries instead of Electron's 150-300 MB. That size difference is the tradeoff you chose.
+Valkyrie is a CLI-driven desktop framework that uses the system WebView (webkit2gtk on Linux, Edge WebView2 on Windows) instead of bundling Chromium. Listen. You ship ~2 MB binaries instead of Electron's 150-300 MB. You chose that size difference. You live with what it costs you.
 
 | Framework | Binary Size |
 |-----------|-------------|
@@ -35,29 +35,29 @@ my-app/
     └── main.css        # Base styles
 ```
 
-> No `main.js` or preload.js here. Valkyrie exposes a built-in `valkyrie` global to your WebView. You write no IPC bridge yourself.
+> No `main.js` or preload.js here. Valkyrie exposes a built-in `valkyrie` global to your WebView. You write no IPC bridge yourself. You use what you are given.
 
 ---
 
 ## Principles
 
 **System WebView, not bundled Chromium**
-You render in whatever WebView your OS provides. You test on your target platforms. What works in one WebView can surprise you in another.
+You render in whatever WebView your OS provides. You test on your target platforms. What works in one WebView can surprise you in another. You do not assume. You check.
 
 **valkyrie global is your API**
-All your native calls go through `valkyrie.*`. You never try to access Node or OS APIs directly. One door. Use it.
+All your native calls go through `valkyrie.*`. You never try to access Node or OS APIs directly. You have one door. You use it. You stay inside it.
 
 **Single HTML entry**
-`index.html` is your shell. You keep it minimal. You drive everything from your JS modules.
+`index.html` is your shell. You keep it minimal. You drive everything from your JS modules. Your shell stays dumb. Your modules do the work.
 
 **Callbacks for native events**
-You assign `window.onFileOpen`, `window.onFolderOpen`, etc. before you trigger dialogs. Set the handler first. Then ask.
+You assign `window.onFileOpen`, `window.onFolderOpen`, etc. before you trigger dialogs. You set the handler first. Then you ask. If you ask first, you miss the answer.
 
 **Small, focused modules**
-Each file owns one domain: state, dialogs, notifications, rendering. One file. One job.
+Each file owns one domain: state, dialogs, notifications, rendering. You keep one file to one job. That is how you stay honest.
 
 **Environment config via .env**
-Your secrets and config live in `.env`, not hard-coded in your JS. Keep them out of your code.
+Your secrets and config live in `.env`, not hard-coded in your JS. You keep them out of your code. Your code stays clean. Your secrets stay out of trouble.
 
 ---
 
@@ -86,7 +86,7 @@ valkyrie package
 
 ## The valkyrie Global API
 
-Valkyrie injects a `valkyrie` object into every WebView page you own. These are the only native calls you get. Learn them. Stay inside them.
+Valkyrie injects a `valkyrie` object into every WebView page you own. These are the only native calls you get. You learn them. You stay inside them. Why stray outside what your platform supports?
 
 ### Dialogs
 
@@ -409,7 +409,7 @@ body {
 
 Your config lives in `.env`. Valkyrie injects it so you read it through `import.meta.env`.
 You keep secrets out of committed source. You commit a `.env.example` with the keys. You gitignore
-the real `.env`.
+the real `.env`. Your teammates see what you need. They do not see your values.
 
 **.env**
 ```
@@ -419,8 +419,8 @@ DEBUG=false
 ```
 
 You access them in your app via the `import.meta.env` object (Valkyrie handles .env injection).
-You read each value once at startup. Do not reach into `import.meta.env` all over your
-codebase. One read. One place.
+You read each value once at startup. You do not reach into `import.meta.env` all over your
+codebase. You read once. You keep it in one place.
 
 ---
 
@@ -434,7 +434,7 @@ codebase. One read. One place.
 | File Pickers  | Zenity         | Win32            |
 | WebView       | webkit2gtk     | Edge WebView2    |
 
-Your macOS support is experimental. Plan for that.
+Your macOS support is experimental. You plan for that. You do not promise what you cannot prove.
 
 ---
 
@@ -448,7 +448,7 @@ sudo pacman -S mingw-w64-gcc
 valkyrie build --target=windows
 ```
 
-Your first build downloads and compiles QuickJS and libuv for Windows. Your later builds use cached deps. Patience once. Speed after.
+Your first build downloads and compiles QuickJS and libuv for Windows. Your later builds use cached deps. You wait once. You build fast after that.
 
 ---
 
@@ -484,7 +484,7 @@ async function loadFile(path) {
 
 You keep logic in pure modules so you can test them in plain Node/Bun without a WebView.
 The `valkyrie` global is injected at runtime, so you **stub it** in your tests. Your `state`
-store, your filtering, and your `ui` helpers should not touch it directly anyway. Keep them clean.
+store, your filtering, and your `ui` helpers should not touch it directly anyway. You keep them clean. Clean code is testable code.
 
 ```javascript
 // state.test.js  (vitest / bun test)
@@ -515,49 +515,49 @@ globalThis.valkyrie = {
 ```
 
 You test the pure logic (state, filtering, formatting). You leave the thin `valkyrie.*` wrappers
-to manual checks on each target platform. Their behavior differs by WebView anyway. Test what you can. Look at the rest.
+to manual checks on each target platform. Their behavior differs by WebView anyway. You test what you can. You look at the rest with your own eyes.
 
 ---
 
 ## Summary
 
-You write no main process or preload. Valkyrie handles that for you.
-You use the `valkyrie` global for all your native calls. One door.
-You assign callbacks before you trigger dialogs or clipboard reads. Handler first. Then ask.
-You keep modules small and single-purpose. One file. One job.
-You test on both Linux and Windows. WebView behavior differs. Believe it.
-You use `.env` for configuration. Keep secrets out of your code.
-You handle errors globally with `window.addEventListener('error'...)`. Catch it at the top.
+You write no main process or preload. Valkyrie handles that for you. That is work you do not own.
+You use the `valkyrie` global for all your native calls. You have one door.
+You assign callbacks before you trigger dialogs or clipboard reads. You set the handler first. Then you ask.
+You keep modules small and single-purpose. You keep one file to one job.
+You test on both Linux and Windows. WebView behavior differs. You believe it because you have seen it.
+You use `.env` for configuration. You keep secrets out of your code.
+You handle errors globally with `window.addEventListener('error'...)`. You catch it at the top.
 
 ---
 
 ## Project Prompt
 
-Build a Valkyrie desktop app against the structure and rules above. No IPC plumbing, no preload files, just the `valkyrie` global and focused JS modules. Where the rules and your defaults disagree, this file wins.
+Build a Valkyrie desktop app against the structure and rules above. No IPC plumbing, no preload files, just the `valkyrie` global and focused JS modules. Where the rules and your defaults disagree, this file wins. You obey this file.
 
-Read `../standards/Principles.md` alongside this file before starting.
+Read `../standards/Principles.md` alongside this file before starting. You know your standards before you cut.
 
 **Native API Usage**
 - Dialogs: `valkyrie.dialog.*`
 - Notifications: `valkyrie.notification.show(title, body)`
 - Clipboard: `valkyrie.clipboard.writeText` / `valkyrie.clipboard.readText`
 - Custom backend: `valkyrie.send({ command, data })`
-- Always assign `window.on*` callbacks before triggering any dialog or clipboard read
+- You always assign `window.on*` callbacks before triggering any dialog or clipboard read. Handler first. Then ask.
 
 **State Management**
-- Centralized reactive store in `modules/state.js`
-- Subscriber pattern with per-key subscriptions
-- No global variables outside the store
+- You keep a centralized reactive store in `modules/state.js`. One place for your truth.
+- You use a subscriber pattern with per-key subscriptions. Each key notifies its own listeners.
+- You keep no global variables outside the store. Your store owns your state.
 
 **Error Handling**
-- Global `window.addEventListener('error'...)` boundary
-- Per-operation try/catch for async work
-- Show user-facing errors via `valkyrie.dialog.showMessageBox`
+- You keep a global `window.addEventListener('error'...)` boundary. You catch it at the top.
+- You use per-operation try/catch for async work. Each operation owns its failure.
+- You show user-facing errors via `valkyrie.dialog.showMessageBox`. Your user hears it plain.
 
 **Platform Awareness**
-- Behavior differs between Linux (webkit2gtk) and Windows (Edge WebView2)
-- Test both platforms
-- macOS is experimental
+- Behavior differs between Linux (webkit2gtk) and Windows (Edge WebView2). You respect that gap.
+- You test both platforms. You do not guess.
+- macOS is experimental. You plan for that.
 
 ### Setup
 
@@ -570,32 +570,31 @@ valkyrie dev
 
 ### Deliverables
 
-1. `index.html`, minimal shell, no logic
-2. `app.js`, bootstrap, event wiring, state subscriptions
-3. `modules/state.js`, reactive key-value store
-4. `modules/dialogs.js`, native dialog wrappers
-5. `modules/clipboard.js`, clipboard read/write wrappers
-6. `modules/notifications.js`, notification wrapper
-7. `modules/ui.js`, pure rendering helpers
-8. `styles/main.css`, clean base styles
-9. `package.json` with dev/build/package scripts
-10. `.env` with documented variables
-11. `README.md` with setup and build instructions
+1. You ship `index.html`, your minimal shell with no logic.
+2. You ship `app.js`, your bootstrap with event wiring and state subscriptions.
+3. You ship `modules/state.js`, your reactive key-value store.
+4. You ship `modules/dialogs.js`, your native dialog wrappers.
+5. You ship `modules/clipboard.js`, your clipboard read and write wrappers.
+6. You ship `modules/notifications.js`, your notification wrapper.
+7. You ship `modules/ui.js`, your pure rendering helpers.
+8. You ship `styles/main.css`, your clean base styles.
+9. You ship `package.json` with dev, build, and package scripts.
+10. You ship `.env` with documented variables.
+11. You ship `README.md` with setup and build instructions.
 
 ### Validation Checklist
 
-- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed; env examples use placeholders only
-
-- [ ] No `valkyrie.*` calls outside dedicated wrapper modules
-- [ ] `window.on*` callbacks assigned before every dialog/clipboard trigger
-- [ ] Functions are small and single-purpose; extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
-- [ ] No global variables (except `valkyrie`)
-- [ ] All modules use ES module syntax
-- [ ] Global error boundary in `app.js`
-- [ ] Natural, human naming throughout
-- [ ] Works on both Linux and Windows
-- [ ] `.env` used for configuration
+- [ ] You verify commands from project AGENTS.md / README run (or you list honest manual checks)
+- [ ] You commit no secrets. Your env examples use placeholders only
+- [ ] You keep no `valkyrie.*` calls outside dedicated wrapper modules
+- [ ] You assign `window.on*` callbacks before every dialog and clipboard trigger
+- [ ] Your functions stay small and single-purpose. You extract when a second concern appears (see Principles / skills/engineering/craft/SKILL.md)
+- [ ] You keep no global variables (except `valkyrie`)
+- [ ] All your modules use ES module syntax
+- [ ] You keep a global error boundary in `app.js`
+- [ ] You use natural, human naming throughout
+- [ ] Your code works on both Linux and Windows
+- [ ] You use `.env` for configuration
 
 ### Pre-Delivery
 

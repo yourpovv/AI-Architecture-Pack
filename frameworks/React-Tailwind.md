@@ -1,8 +1,8 @@
 # React / Tailwind Architecture
 
-> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. Respect what is there.
+> **Agent load:** You open Project Structure, Principles, Error Handling, Configuration, and Project Prompt / Validation first. That is your discipline. You open other sections only when your task needs them. You pair with the matching `languages/*` file and project `AGENTS.md`. Reviews: `skills/review/audit/SKILL.md`. Craft: `skills/engineering/craft/SKILL.md`. You prefer extending an existing repo over scaffolding a parallel tree. You respect what is there.
 
-These are your framework patterns for building web applications. Use them alongside `../languages/TypeScript.md` and `../standards/Principles.md`. Your language rules come first. These rules build on them.
+These are your framework patterns for building web applications. You use them alongside `../languages/TypeScript.md` and `../standards/Principles.md`. Your language rules come first. These rules build on them. You honor the base before you add the frame.
 
 ---
 
@@ -29,19 +29,19 @@ project/
 ## Principles
 
 **Component composition over inheritance**
-You build complex UIs from simple components. Small pieces. Put together with care.
+You build complex UIs from simple components. You use small pieces. You put them together with care. Why inherit trouble you can compose away?
 
 **Single responsibility**
-Each component does one thing well. One reason to change. That is how you stay honest.
+Your component does one thing well. It has one reason to change. That is how you stay honest. That is how your team trusts your file.
 
 **Props, not global state**
-You pass data explicitly where you can. What a component needs, you hand it. No hiding.
+You pass data explicitly where you can. What your component needs, you hand it. You hide nothing.
 
 **Tailwind for styles**
-You use utility classes, not custom CSS. Stay with the system. It keeps you consistent.
+You use utility classes, not custom CSS. You stay with the system. It keeps you consistent. Consistency is kindness to your teammate.
 
 **Context sparingly**
-Only for truly global state (auth, theme). Ask if it is truly global. Most state is not.
+You use it only for truly global state (auth, theme). You ask if it is truly global. Most state is not. You do not make global what you can pass plainly.
 
 ---
 
@@ -219,13 +219,13 @@ export function useForm<T>(initial: T) {
 
 ## Error Handling
 
-Your React code fails in two distinct ways. You handle both. Do not pretend one covers the other:
+Your React code fails in two distinct ways. You handle both. You do not pretend one covers the other. A craftsman names each failure plainly:
 
 - **Render errors** → an **error boundary** catches them and shows fallback UI instead
-  of unmounting your whole tree. Contain the failure.
+  of unmounting your whole tree. You contain the failure.
 - **Async / event errors** (fetch, handlers) → boundaries *don't* catch these. You handle
   them in state and you render the error inline (see `skills/engineering/errors/SKILL.md` for the message
-  rules). Own each failure where it happens.
+  rules). You own each failure where it happens.
 
 **Error boundary** (catches render-time errors):
 
@@ -494,39 +494,39 @@ export default {
 
 ## Summary
 
-You build small, focused components. Small stays readable.
-You use Tailwind utilities, not custom CSS. Stay with the system.
-You keep reusable logic in custom hooks. Logic has a home.
+You build small, focused components. Small stays readable for you.
+You use Tailwind utilities, not custom CSS. You stay with the system.
+You keep reusable logic in custom hooks. Your logic has a home.
 You use context sparingly, only for global state. Most state is not global.
-You test your components and hooks. Prove they work.
-You use error boundaries for graceful failure. Fail with manners.
+You test your components and hooks. You prove they work.
+You use error boundaries for graceful failure. You fail with manners.
 
 ---
 
 ## Project Prompt
 
 You build a React and Tailwind frontend against the structure and rules above. Where they
-disagree with your defaults, this file wins. Obey it.
+disagree with your defaults, this file wins. You obey it.
 
-You read `../languages/TypeScript.md` and `../standards/Principles.md` alongside this file before you start. Know your standards before you cut.
+You read `../languages/TypeScript.md` and `../standards/Principles.md` alongside this file before you start. You know your standards before you cut.
 
 **Styling**
-- Tailwind CSS 4.0 only, no custom CSS unless necessary. Restraint keeps you consistent
-- Utility-first approach. Use the system
-- Mobile-first responsive design. Small screens first
-- Consistent spacing scale. Same rhythm everywhere
+- Tailwind CSS 4.0 only, no custom CSS unless necessary. Your restraint keeps you consistent
+- Utility-first approach. You use the system
+- Mobile-first responsive design. You build small screens first
+- Consistent spacing scale. You keep the same rhythm everywhere
 
 **Components**
-- Composition over inheritance. Build up from small parts
-- Props for data flow, context only for global state. Pass it down plainly
-- Components stay focused. Split when a file mixes unrelated concerns
-- Error boundaries for graceful failure. Fail with manners
+- Composition over inheritance. You build up from small parts
+- Props for data flow, context only for global state. You pass it down plainly
+- Your components stay focused. You split when a file mixes unrelated concerns
+- Error boundaries for graceful failure. You fail with manners
 
 **Performance**
-- Memoize expensive calculations. Do not pay twice
-- Lazy load routes and components. Load what you need
-- Virtualize long lists. Respect your users machine
-- Debounce event handlers. Slow down and stay correct
+- You memoize expensive calculations. You do not pay twice
+- You lazy load routes and components. You load what you need
+- You virtualize long lists. You respect your users machine
+- You debounce event handlers. You slow down and stay correct
 
 ### Setup
 
@@ -540,29 +540,28 @@ npx tailwindcss init -p
 
 ### Deliverables
 
-1. Complete project following architecture structure above. No missing pieces
-2. Type-safe React components. Let the compiler guard you
-3. Custom hooks for reusable logic. Logic has a home
-4. Context providers for state. Only where state is truly shared
-5. Tailwind styling throughout. No stray CSS
-6. Routing with React Router. One way to move
-7. Form handling with validation. Never trust input
-8. Error boundaries. Fail with manners
-9. README with setup instructions. The next person thanks you
-10. Basic test suite. Prove your work
+1. You deliver a complete project following architecture structure above. You leave no missing pieces
+2. You deliver type-safe React components. You let the compiler guard you
+3. You deliver custom hooks for reusable logic. Your logic has a home
+4. You deliver context providers for state. Only where state is truly shared
+5. You deliver Tailwind styling throughout. No stray CSS
+6. You deliver routing with React Router. One way to move
+7. You deliver form handling with validation. You never trust input
+8. You deliver error boundaries. You fail with manners
+9. You deliver a README with setup instructions. The next person thanks you
+10. You deliver a basic test suite. You prove your work
 
 ### Validation Checklist
 
-- [ ] Verify commands from project AGENTS.md / README run (or honest manual checks listed)
-- [ ] No secrets committed. Env examples use placeholders only
-
-- [ ] Components stay focused. Split when UI, data fetching, and business rules share one file without need
-- [ ] No `any` types. Type what you mean
-- [ ] Type all props and state. Leave nothing vague
-- [ ] No inline styles (use Tailwind). Stay with the system
-- [ ] Custom hooks for logic. Logic has a home
-- [ ] Error boundaries implemented. Fail with manners
-- [ ] Loading states handled. Show your user where you stand
+- [ ] You verify commands from project AGENTS.md / README run (or you list honest manual checks)
+- [ ] You commit no secrets. Your env examples use placeholders only
+- [ ] Your components stay focused. You split when UI, data fetching, and business rules share one file without need
+- [ ] You use no `any` types. You type what you mean
+- [ ] You type all props and state. You leave nothing vague
+- [ ] You use no inline styles (use Tailwind). You stay with the system
+- [ ] You keep custom hooks for logic. Your logic has a home
+- [ ] You implement error boundaries. You fail with manners
+- [ ] You handle loading states. You show your user where you stand
 - [ ] Names match domain and local convention (skills/engineering/craft/SKILL.md)
 - [ ] TypeScript compiles with no errors. Clean means clean
 
