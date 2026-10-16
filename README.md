@@ -23,12 +23,15 @@ Portable, stack-agnostic, and project-neutral. Copy the parts a repo needs into 
    edit, and names the commands that verify its work.
 3. Tell the agent to load one file at a time, never the whole folder.
 
-Then install the audit harness so every review has an explicit scope and stays `report-only`
-until you switch it to `fix`:
+Then install the skills. Each one is named `coding-*`, so they are easy to find:
 
 ```bash
-cp -r skills/review/audit .claude/skills/
+./install.sh          # macOS / Linux / Git Bash
+.\install.ps1         # Windows PowerShell
 ```
+
+The audit harness (`coding-audit`) keeps every review scoped and `report-only` until you
+switch it to `fix`.
 
 [Project templates](#project-templates) lists the files to copy for each kind of project.
 
@@ -286,17 +289,20 @@ project, never invented.
 
 ### Installing the skills
 
-Every skill is a folder holding a `SKILL.md`, named the way Claude Code expects. Copy the
-folder:
+`dist/skills/` holds ready-to-install builds of every skill, each named `coding-<name>`
+(`coding-standards`, `coding-audit`, `coding-errors`, ...). `coding-standards` bundles the 60
+Clean-Code lessons and `Principles.md`, so the standards travel with it.
 
-```bash
-cp -r skills/review/audit .claude/skills/
-```
+| Command | Installs to |
+|---|---|
+| `./install.sh` or `.\install.ps1` | `~/.claude/skills/`, for every project on the machine |
+| `./install.sh --project` or `.\install.ps1 -Project` | `.claude/skills/` in the current directory |
 
-Use `~/.claude/skills/` to install for every project on the machine. The category folders
-(`agent/`, `engineering/`, `review/`, `web/`, `writing/`) exist for browsing this repo. Claude
-Code reads a flat skills directory, so copy the individual skill folders, not the category. The
-full list with triggers is in [`skills/README.md`](skills/README.md).
+Re-running the installer replaces the installed `coding-*` skills with the current build.
+Start a new Claude Code session afterwards so the skills load. To install a single skill, copy
+its folder from `dist/skills/` by hand.
+
+The full list with triggers is in [`skills/README.md`](skills/README.md).
 
 Harness details change between releases. [`code.claude.com/docs`](https://code.claude.com/docs)
 is the authority on exact paths, settings keys, and hook events. This pack covers what to put
@@ -314,6 +320,9 @@ Architecture/
 ├── README.md                       this file
 ├── STACK.md                        stack decisions, services, AI tooling
 ├── LICENSE
+├── install.sh / install.ps1        install dist/skills/ into Claude Code
+├── scripts/build_skills.py         rebuild dist/skills/ from skills/ and standards/
+├── dist/skills/                    GENERATED, installable coding-* skills
 │
 ├── standards/                      UNIVERSAL, applies to every project
 │   ├── README.md
@@ -331,6 +340,7 @@ Architecture/
 │   │   ├── commits/SKILL.md        one commit per task, staging, messages
 │   │   └── claude-folder/SKILL.md  .claude/ layout and hook registration
 │   ├── engineering/                how code gets written
+│   │   ├── standards/SKILL.md      the coding standards (bundles Clean-Code)
 │   │   ├── errors/SKILL.md         failure handling and user-facing copy
 │   │   ├── uncle-bob/SKILL.md      craft methodology
 │   │   ├── craft/SKILL.md          naming, comments, structure
@@ -453,7 +463,7 @@ Every folder's README has an "Adding" section with the required shape. In short:
 
 | Adding a | Start from | Then |
 |---|---|---|
-| **Skill** | The frontmatter in `skills/engineering/errors/SKILL.md` | Write the `description` for the matcher, using phrases people actually type |
+| **Skill** | The frontmatter in `skills/engineering/errors/SKILL.md` | Write the `description` for the matcher, then run `python scripts/build_skills.py` |
 | **Framework** | The closest `frameworks/*` file | Cover only what the framework changes; keep the `Agent load` blockquote |
 | **Review prompt** | The harness block in any `prompts/reviews/*` file | Default to `report-only` and always require a scope |
 | **Scaffold prompt** | Any `prompts/scaffolds/*` file | Prefer extending an existing repo, and implement only what was asked |
